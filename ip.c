@@ -15,7 +15,7 @@
  * 02110-1301, USA
  *
  * Contributors:
- *	Simó Albert i Beltran
+ *  Simó Albert i Beltran
  */
 
 
@@ -159,74 +159,74 @@ int rtnl_open(struct rtnl_handle *rth)
 {
         unsigned subscriptions = 0;
         int protocol = NETLINK_ROUTE;
-	socklen_t addr_len;
-//	int sndbuf = 32768;
+    socklen_t addr_len;
+//  int sndbuf = 32768;
 //        int rcvbuf = 1024 * 1024;
 
-	memset(rth, 0, sizeof(*rth));
+    memset(rth, 0, sizeof(*rth));
 
-	rth->fd = socket(AF_NETLINK, SOCK_RAW, protocol);
-	if (rth->fd < 0) {
+    rth->fd = socket(AF_NETLINK, SOCK_RAW, protocol);
+    if (rth->fd < 0) {
                 dbgf_sys(DBGT_ERR, "Cannot open netlink socket");
-		return FAILURE;
-	}
+        return FAILURE;
+    }
 
 /*
         if ( fcntl( rth->fd, F_SETFL, O_NONBLOCK) < 0 ) {
-		dbgf_sys(DBGT_ERR, "can't set netlink socket nonblocking : (%s)",  strerror(errno));
-		close(rth->fd);
-		return FAILURE;
-	}
+        dbgf_sys(DBGT_ERR, "can't set netlink socket nonblocking : (%s)",  strerror(errno));
+        close(rth->fd);
+        return FAILURE;
+    }
 
- 	if (setsockopt(rth->fd,SOL_SOCKET,SO_SNDBUF,&sndbuf,sizeof(sndbuf)) < 0) {
-		dbgf_sys(DBGT_ERR, "SO_SNDBUF");
-		return FAILURE;
-	}
+    if (setsockopt(rth->fd,SOL_SOCKET,SO_SNDBUF,&sndbuf,sizeof(sndbuf)) < 0) {
+        dbgf_sys(DBGT_ERR, "SO_SNDBUF");
+        return FAILURE;
+    }
 
-	if (setsockopt(rth->fd,SOL_SOCKET,SO_RCVBUF,&rcvbuf,sizeof(rcvbuf)) < 0) {
-		dbgf_sys(DBGT_ERR, "SO_RCVBUF");
-		return FAILURE;
-	}
+    if (setsockopt(rth->fd,SOL_SOCKET,SO_RCVBUF,&rcvbuf,sizeof(rcvbuf)) < 0) {
+        dbgf_sys(DBGT_ERR, "SO_RCVBUF");
+        return FAILURE;
+    }
 */
 
-	memset(&rth->local, 0, sizeof(rth->local));
-	rth->local.nl_family = AF_NETLINK;
-	rth->local.nl_groups = subscriptions;
+    memset(&rth->local, 0, sizeof(rth->local));
+    rth->local.nl_family = AF_NETLINK;
+    rth->local.nl_groups = subscriptions;
 
-	if (bind(rth->fd, (struct sockaddr*)&rth->local, sizeof(rth->local)) < 0) {
-		dbgf_sys(DBGT_ERR, "Cannot bind netlink socket");
-		return FAILURE;
-	}
-	addr_len = sizeof(rth->local);
-	if (getsockname(rth->fd, (struct sockaddr*)&rth->local, &addr_len) < 0) {
+    if (bind(rth->fd, (struct sockaddr*)&rth->local, sizeof(rth->local)) < 0) {
+        dbgf_sys(DBGT_ERR, "Cannot bind netlink socket");
+        return FAILURE;
+    }
+    addr_len = sizeof(rth->local);
+    if (getsockname(rth->fd, (struct sockaddr*)&rth->local, &addr_len) < 0) {
                 dbgf_sys(DBGT_ERR, "Cannot getsockname");
-		return FAILURE;
-	}
-	if (addr_len != sizeof(rth->local)) {
+        return FAILURE;
+    }
+    if (addr_len != sizeof(rth->local)) {
                 dbgf_sys(DBGT_ERR, "Wrong address length %d\n", addr_len);
-		return FAILURE;
-	}
-	if (rth->local.nl_family != AF_NETLINK) {
+        return FAILURE;
+    }
+    if (rth->local.nl_family != AF_NETLINK) {
                 dbgf_sys(DBGT_ERR, "Wrong address family %d\n", rth->local.nl_family);
-		return FAILURE;
-	}
-	rth->seq = rand_num(UINT32_MAX);
-	return SUCCESS;
+        return FAILURE;
+    }
+    rth->seq = rand_num(UINT32_MAX);
+    return SUCCESS;
 }
 
 
 STATIC_FUNC
 void parse_rtattr(struct rtattr *tb[], int max, struct rtattr *rta, int len)
 {
-	memset(tb, 0, sizeof(struct rtattr *) * (max + 1));
+    memset(tb, 0, sizeof(struct rtattr *) * (max + 1));
 
-	while (RTA_OK(rta, len)) {
-		if (rta->rta_type <= max)
-			tb[rta->rta_type] = rta;
-		rta = RTA_NEXT(rta,len);
-	}
+    while (RTA_OK(rta, len)) {
+        if (rta->rta_type <= max)
+            tb[rta->rta_type] = rta;
+        rta = RTA_NEXT(rta,len);
+    }
 
-	if (len) {
+    if (len) {
                 dbgf_sys(DBGT_ERR, "!!!Deficit %d, rta_len=%d\n", len, rta->rta_len);
         }
 
@@ -236,7 +236,7 @@ STATIC_FUNC
 IDM_T get_if_req(IFNAME_T *dev_name, struct ifreq *if_req, int siocgi_req)
 {
 
-	memset( if_req, 0, sizeof (struct ifreq) );
+    memset( if_req, 0, sizeof (struct ifreq) );
 
         if (dev_name)
                 strncpy(if_req->ifr_name, dev_name->str, IFNAMSIZ - 1);
@@ -249,9 +249,9 @@ IDM_T get_if_req(IFNAME_T *dev_name, struct ifreq *if_req, int siocgi_req)
                                 siocgi_req, dev_name->str, strerror(errno));
                 }
                 return FAILURE;
-	}
+    }
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 extern unsigned int if_nametoindex (const char *);
@@ -265,7 +265,7 @@ uint32_t get_if_index(IFNAME_T *name) {
 STATIC_FUNC
 void add_rtattr(struct nlmsghdr *nlh, int rta_type, char *data, uint16_t data_len, uint16_t family)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
         IP4_T ip4;
         if (family == AF_INET) {
                 ip4 = ipXto4((*((IPX_T*)data)));
@@ -299,16 +299,16 @@ uint32_t prio_macro_to_prio(int32_t prio_macro)
         if (policy_routing == POLICY_RT_DISABLED)
                 return 0;
 
-	else if (prio_macro>=0)
-		return prio_macro;
+    else if (prio_macro>=0)
+        return prio_macro;
 
         else if (prio_macro == RT_PRIO_HNA)
-		return ip_prio_hna_cfg;
+        return ip_prio_hna_cfg;
 
         else if (prio_macro == RT_PRIO_TUNS)
-		return ip_prio_tun_cfg;
+        return ip_prio_tun_cfg;
 
-	return 0;
+    return 0;
 }
 
 
@@ -320,16 +320,16 @@ uint32_t table_macro_to_table(int32_t table_macro)
         if (policy_routing == POLICY_RT_DISABLED)
                 return 0;
 
-	else if (table_macro>=0)
-		return table_macro;
+    else if (table_macro>=0)
+        return table_macro;
 
-	else if ( table_macro == BMX_TABLE_HNA )
-		return ip_table_hna_cfg;
+    else if ( table_macro == BMX_TABLE_HNA )
+        return ip_table_hna_cfg;
 
-	else if ( table_macro == BMX_TABLE_TUN )
-		return ip_table_tun_cfg;
+    else if ( table_macro == BMX_TABLE_TUN )
+        return ip_table_tun_cfg;
 
-	return 0;
+    return 0;
 }
 
 STATIC_FUNC
@@ -342,30 +342,30 @@ char *del2str(IDM_T del)
 STATIC_FUNC
 char *rtn2str(uint8_t rtn)
 {
-	if ( rtn == RTN_UNICAST )
-		return "RTN_UNICAST";
+    if ( rtn == RTN_UNICAST )
+        return "RTN_UNICAST";
 
-	else if ( rtn == RTN_THROW )
-		return "RTN_THROW  ";
+    else if ( rtn == RTN_THROW )
+        return "RTN_THROW  ";
 
-	return "RTN_ILLEGAL";
+    return "RTN_ILLEGAL";
 }
 
 STATIC_FUNC
 char *rta2str(uint8_t rta)
 {
-	if ( rta == RTA_DST )
-		return "RTA_DST";
+    if ( rta == RTA_DST )
+        return "RTA_DST";
 
-	return "RTA_ILLEGAL";
+    return "RTA_ILLEGAL";
 }
 #endif
 
 STATIC_FUNC
 char *trackt2str(uint8_t cmd)
 {
-	if ( cmd == IP_NOP )
-		return "TRACK_NOP";
+    if ( cmd == IP_NOP )
+        return "TRACK_NOP";
 
         else if (cmd == IP_LINK_DEL)
                 return "LINK_DEL";
@@ -381,45 +381,45 @@ char *trackt2str(uint8_t cmd)
 
 
         else if ( cmd == IP_ADDRESS_SET )
-		return "ADDRESS_SET";
+        return "ADDRESS_SET";
 
 
         else if ( cmd == IP_RULE_FLUSH )
-		return "RULE_FLUSH";
+        return "RULE_FLUSH";
 
         else if ( cmd == IP_RULE_DEFAULT )
-		return "RULE_DEFAULT";
+        return "RULE_DEFAULT";
 
         else if ( cmd == IP_RULE_TEST )
-		return "RULE_TEST";
+        return "RULE_TEST";
 
 
         else if (cmd == IP_ROUTE_FLUSH)
                 return "ROUTE_FLUSH";
 
         else if ( cmd == IP_THROW_MY_HNA )
-		return "THROW_MY_HNA";
+        return "THROW_MY_HNA";
 
-	else if ( cmd == IP_THROW_MY_NET )
-		return "THROW_MY_NET";
+    else if ( cmd == IP_THROW_MY_NET )
+        return "THROW_MY_NET";
 
-	else if ( cmd == IP_THROW_MY_TUNS )
-		return "THROW_MY_TUNS";
+    else if ( cmd == IP_THROW_MY_TUNS )
+        return "THROW_MY_TUNS";
 
-	else if ( cmd == IP_ROUTE_HOST )
-		return "ROUTE_HOST";
+    else if ( cmd == IP_ROUTE_HOST )
+        return "ROUTE_HOST";
 
-	else if ( cmd == IP_ROUTE_HNA )
-		return "ROUTE_HNA";
+    else if ( cmd == IP_ROUTE_HNA )
+        return "ROUTE_HNA";
 
         else if(cmd == IP_ROUTE_TUNS )
                 return "ROUTE_TUNS";
 
-	else if ( cmd > IP_ROUTE_TUNS && cmd < IP_ROUTE_MAX ) {
+    else if ( cmd > IP_ROUTE_TUNS && cmd < IP_ROUTE_MAX ) {
 
                 return bmx6_rt_dict[ (cmd - IP_ROUTE_TUNS) ].sys2Name ? bmx6_rt_dict[ (cmd - IP_ROUTE_TUNS) ].sys2Name : "unknown";
 
-	} 
+    }
 
         return "TRACK_ILLEGAL";
 }
@@ -457,7 +457,7 @@ void ipXToStr(int family, const IPX_T *addr, char *str)
                 a = (uint32_t *)&(addr->s6_addr32[3]);
 
         } else if (family == AF_INET6) {
-                
+
                 a = (uint32_t *)&(addr->s6_addr32[0]);
 
         } else {
@@ -466,7 +466,7 @@ void ipXToStr(int family, const IPX_T *addr, char *str)
         }
 
         inet_ntop(family, a, str, family == AF_INET ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN);
-	return;
+    return;
 }
 
 void ipFToStr(const IPX_T *addr, char *str)
@@ -483,10 +483,10 @@ IPX_T ip4ToX(IP4_T ip4)
 
 char *ipXAsStr(int family, const IPX_T *addr)
 {
-	static uint8_t c=0;
+    static uint8_t c=0;
         static char str[IP2S_ARRAY_LEN][INET6_ADDRSTRLEN];
 
-	c = (c+1) % IP2S_ARRAY_LEN;
+    c = (c+1) % IP2S_ARRAY_LEN;
 
         ipXToStr(family, addr, str[c]);
 
@@ -501,22 +501,22 @@ char *ipFAsStr(const IPX_T *addr)
 char *ip4AsStr( IP4_T addr )
 {
 
-	static uint8_t c=0;
-	static char str[IP2S_ARRAY_LEN][INET_ADDRSTRLEN];
+    static uint8_t c=0;
+    static char str[IP2S_ARRAY_LEN][INET_ADDRSTRLEN];
 
-	c = (c+1) % IP2S_ARRAY_LEN;
+    c = (c+1) % IP2S_ARRAY_LEN;
 
-	inet_ntop( AF_INET, &addr, str[c], INET_ADDRSTRLEN );
+    inet_ntop( AF_INET, &addr, str[c], INET_ADDRSTRLEN );
 
-	return str[c];
+    return str[c];
 }
 
 char *netAsStr(const struct net_key *net)
 {
-	static uint8_t c=0;
+    static uint8_t c=0;
         static char str[IP2S_ARRAY_LEN][IPXNET_STR_LEN];
 
-	c = (c+1) % IP2S_ARRAY_LEN;
+    c = (c+1) % IP2S_ARRAY_LEN;
 
         if(net) {
                 ipXToStr(net->af, &net->ip, str[c]);
@@ -584,7 +584,7 @@ IDM_T is_ip_set(const IPX_T *ip)
 
 IDM_T is_ip_valid( const IPX_T *ip, const uint8_t family )
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
 
         if (!is_ip_set(ip))
                 return NO;
@@ -596,7 +596,7 @@ IDM_T is_ip_valid( const IPX_T *ip, const uint8_t family )
 
                 if (!is_ip_equal(ip, &IP6_LOOPBACK_ADDR))
                         return YES;
-                
+
 
         } else if (family == AF_INET ) {
 
@@ -631,7 +631,7 @@ IDM_T is_ip_local(IPX_T *ip)
 
 IDM_T ip_netmask_validate(IPX_T *ipX, uint8_t mask, uint8_t family, uint8_t force)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
         uint8_t nmask = mask;
         int i;
         IP4_T ip32 = 0, m32 = 0;
@@ -690,13 +690,13 @@ int rtnl_rcv( int fd, uint32_t pid, uint32_t seq, uint8_t cmd, uint8_t quiet, vo
 {
         int max_retries = 10;
         uint8_t more_data;
-	int iteration = 0;
+    int iteration = 0;
 
         //TODO: see ip/libnetlink.c rtnl_talk() for HOWTO
         do {
                 char buf[RTNL_RCV_MAX];
                 memset(buf, 0, sizeof(buf));
-		iteration++;
+        iteration++;
 
                 struct iovec iov = {.iov_base = buf, .iov_len = sizeof (buf)};
                 struct sockaddr_nl nla = {.nl_family = AF_NETLINK }; //{.nl_family = AF_NETLINK}; //TODO: not sure here, maybe only for cmd==IP_ADDR_GET and IP_LINK_GET
@@ -705,16 +705,16 @@ int rtnl_rcv( int fd, uint32_t pid, uint32_t seq, uint8_t cmd, uint8_t quiet, vo
 
                 more_data = NO;
 
-		errno=0;
-		int status = recvmsg( fd, &msg, 0 );
+        errno=0;
+        int status = recvmsg( fd, &msg, 0 );
                 int err = errno;
 
-		dbgf((err || status <= 0) ? DBGL_SYS : DBGL_CHANGES, (err || status <= 0) ? DBGT_WARN : DBGT_INFO,
-			"rcvd cmd=%s fd=%d iteration=%d retries=%d status=%d err=%d %s",
-			trackt2str(cmd), fd, iteration, max_retries, status, err, strerror(err));
+        dbgf((err || status <= 0) ? DBGL_SYS : DBGL_CHANGES, (err || status <= 0) ? DBGT_WARN : DBGT_INFO,
+            "rcvd cmd=%s fd=%d iteration=%d retries=%d status=%d err=%d %s",
+            trackt2str(cmd), fd, iteration, max_retries, status, err, strerror(err));
 
 
-		if ( status < 0 ) {
+        if ( status < 0 ) {
 
                         if ( (err == EINTR || err == EWOULDBLOCK || err == EAGAIN ) && max_retries-- > 0 ) {
                                 usleep(500);
@@ -723,16 +723,16 @@ int rtnl_rcv( int fd, uint32_t pid, uint32_t seq, uint8_t cmd, uint8_t quiet, vo
                                 continue;
                         } else {
                                 dbgf_sys(DBGT_ERR, "giving up!");
-				return -501096;
-//				EXITERROR(-501096, (0));
-//				return FAILURE;
+                return -501096;
+//              EXITERROR(-501096, (0));
+//              return FAILURE;
                         }
 
-		} else if (status == 0) {
+        } else if (status == 0) {
                         dbgf_sys(DBGT_ERR, "netlink EOF");
-			return -501097;
-//			EXITERROR(-501097, (0));
-//			return FAILURE;
+            return -501097;
+//          EXITERROR(-501097, (0));
+//          return FAILURE;
                 }
 
                 if (msg.msg_flags & MSG_TRUNC) {
@@ -741,7 +741,7 @@ int rtnl_rcv( int fd, uint32_t pid, uint32_t seq, uint8_t cmd, uint8_t quiet, vo
                 }
 
 
-		for ( nh = (struct nlmsghdr *)buf; NLMSG_OK(nh, (size_t)status); nh = NLMSG_NEXT(nh, status) ) {
+        for ( nh = (struct nlmsghdr *)buf; NLMSG_OK(nh, (size_t)status); nh = NLMSG_NEXT(nh, status) ) {
 
                         if (nla.nl_pid || (pid && nh->nlmsg_pid != pid) || (seq && nh->nlmsg_seq != seq)) {
 
@@ -774,7 +774,7 @@ int rtnl_rcv( int fd, uint32_t pid, uint32_t seq, uint8_t cmd, uint8_t quiet, vo
 
                         if (func)
                                 (*func)(nh, data);
-		}
+        }
 
         } while (more_data);
 
@@ -790,32 +790,32 @@ IDM_T rtnl_talk(struct rtnl_handle *iprth, struct nlmsghdr *nlh, uint8_t cmd, ui
         assertion(-501494, (!iprth->busy));
         iprth->busy = 1;
 
-	nlh->nlmsg_pid = My_pid;
-	nlh->nlmsg_seq = ++(iprth->seq);
+    nlh->nlmsg_pid = My_pid;
+    nlh->nlmsg_seq = ++(iprth->seq);
 
         errno = 0;
         if (send(iprth->fd, nlh, nlh->nlmsg_len, 0) < 0) {
                 dbgf_sys(DBGT_ERR, "can't send netlink message to kernel: %s", strerror(errno));
                 iprth->busy = 0;
                 EXITERROR(-501095, (0));
-		return FAILURE;
+        return FAILURE;
         }
 
 
 
-	int result = rtnl_rcv( iprth->fd, iprth->local.nl_pid, iprth->seq, cmd, quiet, func, data );
+    int result = rtnl_rcv( iprth->fd, iprth->local.nl_pid, iprth->seq, cmd, quiet, func, data );
 
-	ASSERTION(result, (result >= FAILURE));
+    ASSERTION(result, (result >= FAILURE));
 
-	iprth->busy = 0;
-	return result;
+    iprth->busy = 0;
+    return result;
 }
 
 
 STATIC_FUNC
 IDM_T kernel_get_if_config_post(IDM_T purge_all, uint16_t curr_sqn)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
         uint16_t changed = 0;
         struct if_link_node *iln;
         int index = 0;
@@ -1064,22 +1064,22 @@ void kernel_get_if_addr_config(struct nlmsghdr *nh, void *index_sqnp)
 STATIC_FUNC
 void kernel_get_if_link_config(struct nlmsghdr *nh, void *update_sqnp)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
 
         uint16_t update_sqn = *((uint16_t*) update_sqnp);
 
-	struct ifinfomsg *if_link_info = NLMSG_DATA(nh);
-	//struct idxmap *im, **imp;
-	struct rtattr *tb[IFLA_MAX+1];
+    struct ifinfomsg *if_link_info = NLMSG_DATA(nh);
+    //struct idxmap *im, **imp;
+    struct rtattr *tb[IFLA_MAX+1];
 
         uint16_t changed = 0;
 
-	if (nh->nlmsg_type != RTM_NEWLINK)
-		return;
+    if (nh->nlmsg_type != RTM_NEWLINK)
+        return;
 
         assertion(-501497, (nh->nlmsg_len >= NLMSG_LENGTH(sizeof(*if_link_info))));
 
-	parse_rtattr(tb, IFLA_MAX, IFLA_RTA(if_link_info), IFLA_PAYLOAD(nh));
+    parse_rtattr(tb, IFLA_MAX, IFLA_RTA(if_link_info), IFLA_PAYLOAD(nh));
 
         if (!tb[IFLA_IFNAME])
                 return;
@@ -1105,10 +1105,10 @@ void kernel_get_if_link_config(struct nlmsghdr *nh, void *update_sqnp)
 
                         dbgf_all(DBGT_INFO, "CHANGED nlmsg_len new=%d  old=%d",
                                 nh->nlmsg_len, old_ilx->nlmsghdr->nlmsg_len);
-                        
+
                         memcpy(old_ilx->nlmsghdr, nh, nh->nlmsg_len);
                         new_ilx = old_ilx;
-                
+
                 } else {
                         new_ilx = old_ilx;
                 }
@@ -1161,7 +1161,7 @@ void kernel_get_if_link_config(struct nlmsghdr *nh, void *update_sqnp)
         if (old_ilx && old_ilx != new_ilx)
                 debugFree(old_ilx, -300241);
 
-	return;
+    return;
 }
 
 
@@ -1171,7 +1171,7 @@ void kernel_get_if_link_config(struct nlmsghdr *nh, void *update_sqnp)
 
 static IDM_T kernel_get_if_config(void)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
 
         static uint16_t index_sqn = 0;
         int ai;
@@ -1189,7 +1189,7 @@ static IDM_T kernel_get_if_config(void)
 
                 memset(&req, 0, sizeof (req));
 
-		req.nlh.nlmsg_len = sizeof(req);
+        req.nlh.nlmsg_len = sizeof(req);
 
                 req.nlh.nlmsg_type = ai ? RTM_GETADDR : RTM_GETLINK;
                 req.nlh.nlmsg_flags = NLM_F_ROOT | NLM_F_MATCH | NLM_F_REQUEST;
@@ -1211,14 +1211,14 @@ IDM_T kernel_set_addr(IDM_T del, uint32_t if_index, uint8_t family, IPX_T *ipX, 
         struct ifamsg_req req;
         struct ifa_cacheinfo cinfo;
 
-	memset(&req, 0, sizeof(req));
+    memset(&req, 0, sizeof(req));
 
-	req.nlh.nlmsg_len = NLMSG_LENGTH(sizeof (struct ifaddrmsg));
+    req.nlh.nlmsg_len = NLMSG_LENGTH(sizeof (struct ifaddrmsg));
 
 
         req.nlh.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK | (del ? 0 : (NLM_F_CREATE | NLM_F_EXCL));
         req.nlh.nlmsg_type = del ? RTM_DELADDR : RTM_NEWADDR;
-	req.ifa.ifa_family = family;
+    req.ifa.ifa_family = family;
         req.ifa.ifa_index = if_index;
 
         req.ifa.ifa_prefixlen = prefixlen;
@@ -1237,8 +1237,8 @@ IDM_T kernel_set_addr(IDM_T del, uint32_t if_index, uint8_t family, IPX_T *ipX, 
 
         if(deprecated) {
                 memset(&cinfo, 0, sizeof (cinfo));
-		cinfo.ifa_prefered = 0;
-		cinfo.ifa_valid = INFINITY_LIFE_TIME;
+        cinfo.ifa_prefered = 0;
+        cinfo.ifa_valid = INFINITY_LIFE_TIME;
                 add_rtattr(&req.nlh, IFA_CACHEINFO, (char*) &cinfo, sizeof (cinfo), 0);
         }
 
@@ -1251,58 +1251,58 @@ IDM_T kernel_set_addr(IDM_T del, uint32_t if_index, uint8_t family, IPX_T *ipX, 
 IDM_T kernel_set_flags(char *name, int fd, int get_req, int set_req, uint16_t up_flags, uint16_t down_flags)
 {
         struct ifreq req;
-	memset(&req, 0, sizeof (req));
-	strncpy(req.ifr_name, name, IFNAMSIZ);
-	if (get_req && (ioctl(fd ? fd : io_sock, get_req, &req))) {
-		dbgf_sys(DBGT_ERR, "getting dev=%s request=%d flags up=%X down=%X %s", name, get_req, up_flags, down_flags, strerror(errno));
-		return FAILURE;
-	}
+    memset(&req, 0, sizeof (req));
+    strncpy(req.ifr_name, name, IFNAMSIZ);
+    if (get_req && (ioctl(fd ? fd : io_sock, get_req, &req))) {
+        dbgf_sys(DBGT_ERR, "getting dev=%s request=%d flags up=%X down=%X %s", name, get_req, up_flags, down_flags, strerror(errno));
+        return FAILURE;
+    }
 
-	req.ifr_flags &= ~down_flags;
-	req.ifr_flags |= up_flags;
+    req.ifr_flags &= ~down_flags;
+    req.ifr_flags |= up_flags;
 
-	if ((ioctl(fd ? fd : io_sock, set_req, &req))) {
-		dbgf_sys(DBGT_ERR, "setting dev=%s request=%d flags up=%X down=%X %s", name, set_req, up_flags, down_flags, strerror(errno));
-		return FAILURE;
-	}
-	return SUCCESS;
+    if ((ioctl(fd ? fd : io_sock, set_req, &req))) {
+        dbgf_sys(DBGT_ERR, "setting dev=%s request=%d flags up=%X down=%X %s", name, set_req, up_flags, down_flags, strerror(errno));
+        return FAILURE;
+    }
+    return SUCCESS;
 }
 
 
 int32_t kernel_get_ifidx( char *name )
 {
         struct ifreq req;
-	memset(&req, 0, sizeof (req));
-	strncpy(req.ifr_name, name, IFNAMSIZ);
+    memset(&req, 0, sizeof (req));
+    strncpy(req.ifr_name, name, IFNAMSIZ);
 
-	if ( ioctl( io_sock, SIOCGIFINDEX, &req ) < 0 ) {
-		dbgf_sys(DBGT_ERR, "getting idx for dev=%s %s", name, strerror(errno));
-		return FAILURE;
-	}
+    if ( ioctl( io_sock, SIOCGIFINDEX, &req ) < 0 ) {
+        dbgf_sys(DBGT_ERR, "getting idx for dev=%s %s", name, strerror(errno));
+        return FAILURE;
+    }
 
-	return req.ifr_ifindex;
+    return req.ifr_ifindex;
 }
 
 
 IDM_T kernel_link_del(char *name)
 {
         dbgf_track(DBGT_INFO, "name=%s", name);
-	struct iplink_req req;
+    struct iplink_req req;
 
-	memset(&req, 0, sizeof(req));
+    memset(&req, 0, sizeof(req));
 
-	req.nlh.nlmsg_len = NLMSG_LENGTH(sizeof (struct ifinfomsg));
+    req.nlh.nlmsg_len = NLMSG_LENGTH(sizeof (struct ifinfomsg));
 
-	req.nlh.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK;
-	req.nlh.nlmsg_type = RTM_DELLINK;
-	req.ifi.ifi_family = AF_UNSPEC;
-	req.ifi.ifi_index = kernel_get_ifidx(name);
+    req.nlh.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK;
+    req.nlh.nlmsg_type = RTM_DELLINK;
+    req.ifi.ifi_family = AF_UNSPEC;
+    req.ifi.ifi_index = kernel_get_ifidx(name);
 
-	if (rtnl_talk(&ip_rth, &req.nlh, IP_LINK_DEL, NO, NULL, NULL) != SUCCESS) {
-		dbgf_sys(DBGT_ERR, "Failed removing link=%s", name);
-		return FAILURE;
-	}
-	return SUCCESS;
+    if (rtnl_talk(&ip_rth, &req.nlh, IP_LINK_DEL, NO, NULL, NULL) != SUCCESS) {
+        dbgf_sys(DBGT_ERR, "Failed removing link=%s", name);
+        return FAILURE;
+    }
+    return SUCCESS;
 }
 
 
@@ -1311,124 +1311,124 @@ IDM_T kernel_dev_exists(char *name)
 {
         dbgf_track(DBGT_INFO, "name=%s tun_name_tree.items=%d", name, tun_name_tree.items);
 
-	IFNAME_T tnKey = {{0}};
-	strcpy(tnKey.str, name);
+    IFNAME_T tnKey = {{0}};
+    strcpy(tnKey.str, name);
 
-	if (avl_find(&tun_name_tree, tnKey.str))
-		return YES;
+    if (avl_find(&tun_name_tree, tnKey.str))
+        return YES;
 
-	struct if_link_node *iln = NULL;
-	struct avl_node *an = NULL;
+    struct if_link_node *iln = NULL;
+    struct avl_node *an = NULL;
 
-	while ((iln = avl_iterate_item(&if_link_tree, &an))) {
-		if (!strcmp(iln->name.str, tnKey.str))
-			return YES;
-	}
+    while ((iln = avl_iterate_item(&if_link_tree, &an))) {
+        if (!strcmp(iln->name.str, tnKey.str))
+            return YES;
+    }
 
-	return NO;
+    return NO;
 }
 
 void kernel_dev_tun_del( char *name, int32_t fd ) {
 
         dbgf_track(DBGT_INFO, "name=%s tun_name_tree.items=%d fd=%d ", name, tun_name_tree.items, fd);
 
-	IFNAME_T tnKey = {{0}};
-	strcpy(tnKey.str,name);
-	IFNAME_T *tn;
-	if ((tn = avl_find_item(&tun_name_tree, tnKey.str))) {
-		avl_remove(&tun_name_tree, tn->str, -300538);
-		debugFree(tn, -300539);
-	}
-	assertion(-501498, (initializing || tn));
+    IFNAME_T tnKey = {{0}};
+    strcpy(tnKey.str,name);
+    IFNAME_T *tn;
+    if ((tn = avl_find_item(&tun_name_tree, tnKey.str))) {
+        avl_remove(&tun_name_tree, tn->str, -300538);
+        debugFree(tn, -300539);
+    }
+    assertion(-501498, (initializing || tn));
 
 
-	if ( DEF_TUN_OUT_PERSIST && ioctl( fd, TUNSETPERSIST, 0 ) < 0 ) {
+    if ( DEF_TUN_OUT_PERSIST && ioctl( fd, TUNSETPERSIST, 0 ) < 0 ) {
 
-		dbg( DBGL_SYS, DBGT_ERR, "can't delete catch_all tunnel device: %s", strerror(errno) );
-		assertion(-501499,(0));
-		return;
-	}
+        dbg( DBGL_SYS, DBGT_ERR, "can't delete catch_all tunnel device: %s", strerror(errno) );
+        assertion(-501499,(0));
+        return;
+    }
 
-	dbgf( DBGL_SYS, DBGT_INFO, "closing catch_all tunnel!" );
+    dbgf( DBGL_SYS, DBGT_INFO, "closing catch_all tunnel!" );
 
-	close( fd );
+    close( fd );
 
-	return;
+    return;
 }
 
 
 int32_t kernel_dev_tun_add( char *name, int32_t *fdp, IDM_T isIp4Tun )
 {
-	int32_t sock_opts;
-	int32_t ifidx;
-	int32_t fd;
+    int32_t sock_opts;
+    int32_t ifidx;
+    int32_t fd;
 
         dbgf_track(DBGT_INFO, "name=%s tun_name_tree.items=%d", name, tun_name_tree.items);
 
-	IFNAME_T *tn = 	debugMalloc(sizeof(IFNAME_T), -300540);
-	memset(tn, 0, sizeof(IFNAME_T));
-	strcpy(tn->str,name);
-	assertion(-501500, (!avl_find_item(&tun_name_tree, tn->str)));
-	avl_insert(&tun_name_tree, tn, -300541);
+    IFNAME_T *tn =  debugMalloc(sizeof(IFNAME_T), -300540);
+    memset(tn, 0, sizeof(IFNAME_T));
+    strcpy(tn->str,name);
+    assertion(-501500, (!avl_find_item(&tun_name_tree, tn->str)));
+    avl_insert(&tun_name_tree, tn, -300541);
 
 
-	if ( ( fd = open( "/dev/net/tun", O_RDWR ) ) < 0 ) {
-		dbg( DBGL_SYS, DBGT_ERR, "can't open tun device (/dev/net/tun): %s", strerror(errno) );
-		return FAILURE;
-	}
+    if ( ( fd = open( "/dev/net/tun", O_RDWR ) ) < 0 ) {
+        dbg( DBGL_SYS, DBGT_ERR, "can't open tun device (/dev/net/tun): %s", strerror(errno) );
+        return FAILURE;
+    }
 
-	if ( kernel_set_flags( name, fd, 0, TUNSETIFF, IFF_TUN | IFF_NO_PI, -1)  == FAILURE )
-		goto kernel_dev_tun_add_error;
+    if ( kernel_set_flags( name, fd, 0, TUNSETIFF, IFF_TUN | IFF_NO_PI, -1)  == FAILURE )
+        goto kernel_dev_tun_add_error;
 
-	if( DEF_TUN_OUT_PERSIST && ioctl( fd, TUNSETPERSIST, 1 ) < 0 ) {
-		dbg( DBGL_SYS, DBGT_ERR, "can't set tun device (TUNSETPERSIST): %s", strerror(errno) );
-		close(fd);
-		return FAILURE;
-	}
+    if( DEF_TUN_OUT_PERSIST && ioctl( fd, TUNSETPERSIST, 1 ) < 0 ) {
+        dbg( DBGL_SYS, DBGT_ERR, "can't set tun device (TUNSETPERSIST): %s", strerror(errno) );
+        close(fd);
+        return FAILURE;
+    }
 
-	if ( kernel_set_flags( name, 0, SIOCGIFFLAGS, SIOCSIFFLAGS, IFF_UP|IFF_RUNNING, 0) == FAILURE )
-		goto kernel_dev_tun_add_error;
-
-
-	/* make tun socket non blocking */
-	sock_opts = fcntl( fd, F_GETFL, 0 );
-	if (fcntl( fd, F_SETFL, sock_opts | O_NONBLOCK ) < 0 ) {
-		dbg_sys(DBGT_ERR, "Failed set tunnel dev=%s sock O_NONBLOCK: %s", name, strerror(errno));
-		goto kernel_dev_tun_add_error;
-	}
-
-	if ((ifidx = kernel_get_ifidx( name )) == FAILURE)
-		goto kernel_dev_tun_add_error;
+    if ( kernel_set_flags( name, 0, SIOCGIFFLAGS, SIOCSIFFLAGS, IFF_UP|IFF_RUNNING, 0) == FAILURE )
+        goto kernel_dev_tun_add_error;
 
 
-	if (isIp4Tun) {
+    /* make tun socket non blocking */
+    sock_opts = fcntl( fd, F_GETFL, 0 );
+    if (fcntl( fd, F_SETFL, sock_opts | O_NONBLOCK ) < 0 ) {
+        dbg_sys(DBGT_ERR, "Failed set tunnel dev=%s sock O_NONBLOCK: %s", name, strerror(errno));
+        goto kernel_dev_tun_add_error;
+    }
 
-		char filename[100];
-
-		sprintf(filename,"ipv4/conf/%s/accept_local", name);
-		if (check_proc_sys_net(filename, SYSCTL_IP4_ACCEPT_LOCAL)==FAILURE)
-			goto kernel_dev_tun_add_error;
-
-		sprintf(filename,"ipv4/conf/%s/rp_filter", name);
-		if (check_proc_sys_net(filename, SYSCTL_IP4_RP_FILTER)==FAILURE)
-			goto kernel_dev_tun_add_error;
-	}
+    if ((ifidx = kernel_get_ifidx( name )) == FAILURE)
+        goto kernel_dev_tun_add_error;
 
 
-	if (fdp)
-		*fdp = fd;
+    if (isIp4Tun) {
 
-	return ifidx;
+        char filename[100];
+
+        sprintf(filename,"ipv4/conf/%s/accept_local", name);
+        if (check_proc_sys_net(filename, SYSCTL_IP4_ACCEPT_LOCAL)==FAILURE)
+            goto kernel_dev_tun_add_error;
+
+        sprintf(filename,"ipv4/conf/%s/rp_filter", name);
+        if (check_proc_sys_net(filename, SYSCTL_IP4_RP_FILTER)==FAILURE)
+            goto kernel_dev_tun_add_error;
+    }
+
+
+    if (fdp)
+        *fdp = fd;
+
+    return ifidx;
 
 kernel_dev_tun_add_error:
 
-	if ( fd > -1 )
-		kernel_dev_tun_del(name, fd );
+    if ( fd > -1 )
+        kernel_dev_tun_del(name, fd );
 
-	if (fdp)
-		*fdp = 0;
+    if (fdp)
+        *fdp = 0;
 
-	return FAILURE;
+    return FAILURE;
 }
 
 
@@ -1437,14 +1437,14 @@ IDM_T kernel_tun_del(char *name)
 
         dbgf_track(DBGT_INFO, "name=%s tun_name_tree.items=%d", name, tun_name_tree.items);
 
-	IFNAME_T tnKey = {{0}};
-	strcpy(tnKey.str,name);
-	IFNAME_T *tn;
-	if ((tn = avl_find_item(&tun_name_tree, tnKey.str))) {
-		avl_remove(&tun_name_tree, tn->str, -300542);
-		debugFree(tn, -300543);
-	}
-	assertion(-501501, (initializing || tn));
+    IFNAME_T tnKey = {{0}};
+    strcpy(tnKey.str,name);
+    IFNAME_T *tn;
+    if ((tn = avl_find_item(&tun_name_tree, tnKey.str))) {
+        avl_remove(&tun_name_tree, tn->str, -300542);
+        debugFree(tn, -300543);
+    }
+    assertion(-501501, (initializing || tn));
 
         struct ifreq req;
 
@@ -1467,19 +1467,19 @@ int32_t kernel_tun_add(char *name, uint8_t proto, IPX_T *local, IPX_T *remote)
 {
 
         dbgf_track(DBGT_INFO, "name=%s tun_name_tree.items=%d proto=%d local=%s remote=%s",
-		name, tun_name_tree.items, proto, ip6AsStr(local), ip6AsStr(remote));
+        name, tun_name_tree.items, proto, ip6AsStr(local), ip6AsStr(remote));
 
-	IFNAME_T *tn = 	debugMalloc(sizeof(IFNAME_T), -300544);
-	memset(tn, 0, sizeof(IFNAME_T));
-	strcpy(tn->str,name);
-	assertion(-501502, (!avl_find_item(&tun_name_tree, tn->str)));
-	avl_insert(&tun_name_tree, tn, -300545);
+    IFNAME_T *tn =  debugMalloc(sizeof(IFNAME_T), -300544);
+    memset(tn, 0, sizeof(IFNAME_T));
+    strcpy(tn->str,name);
+    assertion(-501502, (!avl_find_item(&tun_name_tree, tn->str)));
+    avl_insert(&tun_name_tree, tn, -300545);
 
 
         struct ifreq req;
-	struct ip6_tnl_parm p;
-	int32_t idx;
-	char filename[100];
+    struct ip6_tnl_parm p;
+    int32_t idx;
+    char filename[100];
 
         assertion(-501527, (name && strlen(name)));
 
@@ -1487,264 +1487,264 @@ int32_t kernel_tun_add(char *name, uint8_t proto, IPX_T *local, IPX_T *remote)
         memset(&req, 0, sizeof (req));
         strncpy(req.ifr_name, "ip6tnl0", IFNAMSIZ);
 
-	memset(&p, 0, sizeof (p));
-	strncpy(p.name, name, IFNAMSIZ);
-	p.flags |= IP6_TNL_F_IGN_ENCAP_LIMIT;
-	p.hop_limit = DEFAULT_TNL_HOP_LIMIT;
-	//        p.encap_limit = IPV6_DEFAULT_TNL_ENCAP_LIMIT;
-	p.proto = proto;
+    memset(&p, 0, sizeof (p));
+    strncpy(p.name, name, IFNAMSIZ);
+    p.flags |= IP6_TNL_F_IGN_ENCAP_LIMIT;
+    p.hop_limit = DEFAULT_TNL_HOP_LIMIT;
+    //        p.encap_limit = IPV6_DEFAULT_TNL_ENCAP_LIMIT;
+    p.proto = proto;
 
-	if(remote)
-		p.raddr = *remote;
-	if(local)
-		p.laddr = *local;
-	req.ifr_ifru.ifru_data = &p;
+    if(remote)
+        p.raddr = *remote;
+    if(local)
+        p.laddr = *local;
+    req.ifr_ifru.ifru_data = &p;
 
         if ((ioctl(io_sock, SIOCADDTUNNEL, &req))) {
                 dbgf_sys(DBGT_ERR, "Failed adding tunnel dev=%s %s", name, strerror(errno));
                 return FAILURE;
-	}
+    }
 
-	if (kernel_set_flags(name, 0, SIOCGIFFLAGS, SIOCSIFFLAGS, IFF_UP, 0) != SUCCESS || (idx = kernel_get_ifidx(name)) <= 0)
-		goto kernel_tun_add_error;
+    if (kernel_set_flags(name, 0, SIOCGIFFLAGS, SIOCSIFFLAGS, IFF_UP, 0) != SUCCESS || (idx = kernel_get_ifidx(name)) <= 0)
+        goto kernel_tun_add_error;
 
 
-	sprintf(filename,"ipv4/conf/%s/accept_local", name);
-	if (check_proc_sys_net(filename, SYSCTL_IP4_ACCEPT_LOCAL)==FAILURE)
-		goto kernel_tun_add_error;
+    sprintf(filename,"ipv4/conf/%s/accept_local", name);
+    if (check_proc_sys_net(filename, SYSCTL_IP4_ACCEPT_LOCAL)==FAILURE)
+        goto kernel_tun_add_error;
 
-	sprintf(filename,"ipv4/conf/%s/rp_filter", name);
-	if (check_proc_sys_net(filename, SYSCTL_IP4_RP_FILTER)==FAILURE)
-		goto kernel_tun_add_error;
+    sprintf(filename,"ipv4/conf/%s/rp_filter", name);
+    if (check_proc_sys_net(filename, SYSCTL_IP4_RP_FILTER)==FAILURE)
+        goto kernel_tun_add_error;
 
-	return idx;
+    return idx;
 
 kernel_tun_add_error: {
 
-	int result = kernel_tun_del(name);
-	assertion(-501502, (result==SUCCESS));
-	return FAILURE;
+    int result = kernel_tun_del(name);
+    assertion(-501502, (result==SUCCESS));
+    return FAILURE;
 }
 }
 
 
 uint32_t kernel_get_mtu(char *name)
 {
-	struct ifreq req;
+    struct ifreq req;
         memset(&req, 0, sizeof (req));
-	req.ifr_addr.sa_family = AF_INET;
-	strcpy(req.ifr_name, name);
+    req.ifr_addr.sa_family = AF_INET;
+    strcpy(req.ifr_name, name);
 
-	if (ioctl(io_sock, SIOCGIFMTU, (caddr_t)&req) < 0) {
-        	dbgf_sys(DBGT_ERR, "Can't read MTU from device=%s: %s", name, strerror(errno));
-        	return FAILURE;
-	}
+    if (ioctl(io_sock, SIOCGIFMTU, (caddr_t)&req) < 0) {
+            dbgf_sys(DBGT_ERR, "Can't read MTU from device=%s: %s", name, strerror(errno));
+            return FAILURE;
+    }
 
         dbgf_all(DBGT_INFO, "Get device=%s mtu=%d", name, req.ifr_mtu);
 
-	return req.ifr_mtu;
+    return req.ifr_mtu;
 }
 
 
 IDM_T kernel_set_mtu(char *name, uint16_t mtu)
 {
-	struct ifreq req;
+    struct ifreq req;
         memset(&req, 0, sizeof (req));
-	req.ifr_addr.sa_family = AF_INET;
-	strcpy(req.ifr_name, name);
+    req.ifr_addr.sa_family = AF_INET;
+    strcpy(req.ifr_name, name);
 
 /*
-	if (ioctl(io_sock, SIOCGIFMTU, (caddr_t)&req) < 0) {
-        	dbgf_sys(DBGT_ERR, "Can't read MTU from device=%s: %s", name, strerror(errno));
-        	return FAILURE;
-	}
+    if (ioctl(io_sock, SIOCGIFMTU, (caddr_t)&req) < 0) {
+            dbgf_sys(DBGT_ERR, "Can't read MTU from device=%s: %s", name, strerror(errno));
+            return FAILURE;
+    }
 */
-    
-	req.ifr_mtu = mtu;
-    	if (ioctl(io_sock, SIOCSIFMTU, (caddr_t)&req) < 0) {
-        	dbgf_sys(DBGT_ERR, "Can't set MTU=%d from device=%s: %s", mtu, name, strerror(errno));
+
+    req.ifr_mtu = mtu;
+        if (ioctl(io_sock, SIOCSIFMTU, (caddr_t)&req) < 0) {
+            dbgf_sys(DBGT_ERR, "Can't set MTU=%d from device=%s: %s", mtu, name, strerror(errno));
                 return FAILURE;
 
-	}
+    }
 
         dbgf_track(DBGT_INFO, "Set device=%s mtu=%d", name, mtu);
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 STATIC_FUNC
 char *proc_get_name(char *name, char *p)
 {
-	while (isspace(*p))
-		p++;
-	while (*p) {
-		if (isspace(*p))
-			break;
-		if (*p == ':') { /* could be an alias */
-			char *dot = p, *dotname = name;
-			*name++ = *p++;
-			while (isdigit(*p))
-				*name++ = *p++;
-			if (*p != ':') { /* it wasn't, backup */
-				p = dot;
-				name = dotname;
-			}
-			if (*p == '\0')
-				return NULL;
-			p++;
-			break;
-		}
-		*name++ = *p++;
-	}
-	*name++ = '\0';
-	return p;
+    while (isspace(*p))
+        p++;
+    while (*p) {
+        if (isspace(*p))
+            break;
+        if (*p == ':') { /* could be an alias */
+            char *dot = p, *dotname = name;
+            *name++ = *p++;
+            while (isdigit(*p))
+                *name++ = *p++;
+            if (*p != ':') { /* it wasn't, backup */
+                p = dot;
+                name = dotname;
+            }
+            if (*p == '\0')
+                return NULL;
+            p++;
+            break;
+        }
+        *name++ = *p++;
+    }
+    *name++ = '\0';
+    return p;
 }
 
 STATIC_FUNC
 int proc_netdev_version(char *buf)
 {
-	if (strstr(buf, "compressed"))
-		return 3;
-	if (strstr(buf, "bytes"))
-		return 2;
-	return 1;
+    if (strstr(buf, "compressed"))
+        return 3;
+    if (strstr(buf, "bytes"))
+        return 2;
+    return 1;
 }
 
 STATIC_FUNC
 int proc_get_dev_fields(char *bp, struct user_net_device_stats *stats, int procnetdev_vsn)
 {
-	unsigned long long ullTrash;
-	unsigned long ulTrash;
+    unsigned long long ullTrash;
+    unsigned long ulTrash;
 
-	switch (procnetdev_vsn) {
+    switch (procnetdev_vsn) {
 
-	case 3:
-		sscanf(bp,
-			"%llu %llu %lu %lu %lu %lu %lu %lu %llu %llu %lu %lu %lu %lu %lu %lu",
-			&ullTrash,//&stats->rx_bytes,
-			&stats->rx_packets,
-			&ulTrash,//&stats->rx_errors,
-			&ulTrash,//&stats->rx_dropped,
-			&ulTrash,//&stats->rx_fifo_errors,
-			&ulTrash,//&stats->rx_frame_errors,
-			&ulTrash,//&stats->rx_compressed,
-			&ulTrash,//&stats->rx_multicast,
+    case 3:
+        sscanf(bp,
+            "%llu %llu %lu %lu %lu %lu %lu %lu %llu %llu %lu %lu %lu %lu %lu %lu",
+            &ullTrash,//&stats->rx_bytes,
+            &stats->rx_packets,
+            &ulTrash,//&stats->rx_errors,
+            &ulTrash,//&stats->rx_dropped,
+            &ulTrash,//&stats->rx_fifo_errors,
+            &ulTrash,//&stats->rx_frame_errors,
+            &ulTrash,//&stats->rx_compressed,
+            &ulTrash,//&stats->rx_multicast,
 
-			&ullTrash,//&stats->tx_bytes,
-			&stats->tx_packets,
-			&ulTrash,//&stats->tx_errors,
-			&ulTrash,//&stats->tx_dropped,
-			&ulTrash,//&stats->tx_fifo_errors,
-			&ulTrash,//&stats->collisions,
-			&ulTrash,//&stats->tx_carrier_errors,
-			&ulTrash//&stats->tx_compressed
-			);
-		break;
-	case 2:
-		sscanf(bp, "%llu %llu %lu %lu %lu %lu %llu %llu %lu %lu %lu %lu %lu",
-			&ullTrash,//&stats->rx_bytes,
-			&stats->rx_packets,
-			&ulTrash,//&stats->rx_errors,
-			&ulTrash,//&stats->rx_dropped,
-			&ulTrash,//&stats->rx_fifo_errors,
-			&ulTrash,//&stats->rx_frame_errors,
+            &ullTrash,//&stats->tx_bytes,
+            &stats->tx_packets,
+            &ulTrash,//&stats->tx_errors,
+            &ulTrash,//&stats->tx_dropped,
+            &ulTrash,//&stats->tx_fifo_errors,
+            &ulTrash,//&stats->collisions,
+            &ulTrash,//&stats->tx_carrier_errors,
+            &ulTrash//&stats->tx_compressed
+            );
+        break;
+    case 2:
+        sscanf(bp, "%llu %llu %lu %lu %lu %lu %llu %llu %lu %lu %lu %lu %lu",
+            &ullTrash,//&stats->rx_bytes,
+            &stats->rx_packets,
+            &ulTrash,//&stats->rx_errors,
+            &ulTrash,//&stats->rx_dropped,
+            &ulTrash,//&stats->rx_fifo_errors,
+            &ulTrash,//&stats->rx_frame_errors,
 
-			&ullTrash,//&stats->tx_bytes,
-			&stats->tx_packets,
-			&ulTrash,//&stats->tx_errors,
-			&ulTrash,//&stats->tx_dropped,
-			&ulTrash,//&stats->tx_fifo_errors,
-			&ulTrash,//&stats->collisions,
-			&ulTrash//&stats->tx_carrier_errors
-			);
-		//stats->rx_multicast = 0;
-		break;
-	case 1:
-		sscanf(bp, "%llu %lu %lu %lu %lu %llu %lu %lu %lu %lu %lu",
-			&stats->rx_packets,
-			&ulTrash,//&stats->rx_errors,
-			&ulTrash,//&stats->rx_dropped,
-			&ulTrash,//&stats->rx_fifo_errors,
-			&ulTrash,//&stats->rx_frame_errors,
+            &ullTrash,//&stats->tx_bytes,
+            &stats->tx_packets,
+            &ulTrash,//&stats->tx_errors,
+            &ulTrash,//&stats->tx_dropped,
+            &ulTrash,//&stats->tx_fifo_errors,
+            &ulTrash,//&stats->collisions,
+            &ulTrash//&stats->tx_carrier_errors
+            );
+        //stats->rx_multicast = 0;
+        break;
+    case 1:
+        sscanf(bp, "%llu %lu %lu %lu %lu %llu %lu %lu %lu %lu %lu",
+            &stats->rx_packets,
+            &ulTrash,//&stats->rx_errors,
+            &ulTrash,//&stats->rx_dropped,
+            &ulTrash,//&stats->rx_fifo_errors,
+            &ulTrash,//&stats->rx_frame_errors,
 
-			&stats->tx_packets,
-			&ulTrash,//&stats->tx_errors,
-			&ulTrash,//&stats->tx_dropped,
-			&ulTrash,//&stats->tx_fifo_errors,
-			&ulTrash,//&stats->collisions,
-			&ulTrash//&stats->tx_carrier_errors
-			);
-		//stats->rx_bytes = 0;
-		//stats->tx_bytes = 0;
-		//stats->rx_multicast = 0;
-		break;
-	}
-	return 0;
+            &stats->tx_packets,
+            &ulTrash,//&stats->tx_errors,
+            &ulTrash,//&stats->tx_dropped,
+            &ulTrash,//&stats->tx_fifo_errors,
+            &ulTrash,//&stats->collisions,
+            &ulTrash//&stats->tx_carrier_errors
+            );
+        //stats->rx_bytes = 0;
+        //stats->tx_bytes = 0;
+        //stats->rx_multicast = 0;
+        break;
+    }
+    return 0;
 }
 
 IDM_T kernel_get_ifstats(struct user_net_device_stats *stats, char *target)
 {
-	assertion(-500000, (stats && target));
+    assertion(-500000, (stats && target));
 
-	FILE *fh;
-	char buf[512];
-	int ret = FAILURE;
-	char *start;
-	struct user_net_device_stats prev = *stats;
+    FILE *fh;
+    char buf[512];
+    int ret = FAILURE;
+    char *start;
+    struct user_net_device_stats prev = *stats;
 
-	if (!(fh = fopen(IFCONFIG_PATH_PROCNET_DEV, "r"))) {
-		dbgf_sys(DBGT_ERR, "Warning: cannot open %s (%s). Limited output", IFCONFIG_PATH_PROCNET_DEV, strerror(errno));
-		return FAILURE;
-	}
+    if (!(fh = fopen(IFCONFIG_PATH_PROCNET_DEV, "r"))) {
+        dbgf_sys(DBGT_ERR, "Warning: cannot open %s (%s). Limited output", IFCONFIG_PATH_PROCNET_DEV, strerror(errno));
+        return FAILURE;
+    }
 
-	start = fgets(buf, sizeof buf, fh); /* eat line */
-	start = fgets(buf, sizeof buf, fh);
+    start = fgets(buf, sizeof buf, fh); /* eat line */
+    start = fgets(buf, sizeof buf, fh);
 
-	int procnetdev_vsn = proc_netdev_version(buf);
+    int procnetdev_vsn = proc_netdev_version(buf);
 
-	while (fgets(buf, sizeof buf, fh)) {
-		char name[IFNAMSIZ];
+    while (fgets(buf, sizeof buf, fh)) {
+        char name[IFNAMSIZ];
 
-		start = proc_get_name(name, buf);
+        start = proc_get_name(name, buf);
 
-		if (!strcmp(target, name)) {
-			proc_get_dev_fields(start, stats, procnetdev_vsn);
-			dbgf_all(DBGT_INFO, "stats: rx=%llu tx=%llu  buf: %s", stats->rx_packets, stats->tx_packets, start);
-			ret = SUCCESS;
-			break;
-		}
-	}
+        if (!strcmp(target, name)) {
+            proc_get_dev_fields(start, stats, procnetdev_vsn);
+            dbgf_all(DBGT_INFO, "stats: rx=%llu tx=%llu  buf: %s", stats->rx_packets, stats->tx_packets, start);
+            ret = SUCCESS;
+            break;
+        }
+    }
 
-	if (ferror(fh)) {
-		perror(IFCONFIG_PATH_PROCNET_DEV);
-		ret = FAILURE;
-	}
+    if (ferror(fh)) {
+        perror(IFCONFIG_PATH_PROCNET_DEV);
+        ret = FAILURE;
+    }
 
-	fclose(fh);
+    fclose(fh);
 
-	dbgf((ret == SUCCESS ? DBGL_ALL : DBGL_CHANGES), (ret == SUCCESS ? DBGT_INFO : DBGT_ERR),
-		"%s %s prev: rx=%llu tx=%llu  curr: rx=%llu tx=%llu", (ret==SUCCESS ? "Succeeded": "Failed"), target,
-		prev.rx_packets, prev.tx_packets, stats->rx_packets, stats->tx_packets);
+    dbgf((ret == SUCCESS ? DBGL_ALL : DBGL_CHANGES), (ret == SUCCESS ? DBGT_INFO : DBGT_ERR),
+        "%s %s prev: rx=%llu tx=%llu  curr: rx=%llu tx=%llu", (ret==SUCCESS ? "Succeeded": "Failed"), target,
+        prev.rx_packets, prev.tx_packets, stats->rx_packets, stats->tx_packets);
 
-	return ret;
+    return ret;
 }
 
 
 IDM_T kernel_get_route(uint8_t quiet, uint8_t family, uint16_t type, uint32_t table, void (*func) (struct nlmsghdr *nh, void *data))
 {
-	struct rtmsg_req req;
-	memset(&req, 0, sizeof(req));
+    struct rtmsg_req req;
+    memset(&req, 0, sizeof(req));
 
-	req.nlh.nlmsg_len = NLMSG_LENGTH(sizeof(struct rtmsg));
+    req.nlh.nlmsg_len = NLMSG_LENGTH(sizeof(struct rtmsg));
 
-	req.rtm.rtm_family = family;
-	req.rtm.rtm_table = table;
-//	req.nlh.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK;
-	req.nlh.nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP;
-	req.nlh.nlmsg_type = type;
-	req.rtm.rtm_scope = RTN_UNICAST;
+    req.rtm.rtm_family = family;
+    req.rtm.rtm_table = table;
+//  req.nlh.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK;
+    req.nlh.nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP;
+    req.nlh.nlmsg_type = type;
+    req.rtm.rtm_scope = RTN_UNICAST;
 
-	return rtnl_talk(&ip_rth2, &req.nlh, IP_ROUTE_GET, quiet, func, &table);
+    return rtnl_talk(&ip_rth2, &req.nlh, IP_ROUTE_GET, quiet, func, &table);
 }
 
 
@@ -1760,7 +1760,7 @@ IDM_T kernel_set_route(uint8_t cmd, int8_t del, uint8_t quiet, const struct net_
 
         memset(&req, 0, sizeof (req));
 
-	req.nlh.nlmsg_len = NLMSG_LENGTH(sizeof(struct rtmsg));
+    req.nlh.nlmsg_len = NLMSG_LENGTH(sizeof(struct rtmsg));
 
         req.rtm.rtm_family = dst->af;
         req.rtm.rtm_table = table;
@@ -1883,7 +1883,7 @@ IDM_T iptrack(const struct net_key *net, uint8_t cmd, uint8_t quiet, int8_t del,
 
         // DONT USE setNet() here (because return pointer is static)!!!!!!!!!!!!!
 
-	TRACE_func_CALL;
+    TRACE_func_CALL;
         assertion(-501232, (net));
         assertion(-500628, (cmd != IP_NOP));
         assertion(-500629, (cmd != IP_ROUTE_FLUSH && cmd != IP_RULE_FLUSH && cmd != IP_RULE_TEST));
@@ -1958,7 +1958,7 @@ IDM_T iptrack(const struct net_key *net, uint8_t cmd, uint8_t quiet, int8_t del,
                 if ( found != 1 )
                         return NO;
 
-	} else {
+    } else {
 
                 if (exact) {
 
@@ -1986,7 +1986,7 @@ IDM_T iptrack(const struct net_key *net, uint8_t cmd, uint8_t quiet, int8_t del,
                 if (found > 0)
                         return NO;
 
-	}
+    }
 
         return YES;
 }
@@ -1998,7 +1998,7 @@ IDM_T iproute(uint8_t cmd, int8_t del, uint8_t quiet, const struct net_key *dst,
 {
         // DONT USE setNet() here (because return pointer is static)!!!!!!!!!!!!!
 
-	TRACE_func_CALL;
+    TRACE_func_CALL;
         assertion(-501518, (cmd != IP_RULE_FLUSH && cmd != IP_ROUTE_FLUSH && cmd != IP_RULE_TEST));
         assertion(-501234, (dst));
         assertion(-500650, IMPLIES(is_ip_set(&dst->ip), is_ip_valid(&dst->ip, dst->af)));
@@ -2019,7 +2019,7 @@ IDM_T iproute(uint8_t cmd, int8_t del, uint8_t quiet, const struct net_key *dst,
 
         if ((cmd == IP_THROW_MY_HNA || cmd == IP_THROW_MY_NET || cmd == IP_THROW_MY_TUNS) &&
                 (policy_routing != POLICY_RT_ENABLED || !ip_throw_rules_cfg))
-		return SUCCESS;
+        return SUCCESS;
 
         if (cmd == IP_RULE_DEFAULT && (table == DEF_IP_TABLE_MAIN || policy_routing != POLICY_RT_ENABLED || !ip_prio_rules_cfg ))
                 return SUCCESS;
@@ -2054,39 +2054,39 @@ IDM_T iproute(uint8_t cmd, int8_t del, uint8_t quiet, const struct net_key *dst,
 
 IDM_T check_proc_sys_net(char *file, int32_t desired)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
         FILE *f;
-	int32_t state = 0;
-	char filename[MAX_PATH_SIZE];
+    int32_t state = 0;
+    char filename[MAX_PATH_SIZE];
 
-	sprintf( filename, "/proc/sys/net/%s", file );
+    sprintf( filename, "/proc/sys/net/%s", file );
 
-	if((f = fopen(filename, "r" )) == NULL) {
+    if((f = fopen(filename, "r" )) == NULL) {
 
-		dbgf_sys(DBGT_ERR, "can't open %s for reading! retry later..", filename );
-		return FAILURE;
-	}
+        dbgf_sys(DBGT_ERR, "can't open %s for reading! retry later..", filename );
+        return FAILURE;
+    }
 
-	if(fscanf(f, "%d", &state) < 0 ) {
+    if(fscanf(f, "%d", &state) < 0 ) {
                  dbgf_track(DBGT_WARN, "%s", strerror(errno));
         }
 
-	fclose(f);
+    fclose(f);
 
-	if ( state != desired ) {
+    if ( state != desired ) {
 
-		dbgf_sys(DBGT_INFO, "changing %s from %d to %d", filename, state, desired );
+        dbgf_sys(DBGT_INFO, "changing %s from %d to %d", filename, state, desired );
 
-		if((f = fopen(filename, "w" )) == NULL) {
+        if((f = fopen(filename, "w" )) == NULL) {
 
                         dbgf_sys(DBGT_ERR, "can't open %s for writing! retry later...", filename);
-			return FAILURE;
-		}
+            return FAILURE;
+        }
 
-		fprintf(f, "%d", desired );
-		fclose(f);
-	}
-	return SUCCESS;
+        fprintf(f, "%d", desired );
+        fclose(f);
+    }
+    return SUCCESS;
 }
 
 
@@ -2102,27 +2102,27 @@ void sysctl_config( struct dev_node *dev )
                 return;
 
 
-	if (checkstamp != bmx_time) {
+    if (checkstamp != bmx_time) {
 
-		check_proc_sys_net("ipv6/conf/all/forwarding", SYSCTL_IP6_FORWARD);
+        check_proc_sys_net("ipv6/conf/all/forwarding", SYSCTL_IP6_FORWARD);
 
-		check_proc_sys_net("ipv4/ip_forward", SYSCTL_IP4_FORWARD);
+        check_proc_sys_net("ipv4/ip_forward", SYSCTL_IP4_FORWARD);
 
-		check_proc_sys_net("ipv4/conf/all/rp_filter", SYSCTL_IP4_RP_FILTER);
-		check_proc_sys_net("ipv4/conf/default/rp_filter", SYSCTL_IP4_RP_FILTER);
-		check_proc_sys_net("ipv4/conf/all/send_redirects", SYSCTL_IP4_SEND_REDIRECT);
-		check_proc_sys_net("ipv4/conf/default/send_redirects", SYSCTL_IP4_SEND_REDIRECT);
+        check_proc_sys_net("ipv4/conf/all/rp_filter", SYSCTL_IP4_RP_FILTER);
+        check_proc_sys_net("ipv4/conf/default/rp_filter", SYSCTL_IP4_RP_FILTER);
+        check_proc_sys_net("ipv4/conf/all/send_redirects", SYSCTL_IP4_SEND_REDIRECT);
+        check_proc_sys_net("ipv4/conf/default/send_redirects", SYSCTL_IP4_SEND_REDIRECT);
 
-		checkstamp = bmx_time;
-	}
+        checkstamp = bmx_time;
+    }
 
 
-	if (dev) {
-		sprintf(filename, "ipv4/conf/%s/rp_filter", dev->name_phy_cfg.str);
-		check_proc_sys_net(filename, SYSCTL_IP4_RP_FILTER);
-		sprintf(filename, "ipv4/conf/%s/send_redirects", dev->name_phy_cfg.str); 
-		check_proc_sys_net(filename, SYSCTL_IP4_SEND_REDIRECT);
-	}
+    if (dev) {
+        sprintf(filename, "ipv4/conf/%s/rp_filter", dev->name_phy_cfg.str);
+        check_proc_sys_net(filename, SYSCTL_IP4_RP_FILTER);
+        sprintf(filename, "ipv4/conf/%s/send_redirects", dev->name_phy_cfg.str);
+        check_proc_sys_net(filename, SYSCTL_IP4_SEND_REDIRECT);
+    }
 }
 
 
@@ -2132,7 +2132,7 @@ void sysctl_config( struct dev_node *dev )
 STATIC_FUNC
 int8_t dev_bind_sock(int32_t sock, IFNAME_T *name)
 {
-	errno=0;
+    errno=0;
 
         if (setsockopt(sock, SOL_SOCKET, SO_BINDTODEVICE, name->str, strlen(name->str) + 1) < 0) {
                 dbgf_sys(DBGT_ERR, "Can not bind socket to device %s : %s", name->str, strerror(errno));
@@ -2153,7 +2153,7 @@ void dev_reconfigure_soft(struct dev_node *dev)
         assertion(-500613, IMPLIES(dev->announce, dev->if_global_addr));
         assertion(-500614, IMPLIES(dev == primary_dev, dev->if_global_addr));
         assertion(-500615, IMPLIES(dev->linklayer == TYP_DEV_LL_LO, dev->if_global_addr));
-        
+
         if (!initializing) {
                 dbgf_track(DBGT_INFO, "%s soft interface configuration changed", dev->label_cfg.str);
         }
@@ -2218,7 +2218,7 @@ void dev_reconfigure_soft(struct dev_node *dev)
 
         update_my_dev_adv();
 
-	dev->soft_conf_changed = NO;
+    dev->soft_conf_changed = NO;
 
 }
 
@@ -2246,7 +2246,7 @@ void dev_deactivate( struct dev_node *dev )
                 cb_plugin_hooks(PLUGIN_CB_BMX_DEV_EVENT, dev);
         }
 
-	if ( dev->linklayer != TYP_DEV_LL_LO ) {
+    if ( dev->linklayer != TYP_DEV_LL_LO ) {
 
                 purge_link_route_orig_nodes(dev, NO);
 
@@ -2259,13 +2259,13 @@ void dev_deactivate( struct dev_node *dev )
                 }
 
 
-		if (dev->unicast_sock) {
-			close(dev->unicast_sock);
+        if (dev->unicast_sock) {
+            close(dev->unicast_sock);
                         dev->unicast_sock = 0;
                 }
 
-		if (dev->rx_mcast_sock) {
-			close(dev->rx_mcast_sock);
+        if (dev->rx_mcast_sock) {
+            close(dev->rx_mcast_sock);
                         dev->rx_mcast_sock = 0;
                 }
 
@@ -2288,9 +2288,9 @@ void dev_deactivate( struct dev_node *dev )
 
 
 
-	change_selects();
+    change_selects();
 
-	dbgf_all( DBGT_WARN, "Interface %s deactivated", dev->label_cfg.str );
+    dbgf_all( DBGT_WARN, "Interface %s deactivated", dev->label_cfg.str );
 
         if (dev->dev_adv_msg > DEVADV_MSG_IGNORED)
                 update_my_dev_adv();
@@ -2343,15 +2343,15 @@ struct sockaddr_storage set_sockaddr_storage(uint8_t af, IPX_T *ipx, int32_t por
 {
         TRACE_func_CALL;
 
-	union {
-		struct sockaddr_storage sosa;
-		struct sockaddr_in soin4;
-		struct sockaddr_in6 soin6;
-	} s;
+    union {
+        struct sockaddr_storage sosa;
+        struct sockaddr_in soin4;
+        struct sockaddr_in6 soin6;
+    } s;
 
         memset(&s, 0, sizeof (s));
 
-	s.sosa.ss_family = af;//AF_CFG
+    s.sosa.ss_family = af;//AF_CFG
 
         if (AF_CFG == AF_INET) {
                 s.soin4.sin_port = htons(port/*base_port*/);
@@ -2361,7 +2361,7 @@ struct sockaddr_storage set_sockaddr_storage(uint8_t af, IPX_T *ipx, int32_t por
                 s.soin6.sin6_addr = *ipx;
         }
 
-	return s.sosa;
+    return s.sosa;
 }
 
 
@@ -2486,7 +2486,7 @@ IDM_T dev_init_sockets(struct dev_node *dev)
                 // we'll always listen on the full-broadcast address
                 IPX_T brc = ip4ToX(0XFFFFFFFF);
                 struct sockaddr_storage rx_fullbrc_addr = set_sockaddr_storage(AF_CFG, &brc, base_port);
-                
+
 
                 // get fullbrc recv socket
                 if ((dev->rx_fullbrc_sock = socket(pf_domain, SOCK_DGRAM, 0)) < 0) {
@@ -2547,9 +2547,9 @@ void dev_activate( struct dev_node *dev )
 
         dbgf_track(DBGT_WARN, "%s=%s", ARG_DEV, dev->label_cfg.str);
 
-	if ( wordsEqual( DEV_LO, dev->name_phy_cfg.str ) ) {
+    if ( wordsEqual( DEV_LO, dev->name_phy_cfg.str ) ) {
 
-		dev->linklayer = TYP_DEV_LL_LO;
+        dev->linklayer = TYP_DEV_LL_LO;
 
                 if (!dev->if_global_addr) {
                         dbgf_mute(30, DBGL_SYS, DBGT_WARN, "loopback dev %s MUST be given with global address",
@@ -2567,7 +2567,7 @@ void dev_activate( struct dev_node *dev )
                 }
 
 
-	} else {
+    } else {
 
                 if (dev->linklayer_conf != OPT_CHILD_UNDEFINED) {
 
@@ -2664,14 +2664,14 @@ void dev_activate( struct dev_node *dev )
 
         dev->soft_conf_changed = YES;
 
-	//activate selector for active interfaces
-	change_selects();
+    //activate selector for active interfaces
+    change_selects();
 
-	//trigger plugins interested in changed interface configuration
+    //trigger plugins interested in changed interface configuration
         cb_plugin_hooks(PLUGIN_CB_BMX_DEV_EVENT, dev);
 //        cb_plugin_hooks(PLUGIN_CB_CONF, NULL);
 
-	return;
+    return;
 
 error:
         dbgf_sys(DBGT_ERR, "error intitializing %s=%s", ARG_DEV, dev->label_cfg.str);
@@ -2687,24 +2687,24 @@ error:
 void del_route_list_nlhdr(struct nlmsghdr *nh, void *tablep )
 {
 
-	uint32_t table = *((uint32_t*)tablep);
+    uint32_t table = *((uint32_t*)tablep);
         struct rtmsg *rtm = (struct rtmsg *) NLMSG_DATA(nh);
         struct rtattr *rtap = (struct rtattr *) RTM_RTA(rtm);
         int rtl = RTM_PAYLOAD(nh);
 
         while (RTA_OK(rtap, rtl)) {
 
-		if (rtap->rta_type==RTA_DST && rtm->rtm_table == table) {
+        if (rtap->rta_type==RTA_DST && rtm->rtm_table == table) {
 
-			struct net_key net = {
-				.af=rtm->rtm_family,
-				.mask=rtm->rtm_dst_len,
-				.ip=(rtm->rtm_family==AF_INET6) ? *((IPX_T *) RTA_DATA(rtap)) : ip4ToX(*((IP4_T *) RTA_DATA(rtap)))
-			};
+            struct net_key net = {
+                .af=rtm->rtm_family,
+                .mask=rtm->rtm_dst_len,
+                .ip=(rtm->rtm_family==AF_INET6) ? *((IPX_T *) RTA_DATA(rtap)) : ip4ToX(*((IP4_T *) RTA_DATA(rtap)))
+            };
 
-			kernel_set_route(IP_ROUTE_FLUSH, DEL, NO, &net, table, 0, 0, NULL, NULL, 0);
-				dbgf_sys(DBGT_ERR, "removed orphan %s route=%s table=%d", family2Str(net.af), netAsStr(&net), table);
-		}
+            kernel_set_route(IP_ROUTE_FLUSH, DEL, NO, &net, table, 0, 0, NULL, NULL, 0);
+                dbgf_sys(DBGT_ERR, "removed orphan %s route=%s table=%d", family2Str(net.af), netAsStr(&net), table);
+        }
 
                 rtap = RTA_NEXT(rtap, rtl);
         }
@@ -2713,32 +2713,32 @@ void del_route_list_nlhdr(struct nlmsghdr *nh, void *tablep )
 
 void ip_flush_routes(uint8_t family, int32_t table_macro)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
 
-	uint32_t table = table_macro_to_table(table_macro);
+    uint32_t table = table_macro_to_table(table_macro);
 
-	if (table == DEF_IP_TABLE_MAIN || policy_routing != POLICY_RT_ENABLED || !ip_prio_rules_cfg)
-		return;
+    if (table == DEF_IP_TABLE_MAIN || policy_routing != POLICY_RT_ENABLED || !ip_prio_rules_cfg)
+        return;
 
-	kernel_get_route(NO, family, RTM_GETROUTE, table, del_route_list_nlhdr);
+    kernel_get_route(NO, family, RTM_GETROUTE, table, del_route_list_nlhdr);
 }
 
 
 
 void ip_flush_rules(uint8_t family, int32_t table_macro)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
 
         struct net_key net = family == AF_INET ? ZERO_NET4_KEY : ZERO_NET6_KEY;
 
-	uint32_t table = table_macro_to_table(table_macro);
+    uint32_t table = table_macro_to_table(table_macro);
 
-	if (table == DEF_IP_TABLE_MAIN || table == DEF_IP_TABLE_DEFAULT || policy_routing != POLICY_RT_ENABLED || !ip_prio_rules_cfg)
-		return;
+    if (table == DEF_IP_TABLE_MAIN || table == DEF_IP_TABLE_DEFAULT || policy_routing != POLICY_RT_ENABLED || !ip_prio_rules_cfg)
+        return;
 
-	while (kernel_set_route(IP_RULE_FLUSH, DEL, YES, &net, table, 0, 0, NULL, NULL, 0) == SUCCESS) {
-		dbgf_sys(DBGT_ERR, "removed orphan %s rule to table %d", family2Str(family), table);
-	}
+    while (kernel_set_route(IP_RULE_FLUSH, DEL, YES, &net, table, 0, 0, NULL, NULL, 0) == SUCCESS) {
+        dbgf_sys(DBGT_ERR, "removed orphan %s rule to table %d", family2Str(family), table);
+    }
 }
 
 
@@ -2746,7 +2746,7 @@ void ip_flush_rules(uint8_t family, int32_t table_macro)
 STATIC_FUNC
 void ip_flush_tracked( uint8_t cmd )
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
         struct avl_node *an;
         struct track_node *tn;
 
@@ -2769,7 +2769,7 @@ void ip_flush_tracked( uint8_t cmd )
 STATIC_FUNC
 int update_interface_rules(void)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
         assertion(-501130, (policy_routing != POLICY_RT_UNSET));
 
 //        ip_flush_tracked(IP_THROW_MY_HNA);
@@ -2822,7 +2822,7 @@ int update_interface_rules(void)
                         setNet(&throw, ian->ifa.ifa_family, ian->ifa.ifa_prefixlen, &ian->ip_addr);
                         ip_netmask_validate(&throw.ip, throw.mask, throw.af, YES);
 
-			//TODO: Fix (set oif_idx=0) as soon as this becomes mainline: http://permalink.gmane.org/gmane.linux.network/242277
+            //TODO: Fix (set oif_idx=0) as soon as this becomes mainline: http://permalink.gmane.org/gmane.linux.network/242277
                         iproute(IP_THROW_MY_NET, ADD, NO, &throw, BMX_TABLE_HNA, 0, (throw.af == AF_INET6 ? iln->index : 0), 0, 0, 0, NULL);
                         //iproute(IP_THROW_MY_NET, ADD, NO, &throw, RT_TABLE_TUN, 0, (throw.af == AF_INET6 ? iln->index : 0), 0, 0, 0, NULL);
 
@@ -2831,7 +2831,7 @@ int update_interface_rules(void)
 
 #ifdef ADJ_PATCHED_NETW
         struct list_node *throw_pos;
-	struct throw_node *throw_node;
+    struct throw_node *throw_node;
 
         list_for_each(throw_pos, &throw4_list) {
 
@@ -2845,7 +2845,7 @@ int update_interface_rules(void)
 
         }
 #endif
-	return SUCCESS;
+    return SUCCESS;
 }
 
 
@@ -2879,7 +2879,7 @@ struct net_key bmx6AutoEUI64Ip6(ADDR_T mac, struct net_key *prefix)
 STATIC_INLINE_FUNC
 void dev_if_fix(void)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
         struct if_link_node *iln = avl_first_item(&if_link_tree);
         struct avl_node *lan;
         struct dev_node *dev;
@@ -2922,10 +2922,10 @@ void dev_if_fix(void)
 
                 if (!global_prefix_cfg.mask && !dev->global_prefix_conf_.mask && autoconf_prefix_cfg.mask) {
                         autoIP6 = bmx6AutoEUI64Ip6(dev->if_link->addr, &autoconf_prefix_cfg);
-			autoIP6.mask = DEF_AUTO_IP6_DEVMASK;
-			autoIP6.ip.s6_addr[6] = DEF_AUTO_IP6_BYTE6;
-			autoIP6.ip.s6_addr[7] = (uint8_t)dev->if_link->index; //different ULAs for equal MAC addresses!!
-		}
+            autoIP6.mask = DEF_AUTO_IP6_DEVMASK;
+            autoIP6.ip.s6_addr[6] = DEF_AUTO_IP6_BYTE6;
+            autoIP6.ip.s6_addr[7] = (uint8_t)dev->if_link->index; //different ULAs for equal MAC addresses!!
+        }
 
 
                 for (aan = NULL; (ian = avl_iterate_item(&dev->if_link->if_addr_tree, &aan));) {
@@ -2957,7 +2957,7 @@ void dev_if_fix(void)
 
                                 } else if (!dev->llocal_prefix_conf_.mask && !llocal_prefix_cfg.mask &&
                                         (AF_CFG == AF_INET || is_ip6llocal)) {
-                                        
+
                                         dev->if_llocal_addr = ian;
 
                                 }
@@ -2994,7 +2994,7 @@ void dev_if_fix(void)
 
                 if (AF_CFG == AF_INET6 && autoIP6.mask && dev->announce && !dev->if_global_addr) {
 
-			dbgf_sys(DBGT_INFO, "Autoconfiguring dev=%s idx=%d ip=%s", dev->label_cfg.str, dev->if_link->index, netAsStr(&autoIP6));
+            dbgf_sys(DBGT_INFO, "Autoconfiguring dev=%s idx=%d ip=%s", dev->label_cfg.str, dev->if_link->index, netAsStr(&autoIP6));
 
                         kernel_set_addr(ADD, dev->if_link->index, AF_INET6, &autoIP6.ip, autoIP6.mask, NO /*deprecated*/);
                         dev->autoIP6Configured = autoIP6;
@@ -3043,12 +3043,12 @@ void dev_if_fix(void)
 
 static void dev_check(void *kernel_ip_config_changed)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
 
         struct avl_node *an;
         struct dev_node *dev;
 
-	dbgf_all( DBGT_INFO, " " );
+    dbgf_all( DBGT_INFO, " " );
 
         task_remove( dev_check, NULL);
 
@@ -3072,11 +3072,11 @@ static void dev_check(void *kernel_ip_config_changed)
 
                 IDM_T iff_up = dev->if_llocal_addr && (dev->if_llocal_addr->iln->flags & IFF_UP);
 
-                assertion(-500895, (!(dev->active && !iff_up) == IMPLIES(dev->active, iff_up)));
+                assertion(-500895, ((!(dev->active && !iff_up)) == IMPLIES(dev->active, iff_up)));
                 assertion(-500896, (IMPLIES(dev->active, iff_up)));
                 assertion(-500897, (!(dev->active && !iff_up)));
 
-                assertion(-500898, (!(dev->active && iff_up && dev->hard_conf_changed) == IMPLIES(dev->active, (!iff_up || !dev->hard_conf_changed))));
+                assertion(-500898, ((!(dev->active && iff_up && dev->hard_conf_changed)) == IMPLIES(dev->active, (!iff_up || !dev->hard_conf_changed))));
                 assertion(-500901, (IMPLIES(dev->active, (!dev->hard_conf_changed))));
                 assertion(-500899, (IMPLIES(dev->active ,(!iff_up || !dev->hard_conf_changed))));
                 assertion(-500900, (!(dev->active && iff_up && dev->hard_conf_changed)));
@@ -3085,24 +3085,24 @@ static void dev_check(void *kernel_ip_config_changed)
 
                 if (iff_up && !dev->active && (dev->hard_conf_changed || dev->activate_again)) {
 
-			struct dev_ip_key devip_key = { .ip = dev->if_llocal_addr->ip_addr, .idx=0 };
+            struct dev_ip_key devip_key = { .ip = dev->if_llocal_addr->ip_addr, .idx=0 };
                         struct dev_node *tmp_dev = avl_find_item(&dev_ip_tree, &devip_key);
 
                         while ((tmp_dev || (tmp_dev = avl_next_item(&dev_ip_tree, &devip_key)))
-				&& is_ip_equal(&tmp_dev->llip_key.ip, &dev->if_llocal_addr->ip_addr)) {
+                && is_ip_equal(&tmp_dev->llip_key.ip, &dev->if_llocal_addr->ip_addr)) {
 
-				devip_key = tmp_dev->llip_key;
+                devip_key = tmp_dev->llip_key;
 
-				if (!wordsEqual(tmp_dev->name_phy_cfg.str, dev->name_phy_cfg.str)) {
+                if (!wordsEqual(tmp_dev->name_phy_cfg.str, dev->name_phy_cfg.str)) {
 
-					dbgf_sys(DBGT_WARN, "%s=%s llocal=%s already used for dev=%s idx=0x%X",
-						ARG_DEV, dev->label_cfg.str, ipFAsStr(&dev->if_llocal_addr->ip_addr),
-						tmp_dev->label_cfg.str, tmp_dev->llip_key.idx);
-				}
-				tmp_dev = NULL;
-			}
+                    dbgf_sys(DBGT_WARN, "%s=%s llocal=%s already used for dev=%s idx=0x%X",
+                        ARG_DEV, dev->label_cfg.str, ipFAsStr(&dev->if_llocal_addr->ip_addr),
+                        tmp_dev->label_cfg.str, tmp_dev->llip_key.idx);
+                }
+                tmp_dev = NULL;
+            }
 
-			if (dev->activate_cancelled) {
+            if (dev->activate_cancelled) {
 
                                 dbgf_sys(DBGT_ERR, "%s=%s activation delayed", ARG_DEV, dev->label_cfg.str);
 
@@ -3142,7 +3142,7 @@ static void dev_check(void *kernel_ip_config_changed)
                 dev->hard_conf_changed = NO;
 
                 if (dev->active && dev->soft_conf_changed)
-			dev_reconfigure_soft( dev );
+            dev_reconfigure_soft( dev );
 
         }
 
@@ -3161,8 +3161,8 @@ static void dev_check(void *kernel_ip_config_changed)
 static void recv_ifevent_netlink_sk(int sk)
 {
         TRACE_func_CALL;
-	char buf[4096]; //test this with a very small value !!
-	struct sockaddr_nl sa;
+    char buf[4096]; //test this with a very small value !!
+    struct sockaddr_nl sa;
         struct iovec iov = {.iov_base = buf, .iov_len = sizeof (buf)};
 
         dbgf_track(DBGT_INFO, "detected changed interface status! Going to check interfaces!");
@@ -3174,13 +3174,13 @@ static void recv_ifevent_netlink_sk(int sk)
         msg.msg_iov = &iov; /* Vector of data to send/receive into.  */
         msg.msg_iovlen = 1; /* Number of elements in the vector.  */
 
-	int rcvd;
+    int rcvd;
 
-	//so fare I just want to consume the pending message...
-	while( (rcvd=recvmsg (sk, &msg, 0)) > 0 ){
-		dbgf_track(DBGT_INFO, "rcvd %d bytes", rcvd);
+    //so fare I just want to consume the pending message...
+    while( (rcvd=recvmsg (sk, &msg, 0)) > 0 ){
+        dbgf_track(DBGT_INFO, "rcvd %d bytes", rcvd);
 
-	}
+    }
 
         //do NOT delay checking of interfaces to not miss ifdown/up of interfaces !!
         if (kernel_get_if_config() == YES) //just call if changed!
@@ -3191,115 +3191,115 @@ static void recv_ifevent_netlink_sk(int sk)
 
 static int open_ifevent_netlink_sk(void)
 {
-	struct sockaddr_nl sa;
-	int32_t unix_opts;
-	memset (&sa, 0, sizeof(sa));
-	sa.nl_family = AF_NETLINK;
-	sa.nl_groups |= RTMGRP_IPV4_IFADDR /*| RTMGRP_IPV4_MROUTE | RTMGRP_IPV4_ROUTE | RTMGRP_IPV4_RULE*/;
+    struct sockaddr_nl sa;
+    int32_t unix_opts;
+    memset (&sa, 0, sizeof(sa));
+    sa.nl_family = AF_NETLINK;
+    sa.nl_groups |= RTMGRP_IPV4_IFADDR /*| RTMGRP_IPV4_MROUTE | RTMGRP_IPV4_ROUTE | RTMGRP_IPV4_RULE*/;
         sa.nl_groups |= RTMGRP_IPV6_IFADDR /*| RTMGRP_IPV6_MROUTE | RTMGRP_IPV6_ROUTE */| RTMGRP_IPV6_IFINFO | RTMGRP_IPV6_PREFIX;
-	sa.nl_groups |= RTMGRP_LINK; // (this can result in select storms with buggy wlan devices
+    sa.nl_groups |= RTMGRP_LINK; // (this can result in select storms with buggy wlan devices
 
 
-	if ( ( ifevent_sk = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE) ) < 0 ) {
-		dbgf_sys(DBGT_ERR, "can't create af_netlink socket for reacting on if up/down events: %s",
-		     strerror(errno) );
-		ifevent_sk = 0;
-		return -1;
-	}
+    if ( ( ifevent_sk = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE) ) < 0 ) {
+        dbgf_sys(DBGT_ERR, "can't create af_netlink socket for reacting on if up/down events: %s",
+             strerror(errno) );
+        ifevent_sk = 0;
+        return -1;
+    }
 
 
-	unix_opts = fcntl( ifevent_sk, F_GETFL, 0 );
-	fcntl( ifevent_sk, F_SETFL, unix_opts | O_NONBLOCK );
+    unix_opts = fcntl( ifevent_sk, F_GETFL, 0 );
+    fcntl( ifevent_sk, F_SETFL, unix_opts | O_NONBLOCK );
 
-	if ( ( bind( ifevent_sk, (struct sockaddr*)&sa, sizeof(sa) ) ) < 0 ) {
-		dbgf_sys(DBGT_ERR, "can't bind af_netlink socket for reacting on if up/down events: %s",
-		     strerror(errno) );
-		ifevent_sk = 0;
-		return -1;
+    if ( ( bind( ifevent_sk, (struct sockaddr*)&sa, sizeof(sa) ) ) < 0 ) {
+        dbgf_sys(DBGT_ERR, "can't bind af_netlink socket for reacting on if up/down events: %s",
+             strerror(errno) );
+        ifevent_sk = 0;
+        return -1;
         }
 
         set_fd_hook(ifevent_sk, recv_ifevent_netlink_sk, ADD);
 
-	return ifevent_sk;
+    return ifevent_sk;
 }
 
 static void close_ifevent_netlink_sk(void)
 {
         set_fd_hook(ifevent_sk, recv_ifevent_netlink_sk, DEL);
 
-	if ( ifevent_sk > 0 )
-		close( ifevent_sk );
+    if ( ifevent_sk > 0 )
+        close( ifevent_sk );
 
-	ifevent_sk = 0;
+    ifevent_sk = 0;
 }
 
 uint32_t nl_mgrp(uint32_t group)
 {
-	assertion(-500000, (group <= 31));
-	return group ? (1 << (group - 1)) : 0;
+    assertion(-500000, (group <= 31));
+    return group ? (1 << (group - 1)) : 0;
 }
 
 int register_netlink_event_hook(uint32_t nlgroups, int buffsize, void (*cb_fd_handler) (int32_t fd))
 {
-	int rtevent_sk = 0;
-	struct sockaddr_nl sa;
-	int32_t unix_opts;
-	memset(&sa, 0, sizeof(sa));
-	sa.nl_family = AF_NETLINK;
-	sa.nl_groups = nlgroups;
+    int rtevent_sk = 0;
+    struct sockaddr_nl sa;
+    int32_t unix_opts;
+    memset(&sa, 0, sizeof(sa));
+    sa.nl_family = AF_NETLINK;
+    sa.nl_groups = nlgroups;
 
 
-	if ((rtevent_sk = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE)) < 0) {
-		dbgf_sys(DBGT_ERR, "can't create af_netlink socket: %s", strerror(errno));
-		rtevent_sk = 0;
-		return -1;
-	}
+    if ((rtevent_sk = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE)) < 0) {
+        dbgf_sys(DBGT_ERR, "can't create af_netlink socket: %s", strerror(errno));
+        rtevent_sk = 0;
+        return -1;
+    }
 
 
-	unix_opts = fcntl(rtevent_sk, F_GETFL, 0);
-	fcntl(rtevent_sk, F_SETFL, unix_opts | O_NONBLOCK);
+    unix_opts = fcntl(rtevent_sk, F_GETFL, 0);
+    fcntl(rtevent_sk, F_SETFL, unix_opts | O_NONBLOCK);
 
-	if ((bind(rtevent_sk, (struct sockaddr*) &sa, sizeof(sa))) < 0) {
-		dbgf_sys(DBGT_ERR, "can't bind af_netlink socket: %s", strerror(errno));
-		close(rtevent_sk);
-		rtevent_sk = 0;
-		return -1;
-	}
+    if ((bind(rtevent_sk, (struct sockaddr*) &sa, sizeof(sa))) < 0) {
+        dbgf_sys(DBGT_ERR, "can't bind af_netlink socket: %s", strerror(errno));
+        close(rtevent_sk);
+        rtevent_sk = 0;
+        return -1;
+    }
 
-	int oldBuff = 0;
-	socklen_t oldSize = sizeof(oldBuff);
-	int newBuff = 0;
-	socklen_t newSize = sizeof(newBuff);
+    int oldBuff = 0;
+    socklen_t oldSize = sizeof(oldBuff);
+    int newBuff = 0;
+    socklen_t newSize = sizeof(newBuff);
 
-	if (
-		getsockopt(rtevent_sk, SOL_SOCKET, SO_RCVBUF, &oldBuff, &oldSize) < 0 ||
-		setsockopt(rtevent_sk, SOL_SOCKET, SO_RCVBUFFORCE, &buffsize, sizeof(buffsize)) < 0 ||
-		getsockopt(rtevent_sk, SOL_SOCKET, SO_RCVBUF, &newBuff, &newSize) < 0 ||
-		newBuff < RTNL_RCV_MAX) {
+    if (
+        getsockopt(rtevent_sk, SOL_SOCKET, SO_RCVBUF, &oldBuff, &oldSize) < 0 ||
+        setsockopt(rtevent_sk, SOL_SOCKET, SO_RCVBUFFORCE, &buffsize, sizeof(buffsize)) < 0 ||
+        getsockopt(rtevent_sk, SOL_SOCKET, SO_RCVBUF, &newBuff, &newSize) < 0 ||
+        newBuff < RTNL_RCV_MAX) {
 
-		dbgf_sys(DBGT_WARN, "can't setsockopts buffsize from=%d to=%d now=%d %s", oldBuff, buffsize, newBuff, strerror(errno));
-		close(rtevent_sk);
-		rtevent_sk = 0;
-		return -1;
-	}
+        dbgf_sys(DBGT_WARN, "can't setsockopts buffsize from=%d to=%d now=%d %s", oldBuff, buffsize, newBuff, strerror(errno));
+        close(rtevent_sk);
+        rtevent_sk = 0;
+        return -1;
+    }
 
-	dbgf_track(DBGT_INFO, "setsockopts buffsize from=%d to=%d now=%d", oldBuff, buffsize, newBuff);
+    dbgf_track(DBGT_INFO, "setsockopts buffsize from=%d to=%d now=%d", oldBuff, buffsize, newBuff);
 
 
-	set_fd_hook(rtevent_sk, cb_fd_handler, ADD);
+    set_fd_hook(rtevent_sk, cb_fd_handler, ADD);
 
-	return rtevent_sk;
+    return rtevent_sk;
 }
 
 int unregister_netlink_event_hook(int rtevent_sk, void (*cb_fd_handler) (int32_t fd))
 {
-	if (cb_fd_handler)
-		set_fd_hook(rtevent_sk, cb_fd_handler, DEL);
+    if (cb_fd_handler)
+        set_fd_hook(rtevent_sk, cb_fd_handler, DEL);
 
-	if (rtevent_sk > 0)
-		close(rtevent_sk);
+    if (rtevent_sk > 0)
+        close(rtevent_sk);
 
-	return 0;
+    return 0;
 }
 
 
@@ -3309,7 +3309,7 @@ IDM_T is_policy_rt_supported(void)
         static IDM_T tested_policy_rt = POLICY_RT_UNSET;
         static uint8_t tested_family = 0;
         struct net_key net = ZERO_NETCFG_KEY;
-	uint32_t prio = prio_macro_to_prio(RT_PRIO_HNA);
+    uint32_t prio = prio_macro_to_prio(RT_PRIO_HNA);
         uint32_t table = table_macro_to_table(BMX_TABLE_HNA);
 
         if (net.af == tested_family) {
@@ -3353,54 +3353,54 @@ struct net_key _ZERO_NETCFG_KEY(const char *func)
 
 static void get_rule_list_nlhdr(struct nlmsghdr *nh, void *unused )
 {
-	dbgf_all(DBGT_INFO, "");
+    dbgf_all(DBGT_INFO, "");
 
-	struct avl_node *an;
-	struct track_node *tn;
+    struct avl_node *an;
+    struct track_node *tn;
 
         struct rtmsg *r = (struct rtmsg *) NLMSG_DATA(nh);
         struct rtattr *rtap = (struct rtattr *) RTM_RTA(r);
         int rtl = RTM_PAYLOAD(nh);
-	struct rtattr * tb[FRA_MAX+1];
+    struct rtattr * tb[FRA_MAX+1];
 
-	memset(tb, 0, sizeof(struct rtattr *) * (FRA_MAX + 1));
-	while (RTA_OK(rtap, rtl)) {
+    memset(tb, 0, sizeof(struct rtattr *) * (FRA_MAX + 1));
+    while (RTA_OK(rtap, rtl)) {
 
-		dbgf_all(DBGT_INFO, "rta_type=%d, rta_len=%d", rtap->rta_type, rtap->rta_len);
+        dbgf_all(DBGT_INFO, "rta_type=%d, rta_len=%d", rtap->rta_type, rtap->rta_len);
 
-		if (rtap->rta_type <= FRA_MAX)
-			tb[rtap->rta_type] = rtap;
+        if (rtap->rta_type <= FRA_MAX)
+            tb[rtap->rta_type] = rtap;
 
-		rtap = RTA_NEXT(rtap, rtl);
-	}
+        rtap = RTA_NEXT(rtap, rtl);
+    }
 
-	uint32_t rta_prio = 0;
-	if (tb[FRA_PRIORITY])
-		rta_prio = *(unsigned*) RTA_DATA(tb[FRA_PRIORITY]);
+    uint32_t rta_prio = 0;
+    if (tb[FRA_PRIORITY])
+        rta_prio = *(unsigned*) RTA_DATA(tb[FRA_PRIORITY]);
 
-	uint32_t table = r->rtm_table;
-	if (tb[RTA_TABLE])
-		table = *(__u32*) RTA_DATA(tb[RTA_TABLE]);
+    uint32_t table = r->rtm_table;
+    if (tb[RTA_TABLE])
+        table = *(__u32*) RTA_DATA(tb[RTA_TABLE]);
 
-	dbgf_track(DBGT_INFO, "nlmsg_type=%d family=%d flags=%d table=%d protocol=%d src_len=%d dst_len=%d tos=%d "
-		"prio=%d src=%d dst=%d, fwmark=%d mwmask=%d iif=%d oif=%d table=%d",
-		nh->nlmsg_type, r->rtm_family, r->rtm_flags, table, r->rtm_protocol, r->rtm_src_len, r->rtm_dst_len, r->rtm_tos,
-		rta_prio, !!tb[FRA_SRC], !!tb[FRA_DST], !!tb[FRA_FWMARK], !!tb[FRA_FWMASK], !!tb[FRA_IFNAME], !!tb[FRA_OIFNAME], !!tb[FRA_TABLE]);
+    dbgf_track(DBGT_INFO, "nlmsg_type=%d family=%d flags=%d table=%d protocol=%d src_len=%d dst_len=%d tos=%d "
+        "prio=%d src=%d dst=%d, fwmark=%d mwmask=%d iif=%d oif=%d table=%d",
+        nh->nlmsg_type, r->rtm_family, r->rtm_flags, table, r->rtm_protocol, r->rtm_src_len, r->rtm_dst_len, r->rtm_tos,
+        rta_prio, !!tb[FRA_SRC], !!tb[FRA_DST], !!tb[FRA_FWMARK], !!tb[FRA_FWMASK], !!tb[FRA_IFNAME], !!tb[FRA_OIFNAME], !!tb[FRA_TABLE]);
 
-	assertion_dbg(-500000, (!rtl), "!!!Deficit %d, rta_len=%d\n", rtl, rtap->rta_len);
+    assertion_dbg(-500000, (!rtl), "!!!Deficit %d, rta_len=%d\n", rtl, rtap->rta_len);
 
 
-	for (an = NULL; (tn = avl_iterate_item(&iptrack_tree, &an));) {
-		if (tn->cmd == IP_RULE_DEFAULT && tn->k.cmd_type == IP_RULES &&
-			tn->k.net.af == r->rtm_family && tn->k.table == table && tn->k.prio == rta_prio &&
-			//all the following is not yet used by bmx6 so must be zero or set by somebody else:
-			!r->rtm_flags && !r->rtm_protocol && !r->rtm_src_len && !r->rtm_dst_len && !r->rtm_tos &&
-			!tb[FRA_SRC] && !tb[FRA_DST] && !tb[FRA_FWMARK] && !tb[FRA_FWMASK] && !tb[FRA_IFNAME] && !tb[FRA_OIFNAME]) {
-			
-			tn->tmp++;;
-			dbgf_track(DBGT_INFO, "found %d/%d", tn->tmp, tn->items);
-		}
-	}
+    for (an = NULL; (tn = avl_iterate_item(&iptrack_tree, &an));) {
+        if (tn->cmd == IP_RULE_DEFAULT && tn->k.cmd_type == IP_RULES &&
+            tn->k.net.af == r->rtm_family && tn->k.table == table && tn->k.prio == rta_prio &&
+            //all the following is not yet used by bmx6 so must be zero or set by somebody else:
+            !r->rtm_flags && !r->rtm_protocol && !r->rtm_src_len && !r->rtm_dst_len && !r->rtm_tos &&
+            !tb[FRA_SRC] && !tb[FRA_DST] && !tb[FRA_FWMARK] && !tb[FRA_FWMASK] && !tb[FRA_IFNAME] && !tb[FRA_OIFNAME]) {
+
+            tn->tmp++;;
+            dbgf_track(DBGT_INFO, "found %d/%d", tn->tmp, tn->items);
+        }
+    }
 }
 
 static void recv_ruleEvent_netlink_sk(int sk)
@@ -3409,41 +3409,41 @@ static void recv_ruleEvent_netlink_sk(int sk)
 
         dbgf_track(DBGT_INFO, "detected changed rules! Going to check...");
 
-	if (rtnl_rcv(sk, 0, 0, IP_ROUTE_GET, NO, NULL, NULL) != SUCCESS) {
-		dbgf_sys(DBGT_ERR, "FAILED");
-	}
+    if (rtnl_rcv(sk, 0, 0, IP_ROUTE_GET, NO, NULL, NULL) != SUCCESS) {
+        dbgf_sys(DBGT_ERR, "FAILED");
+    }
 
-	struct avl_node *an;
-	struct track_node *tn;
+    struct avl_node *an;
+    struct track_node *tn;
 
-	for (an = NULL; (tn = avl_iterate_item(&iptrack_tree, &an));)
-		tn->tmp = 0;
+    for (an = NULL; (tn = avl_iterate_item(&iptrack_tree, &an));)
+        tn->tmp = 0;
 
-	kernel_get_route(NO, AF_INET, RTM_GETRULE, 0, get_rule_list_nlhdr);
-	kernel_get_route(NO, AF_INET6, RTM_GETRULE, 0, get_rule_list_nlhdr);
+    kernel_get_route(NO, AF_INET, RTM_GETRULE, 0, get_rule_list_nlhdr);
+    kernel_get_route(NO, AF_INET6, RTM_GETRULE, 0, get_rule_list_nlhdr);
 
-	for (an = NULL; (tn = avl_iterate_item(&iptrack_tree, &an));) {
+    for (an = NULL; (tn = avl_iterate_item(&iptrack_tree, &an));) {
 
-		if (tn->cmd == IP_RULE_DEFAULT && tn->k.cmd_type == IP_RULES) {
+        if (tn->cmd == IP_RULE_DEFAULT && tn->k.cmd_type == IP_RULES) {
 
-			dbgf(tn->tmp < tn->items ? DBGL_SYS : DBGL_ALL, (tn->tmp < tn->items) ? DBGT_WARN : DBGT_INFO,
-				"%s lost rule family=%d pref=%d to table=%d should=%d is=%d",
-				tn->tmp < tn->items ? "FIXING" : "KEEPING", tn->k.net.af, tn->k.prio, tn->k.table, tn->items, tn->tmp);
+            dbgf(tn->tmp < tn->items ? DBGL_SYS : DBGL_ALL, (tn->tmp < tn->items) ? DBGT_WARN : DBGT_INFO,
+                "%s lost rule family=%d pref=%d to table=%d should=%d is=%d",
+                tn->tmp < tn->items ? "FIXING" : "KEEPING", tn->k.net.af, tn->k.prio, tn->k.table, tn->items, tn->tmp);
 
-			if (tn->tmp < tn->items) {
-				kernel_set_route(tn->cmd, ADD, NO, &tn->k.net, tn->k.table, tn->k.prio, 0, NULL, NULL, tn->k.metric);
-				return;
-			}
-		}
-	}
+            if (tn->tmp < tn->items) {
+                kernel_set_route(tn->cmd, ADD, NO, &tn->k.net, tn->k.table, tn->k.prio, 0, NULL, NULL, tn->k.metric);
+                return;
+            }
+        }
+    }
 }
 
 
 STATIC_FUNC
 int32_t opt_ip_version(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	TRACE_func_CALL;
-	static int nl_rule_event_sk = 0;
+    TRACE_func_CALL;
+    static int nl_rule_event_sk = 0;
 
         if (cmd == OPT_CHECK) {
 
@@ -3531,35 +3531,35 @@ int32_t opt_ip_version(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 
                         );
 
-		// add rule for hosts and announced interfaces and networks
+        // add rule for hosts and announced interfaces and networks
 
-		ip_flush_routes(AF_INET, BMX_TABLE_HNA);
-		ip_flush_rules(AF_INET, BMX_TABLE_HNA);
+        ip_flush_routes(AF_INET, BMX_TABLE_HNA);
+        ip_flush_rules(AF_INET, BMX_TABLE_HNA);
 
-		if (policy_routing == POLICY_RT_ENABLED) {
-			nl_rule_event_sk = register_netlink_event_hook(nl_mgrp(RTNLGRP_IPV4_RULE) | nl_mgrp(RTNLGRP_IPV6_RULE), (RTNL_RCV_MAX/2), recv_ruleEvent_netlink_sk);
-			assertion(-500000, (nl_rule_event_sk > 0));
-		}
+        if (policy_routing == POLICY_RT_ENABLED) {
+            nl_rule_event_sk = register_netlink_event_hook(nl_mgrp(RTNLGRP_IPV4_RULE) | nl_mgrp(RTNLGRP_IPV6_RULE), (RTNL_RCV_MAX/2), recv_ruleEvent_netlink_sk);
+            assertion(-500000, (nl_rule_event_sk > 0));
+        }
 
 
-		iproute(IP_RULE_DEFAULT, ADD, NO, &ZERO_NET4_KEY, BMX_TABLE_HNA, RT_PRIO_HNA, 0, 0, 0, 0, NULL);
-		//iproute(IP_RULE_DEFAULT, ADD, NO, &ZERO_NET4_KEY, RT_TABLE_TUN, RT_PRIO_TUNS, 0, 0, 0, 0, NULL);
+        iproute(IP_RULE_DEFAULT, ADD, NO, &ZERO_NET4_KEY, BMX_TABLE_HNA, RT_PRIO_HNA, 0, 0, 0, 0, NULL);
+        //iproute(IP_RULE_DEFAULT, ADD, NO, &ZERO_NET4_KEY, RT_TABLE_TUN, RT_PRIO_TUNS, 0, 0, 0, 0, NULL);
 
-		if (AF_CFG == AF_INET6) {
+        if (AF_CFG == AF_INET6) {
 
-			ip_flush_routes(AF_INET6, BMX_TABLE_HNA);
-			ip_flush_rules(AF_INET6, BMX_TABLE_HNA);
+            ip_flush_routes(AF_INET6, BMX_TABLE_HNA);
+            ip_flush_rules(AF_INET6, BMX_TABLE_HNA);
 
-			iproute(IP_RULE_DEFAULT, ADD, NO, &ZERO_NET6_KEY, BMX_TABLE_HNA, RT_PRIO_HNA, 0, 0, 0, 0, NULL);
-			//iproute(IP_RULE_DEFAULT, ADD, NO, &ZERO_NET6_KEY, RT_TABLE_TUN, RT_PRIO_TUNS, 0, 0, 0, 0, NULL);
-		}
+            iproute(IP_RULE_DEFAULT, ADD, NO, &ZERO_NET6_KEY, BMX_TABLE_HNA, RT_PRIO_HNA, 0, 0, 0, 0, NULL);
+            //iproute(IP_RULE_DEFAULT, ADD, NO, &ZERO_NET6_KEY, RT_TABLE_TUN, RT_PRIO_TUNS, 0, 0, 0, 0, NULL);
+        }
 
-	} else if (cmd == OPT_UNREGISTER && nl_rule_event_sk > 0) {
+    } else if (cmd == OPT_UNREGISTER && nl_rule_event_sk > 0) {
 
-		unregister_netlink_event_hook(nl_rule_event_sk, recv_ruleEvent_netlink_sk);
-	}
+        unregister_netlink_event_hook(nl_rule_event_sk, recv_ruleEvent_netlink_sk);
+    }
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 struct dev_status {
@@ -3635,7 +3635,7 @@ static int32_t dev_status_creator(struct status_handl *handl, void* data)
 STATIC_FUNC
 int32_t opt_dev_prefix(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
 
 
         if ((cmd == OPT_ADJUST || cmd == OPT_CHECK || cmd == OPT_APPLY)) {
@@ -3688,13 +3688,13 @@ int32_t opt_dev_prefix(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
                 }
         }
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 STATIC_FUNC
 int32_t opt_auto_prefix(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
 
 
         if ((cmd == OPT_ADJUST || cmd == OPT_CHECK || cmd == OPT_APPLY)) {
@@ -3743,28 +3743,28 @@ int32_t opt_auto_prefix(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
                                 }
 
                                 autoconf_prefix_cfg = prefix;
-				my_description_changed = YES;
+                my_description_changed = YES;
 
                         }
                 }
         }
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 
 STATIC_FUNC
 int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	TRACE_func_CALL;
+    TRACE_func_CALL;
 
-	struct dev_node *dev = NULL;
+    struct dev_node *dev = NULL;
 
         if (cmd == OPT_ADJUST || cmd == OPT_CHECK || cmd == OPT_APPLY) {
 
-		if ( strlen(patch->val) >= IFNAMSIZ ) {
-			dbgf_cn( cn, DBGL_SYS, DBGT_ERR, "dev name MUST be smaller than %d chars", IFNAMSIZ );
-			return FAILURE;
+        if ( strlen(patch->val) >= IFNAMSIZ ) {
+            dbgf_cn( cn, DBGL_SYS, DBGT_ERR, "dev name MUST be smaller than %d chars", IFNAMSIZ );
+            return FAILURE;
                 }
 
                 char *colon_ptr;
@@ -3786,7 +3786,7 @@ int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_par
                         return FAILURE;
                 }
 
-		if ( patch->diff == DEL ) {
+        if ( patch->diff == DEL ) {
 
 /*
                         if (dev && dev == primary_dev_cfg) {
@@ -3795,7 +3795,7 @@ int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_par
                                         "primary interface %s %s can not be removed!",
                                         dev->label_cfg.str, dev->ip_llocal_str);
 
-				return FAILURE;
+                return FAILURE;
 
                         } else
 */
@@ -3869,7 +3869,7 @@ int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_par
                         //dev->umetric_max = DEF_DEV_BITRATE_MAX;
 
                         dev->dummy_lndev.key.dev = dev;
-                        
+
                         /*
                          * specifying the outgoing src address for IPv6 seems not working
                          * http://www.ureader.de/msg/12621915.aspx
@@ -3883,7 +3883,7 @@ int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_par
 
                 if (cmd == OPT_APPLY)
                         opt_dev_changed = dev->soft_conf_changed = YES;
-                
+
 
                 struct opt_child *c = NULL;
                 while ((c = list_iterate(&patch->childs_instance_list, c))) {
@@ -3918,7 +3918,7 @@ int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_par
                                                         dev->global_prefix_conf_ = prefix;
                                                 else
                                                         dev->global_prefix_conf_ = ZERO_NETCFG_KEY;
-                                                
+
                                         } else {
                                                 if (c->val)
                                                         dev->llocal_prefix_conf_ = prefix;
@@ -3954,7 +3954,7 @@ int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_par
                                                 return FAILURE;
                                         }
 
-                                        
+
 
                                         dev->umetric_max_conf = ull;
                                 } else {
@@ -4010,77 +4010,77 @@ int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_par
 
         }
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 
 
 static struct opt_type ip_options[]=
 {
-//        ord parent long_name          shrt, order, relevance, Attributes...	*ival		min		max		default		*func,*syntax,*help
-	{ODI,0,ARG_IP,	                'I',3,2, A_PS1N,A_ADM,A_INI,A_CFA,A_ANY,	NULL,    0,0,0,/*MIN_IP_VERSION, MAX_IP_VERSION,*/ DEF_IP_VERSION,  opt_ip_version,
-			ARG_VALUE_FORM,	"select ip protocol Version 4 or 6"},
+//        ord parent long_name          shrt, order, relevance, Attributes...   *ival       min     max     default     *func,*syntax,*help
+    {ODI,0,ARG_IP,                  'I',3,2, A_PS1N,A_ADM,A_INI,A_CFA,A_ANY,    NULL,    0,0,0,/*MIN_IP_VERSION, MAX_IP_VERSION,*/ DEF_IP_VERSION,  opt_ip_version,
+            ARG_VALUE_FORM, "select ip protocol Version 4 or 6"},
 
-	{ODI,ARG_IP,ARG_IP_POLICY_ROUTING,0,3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY,	&ip_policy_rt_cfg,0, 		1,		DEF_IP_POLICY_ROUTING,0,opt_ip_version,
-			ARG_VALUE_FORM,	"disable policy routing (throw and priority rules)"},
+    {ODI,ARG_IP,ARG_IP_POLICY_ROUTING,0,3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY,  &ip_policy_rt_cfg,0,        1,      DEF_IP_POLICY_ROUTING,0,opt_ip_version,
+            ARG_VALUE_FORM, "disable policy routing (throw and priority rules)"},
 
-	{ODI,ARG_IP,ARG_IP_THROW_RULES,	 0, 3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY,	&ip_throw_rules_cfg,0, 		1,		DEF_IP_THROW_RULES,0,opt_ip_version,
-			ARG_VALUE_FORM,	"disable/enable default throw rules"},
+    {ODI,ARG_IP,ARG_IP_THROW_RULES,  0, 3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY,  &ip_throw_rules_cfg,0,      1,      DEF_IP_THROW_RULES,0,opt_ip_version,
+            ARG_VALUE_FORM, "disable/enable default throw rules"},
 
-	{ODI,ARG_IP,ARG_IP_PRIO_RULES,	 0, 3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY,	&ip_prio_rules_cfg, 0, 		1,		DEF_IP_PRIO_RULES,0, opt_ip_version,
-			ARG_VALUE_FORM,	"disable/enable default priority rules"},
+    {ODI,ARG_IP,ARG_IP_PRIO_RULES,   0, 3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY,  &ip_prio_rules_cfg, 0,      1,      DEF_IP_PRIO_RULES,0, opt_ip_version,
+            ARG_VALUE_FORM, "disable/enable default priority rules"},
 
-	{ODI,ARG_IP,ARG_IP_RULE_HNA,	 0, 3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY,	&ip_prio_hna_cfg,	MIN_IP_RULE_HNA,MAX_IP_RULE_HNA,DEF_IP_RULE_HNA,0,opt_ip_version,
-			ARG_VALUE_FORM,	"specify iproute2 rule preference offset for hna networks"},
+    {ODI,ARG_IP,ARG_IP_RULE_HNA,     0, 3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY,  &ip_prio_hna_cfg,   MIN_IP_RULE_HNA,MAX_IP_RULE_HNA,DEF_IP_RULE_HNA,0,opt_ip_version,
+            ARG_VALUE_FORM, "specify iproute2 rule preference offset for hna networks"},
 /*
-	{ODI,ARG_IP,ARG_IP_RULE_TUN,	 0, 3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY,	&ip_prio_tun_cfg,	MIN_IP_RULE_TUN,MAX_IP_RULE_TUN,DEF_IP_RULE_TUN,0,opt_ip_version,
-			ARG_VALUE_FORM,	"specify iproute2 rule preference offset for tunnel networks"},
+    {ODI,ARG_IP,ARG_IP_RULE_TUN,     0, 3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY,  &ip_prio_tun_cfg,   MIN_IP_RULE_TUN,MAX_IP_RULE_TUN,DEF_IP_RULE_TUN,0,opt_ip_version,
+            ARG_VALUE_FORM, "specify iproute2 rule preference offset for tunnel networks"},
 */
-	{ODI,ARG_IP,ARG_IP_TABLE_HNA, 0, 3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY,	&ip_table_hna_cfg,	MIN_IP_TABLE_HNA,   MAX_IP_TABLE_HNA,   DEF_IP_TABLE_HNA,0,     opt_ip_version,
-			ARG_VALUE_FORM,	"specify iproute2 table for hna networks"},
+    {ODI,ARG_IP,ARG_IP_TABLE_HNA, 0, 3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY, &ip_table_hna_cfg,  MIN_IP_TABLE_HNA,   MAX_IP_TABLE_HNA,   DEF_IP_TABLE_HNA,0,     opt_ip_version,
+            ARG_VALUE_FORM, "specify iproute2 table for hna networks"},
 /*
-	{ODI,ARG_IP,ARG_IP_TABLE_TUN, 0, 3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY,	&ip_table_tun_cfg,	MIN_IP_TABLE_TUN,   MAX_IP_TABLE_TUN,   DEF_IP_TABLE_TUN,0,     opt_ip_version,
-			ARG_VALUE_FORM,	"specify iproute2 table for tunnel networks"},
+    {ODI,ARG_IP,ARG_IP_TABLE_TUN, 0, 3,1,A_CS1,A_ADM,A_INI,A_CFA,A_ANY, &ip_table_tun_cfg,  MIN_IP_TABLE_TUN,   MAX_IP_TABLE_TUN,   DEF_IP_TABLE_TUN,0,     opt_ip_version,
+            ARG_VALUE_FORM, "specify iproute2 table for tunnel networks"},
 */
 
 #ifdef WITH_UNUSED
 
-        {ODI,0,"lo_rule",		0,  4,0,A_PS1,A_ADM,A_INI,A_CFA,A_ANY,	&Lo_rule,	0, 		1,		DEF_LO_RULE,0,	0,
-			ARG_VALUE_FORM,	"disable/enable autoconfiguration of lo rule"},
+        {ODI,0,"lo_rule",       0,  4,0,A_PS1,A_ADM,A_INI,A_CFA,A_ANY,  &Lo_rule,   0,      1,      DEF_LO_RULE,0,  0,
+            ARG_VALUE_FORM, "disable/enable autoconfiguration of lo rule"},
 #endif
 
-	{ODI,0,ARG_INTERFACES,	        0,  9,2,A_PS0,A_USR,A_DYN,A_ARG,A_ANY,	0,		0, 		0,		0,0, 		opt_status,
-			0,		"show interfaces\n"},
+    {ODI,0,ARG_INTERFACES,          0,  9,2,A_PS0,A_USR,A_DYN,A_ARG,A_ANY,  0,      0,      0,      0,0,        opt_status,
+            0,      "show interfaces\n"},
 
-	{ODI,0,ARG_GLOBAL_PREFIX,	0,  9,2,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	0,		0,		0,		0,0,		opt_dev_prefix,
-			ARG_NETW_FORM,HLP_GLOBAL_PREFIX},
+    {ODI,0,ARG_GLOBAL_PREFIX,   0,  9,2,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,  0,      0,      0,      0,0,        opt_dev_prefix,
+            ARG_NETW_FORM,HLP_GLOBAL_PREFIX},
 
-	{ODI,0,ARG_LLOCAL_PREFIX,	0,  9,2,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	0,		0,		0,		0,0,		opt_dev_prefix,
-			ARG_NETW_FORM,HLP_LLOCAL_PREFIX},
+    {ODI,0,ARG_LLOCAL_PREFIX,   0,  9,2,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,  0,      0,      0,      0,0,        opt_dev_prefix,
+            ARG_NETW_FORM,HLP_LLOCAL_PREFIX},
 
-	{ODI,0,ARG_AUTO_IP6_PREFIX,     0,  9,2,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	0,      	0,      	0,              0,DEF_AUTO_IP6_PREFIX,opt_auto_prefix,
-			ARG_VALUE_FORM,	HLP_AUTO_IP6_PREFIX},
+    {ODI,0,ARG_AUTO_IP6_PREFIX,     0,  9,2,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,  0,          0,          0,              0,DEF_AUTO_IP6_PREFIX,opt_auto_prefix,
+            ARG_VALUE_FORM, HLP_AUTO_IP6_PREFIX},
 
-	{ODI,0,ARG_DEV,		        'i',9,2,A_PM1N,A_ADM,A_DYI,A_CFA,A_ANY,	0,		0, 		0,		0,0, 		opt_dev,
-			"<interface-name>", HLP_DEV},
+    {ODI,0,ARG_DEV,             'i',9,2,A_PM1N,A_ADM,A_DYI,A_CFA,A_ANY, 0,      0,      0,      0,0,        opt_dev,
+            "<interface-name>", HLP_DEV},
 
-	{ODI,ARG_DEV,ARG_DEV_ANNOUNCE,  'a',9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,	0,		0,		1,		DEF_DEV_ANNOUNCE,0,opt_dev,
-			ARG_VALUE_FORM,	HLP_DEV_ANNOUNCE},
+    {ODI,ARG_DEV,ARG_DEV_ANNOUNCE,  'a',9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,  0,      0,      1,      DEF_DEV_ANNOUNCE,0,opt_dev,
+            ARG_VALUE_FORM, HLP_DEV_ANNOUNCE},
 
-	{ODI,ARG_DEV,ARG_DEV_LL,	 'l',9,0,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,	0,		MIN_DEV_LL,	MAX_DEV_LL,     DEF_DEV_LL,0,	opt_dev,
-			ARG_VALUE_FORM,	HLP_DEV_LL},
+    {ODI,ARG_DEV,ARG_DEV_LL,     'l',9,0,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY, 0,      MIN_DEV_LL, MAX_DEV_LL,     DEF_DEV_LL,0,   opt_dev,
+            ARG_VALUE_FORM, HLP_DEV_LL},
 
-	{ODI,ARG_DEV,ARG_DEV_GLOBAL_PREFIX,0, 9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,  0,		0,              0,              0,0,              opt_dev,
-			ARG_VALUE_FORM,	HLP_DEV_GLOBAL_PREFIX},
+    {ODI,ARG_DEV,ARG_DEV_GLOBAL_PREFIX,0, 9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,  0,        0,              0,              0,0,              opt_dev,
+            ARG_VALUE_FORM, HLP_DEV_GLOBAL_PREFIX},
 
-	{ODI,ARG_DEV,ARG_DEV_LLOCAL_PREFIX,0, 9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,  0,		0,              0,              0,0,              opt_dev,
-			ARG_VALUE_FORM,	HLP_DEV_LLOCAL_PREFIX},
+    {ODI,ARG_DEV,ARG_DEV_LLOCAL_PREFIX,0, 9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,  0,        0,              0,              0,0,              opt_dev,
+            ARG_VALUE_FORM, HLP_DEV_LLOCAL_PREFIX},
 
-	{ODI,ARG_DEV,ARG_DEV_BITRATE_MAX,'r',9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,	0,		0,              0,              0,0,              opt_dev,
-			ARG_VALUE_FORM,	HLP_DEV_BITRATE_MAX},
+    {ODI,ARG_DEV,ARG_DEV_BITRATE_MAX,'r',9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY, 0,      0,              0,              0,0,              opt_dev,
+            ARG_VALUE_FORM, HLP_DEV_BITRATE_MAX},
 
-	{ODI,ARG_DEV,ARG_DEV_BITRATE_MIN, 0, 9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,	0,		0,              0,              0,0,              opt_dev,
-			ARG_VALUE_FORM,	HLP_DEV_BITRATE_MIN},
+    {ODI,ARG_DEV,ARG_DEV_BITRATE_MIN, 0, 9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY, 0,      0,              0,              0,0,              opt_dev,
+            ARG_VALUE_FORM, HLP_DEV_BITRATE_MIN},
 
 
 
@@ -4137,16 +4137,16 @@ void init_ip(void)
                 cleanup_all( -500561 );
         }
 
-	if (rtnl_open(&ip_rth2) != SUCCESS) {
+    if (rtnl_open(&ip_rth2) != SUCCESS) {
                 dbgf_sys(DBGT_ERR, "failed opening rtnl2 socket");
                 cleanup_all( -501605 );
         }
 
         errno=0;
-	if ( !io_sock  &&  (io_sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-		dbgf_sys(DBGT_ERR, "can't create io socket %s:",  strerror(errno) );
-		cleanup_all( -500021 );
-	}
+    if ( !io_sock  &&  (io_sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+        dbgf_sys(DBGT_ERR, "can't create io socket %s:",  strerror(errno) );
+        cleanup_all( -500021 );
+    }
 
         if (open_ifevent_netlink_sk() < 0)
                 cleanup_all(-500150);
@@ -4168,22 +4168,22 @@ void cleanup_ip(void)
         close_ifevent_netlink_sk();
 
         // if ever started succesfully in daemon mode...
-	// flush default routes installed by bmx6:
-	ip_flush_tracked( IP_ROUTE_FLUSH );
+    // flush default routes installed by bmx6:
+    ip_flush_tracked( IP_ROUTE_FLUSH );
 
-	// flush all routes in this bmx6 tables (there should be NOTHING!):
-	ip_flush_routes(AF_CFG, BMX_TABLE_HNA);
-	if (AF_CFG == AF_INET6)
-		ip_flush_routes(AF_INET, BMX_TABLE_HNA);
+    // flush all routes in this bmx6 tables (there should be NOTHING!):
+    ip_flush_routes(AF_CFG, BMX_TABLE_HNA);
+    if (AF_CFG == AF_INET6)
+        ip_flush_routes(AF_INET, BMX_TABLE_HNA);
 
-	// flush default routes installed by bmx6:
-	ip_flush_tracked( IP_RULE_FLUSH );
+    // flush default routes installed by bmx6:
+    ip_flush_tracked( IP_RULE_FLUSH );
 
 
-	// flush all rules pointing to bmx6 tables (there should be NOTHING!):
-	ip_flush_rules(AF_CFG, BMX_TABLE_HNA);
-	if (AF_CFG == AF_INET6)
-		ip_flush_rules(AF_INET, BMX_TABLE_HNA);
+    // flush all rules pointing to bmx6 tables (there should be NOTHING!):
+    ip_flush_rules(AF_CFG, BMX_TABLE_HNA);
+    if (AF_CFG == AF_INET6)
+        ip_flush_rules(AF_INET, BMX_TABLE_HNA);
 
 
         kernel_get_if_config_post(YES,0);

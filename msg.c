@@ -142,7 +142,7 @@ struct frame_handl description_tlv_handl[BMX_DSC_TLV_ARRSZ];
 
 void register_frame_handler(struct frame_handl *array, int pos, struct frame_handl *handl)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         
         assertion(-500659, (pos < BMX_DSC_TLV_ARRSZ));
         assertion(-500660, (!array[pos].min_msg_size)); // the pos MUST NOT be used yet
@@ -164,7 +164,7 @@ void register_frame_handler(struct frame_handl *array, int pos, struct frame_han
 STATIC_FUNC
 struct description * remove_cached_description(struct description_hash *dhash)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct description_cache_node *dcn;
 
         if (!(dcn = avl_find_item(&description_cache_tree, dhash)))
@@ -180,7 +180,7 @@ struct description * remove_cached_description(struct description_hash *dhash)
 STATIC_FUNC
 struct description_cache_node *purge_cached_descriptions(IDM_T purge_all)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct description_cache_node *dcn;
         struct description_cache_node *dcn_min = NULL;
         struct description_hash tmp_dhash;
@@ -211,7 +211,7 @@ struct description_cache_node *purge_cached_descriptions(IDM_T purge_all)
 STATIC_FUNC
 void cache_description(struct description *desc, struct description_hash *dhash)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct description_cache_node *dcn;
 
         uint16_t desc_len = sizeof (struct description) + ntohs(desc->extensionLen);
@@ -256,7 +256,7 @@ void cache_description(struct description *desc, struct description_hash *dhash)
 IDM_T process_description_tlvs(struct packet_buff *pb, struct orig_node *on, struct description *desc, uint8_t op,
         uint8_t filter, void *custom, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-500370, (op == TLV_OP_DEL || op == TLV_OP_TEST || op == TLV_OP_NEW || op == TLV_OP_DEBUG ||
                 (op >= TLV_OP_CUSTOM_MIN && op <= TLV_OP_CUSTOM_MAX) || (op >= TLV_OP_PLUGIN_MIN && op <= TLV_OP_PLUGIN_MAX)));
         assertion(-500590, IMPLIES(on == self, (op == TLV_OP_DEBUG ||
@@ -269,7 +269,7 @@ IDM_T process_description_tlvs(struct packet_buff *pb, struct orig_node *on, str
         uint16_t dsc_tlvs_len = ntohs(desc->extensionLen);
 
         struct rx_frame_iterator it = {
-                .caller = __FUNCTION__, .on = on, .cn = cn, .op = op, .pb = pb,
+                .caller = __func__, .on = on, .cn = cn, .op = op, .pb = pb,
                 .handls = description_tlv_handl, .handl_max = (BMX_DSC_TLV_MAX), .process_filter = filter,
                 .data = ((uint8_t*) desc), .frame_type = -1,
                 .frames_in = (((uint8_t*) desc) + sizeof (struct description)), .frames_pos = 0,
@@ -318,7 +318,7 @@ IDM_T process_description_tlvs(struct packet_buff *pb, struct orig_node *on, str
 
 void purge_tx_task_list(struct list_head *tx_task_lists, struct link_node *only_link, struct dev_node *only_dev)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         int i;
         assertion(-500845, (tx_task_lists));
 
@@ -359,7 +359,7 @@ void purge_tx_task_list(struct list_head *tx_task_lists, struct link_node *only_
 STATIC_FUNC
 IDM_T freed_tx_task_node(struct tx_task_node *tx_task, struct list_head *tx_task_list, struct list_node *lprev)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-500372, (tx_task && tx_task->task.dev));
         assertion(-500539, lprev);
 
@@ -383,7 +383,7 @@ IDM_T freed_tx_task_node(struct tx_task_node *tx_task, struct list_head *tx_task
 STATIC_FUNC
 IDM_T tx_task_obsolete(struct tx_task_node *tx_task)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct dhash_node *dhn = NULL;
         char *reason = NULL;
         IDM_T problem;
@@ -497,7 +497,7 @@ struct tx_task_node *tx_task_new(struct link_dev_node *dest_lndev, struct tx_tas
 void schedule_tx_task(struct link_dev_node *dest_lndev, uint16_t frame_type, int16_t frame_msgs_len,
         uint16_t u16, uint32_t u32, IID_T myIID4x, IID_T neighIID4x)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct frame_handl *handl = &packet_frame_handler[frame_type];
 
@@ -592,7 +592,7 @@ void schedule_tx_task(struct link_dev_node *dest_lndev, uint16_t frame_type, int
 
 OGM_SQN_T set_ogmSqn_toBeSend_and_aggregated(struct orig_node *on, UMETRIC_T um, OGM_SQN_T to_be_send, OGM_SQN_T aggregated)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         to_be_send &= OGM_SQN_MASK;
         aggregated &= OGM_SQN_MASK;
@@ -621,7 +621,7 @@ OGM_SQN_T set_ogmSqn_toBeSend_and_aggregated(struct orig_node *on, UMETRIC_T um,
 STATIC_FUNC
 IID_T create_ogm(struct orig_node *on, IID_T prev_ogm_iid, struct msg_ogm_adv *ogm)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-501064, (on->ogmMetric_next <= UMETRIC_MAX));
         assertion(-501066, (on->ogmMetric_next > UMETRIC_INVALID));
         assertion_dbg(-501063, ((((OGM_SQN_MASK) & (on->ogmSqn_next - on->ogmSqn_rangeMin)) < on->ogmSqn_rangeSize)),
@@ -658,7 +658,7 @@ IID_T create_ogm(struct orig_node *on, IID_T prev_ogm_iid, struct msg_ogm_adv *o
 STATIC_FUNC
 void create_ogm_aggregation(void)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         uint32_t target_ogms = XMIN(OGMS_PER_AGGREG_MAX,
                 ((ogm_aggreg_pending < ((OGMS_PER_AGGREG_PREF / 3)*4)) ? ogm_aggreg_pending : OGMS_PER_AGGREG_PREF));
 
@@ -773,7 +773,7 @@ static struct link_dev_node **lndev_arr = NULL;
 STATIC_FUNC
 void lndevs_prepare(void)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
 	static uint16_t lndev_arr_items = 0;
         struct avl_node *an;
@@ -796,7 +796,7 @@ void lndevs_prepare(void)
 STATIC_FUNC
 struct link_dev_node **lndevs_get_unacked_ogm_neighbors(struct ogm_aggreg_node *oan)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct avl_node *neigh_an = NULL;
         struct neigh_node *neigh;
@@ -861,7 +861,7 @@ struct link_dev_node **lndevs_get_unacked_ogm_neighbors(struct ogm_aggreg_node *
 STATIC_FUNC
 struct link_dev_node **lndevs_get_best_tp(struct local_node *except_local)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct avl_node *an;
         struct local_node *local;
@@ -903,7 +903,7 @@ struct link_dev_node **lndevs_get_best_tp(struct local_node *except_local)
 STATIC_FUNC
 void schedule_or_purge_ogm_aggregations(IDM_T purge_all)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         static TIME_T timestamp = 0;
 
@@ -1002,7 +1002,7 @@ void schedule_or_purge_ogm_aggregations(IDM_T purge_all)
 STATIC_FUNC
 int32_t tx_msg_hello_adv(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-500771, (tx_iterator_cache_data_space_pref(it) >= ((int) sizeof (struct msg_hello_adv))));
 
         struct tx_task_node *ttn = it->ttn;
@@ -1025,7 +1025,7 @@ int32_t tx_msg_hello_adv(struct tx_frame_iterator *it)
 STATIC_FUNC
 int32_t tx_frame_test_adv(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         static uint8_t i = 0xFF;
         struct hdr_test_adv* hdr = ((struct hdr_test_adv*) tx_iterator_cache_hdr_ptr(it));
 
@@ -1040,7 +1040,7 @@ int32_t tx_frame_test_adv(struct tx_frame_iterator *it)
 STATIC_FUNC
 int32_t rx_frame_test_adv( struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct hdr_test_adv* hdr = (struct hdr_test_adv*) it->frame_data;;
         struct msg_test_adv* adv = (struct msg_test_adv*) it->msg;
@@ -1067,7 +1067,7 @@ int32_t rx_frame_test_adv( struct rx_frame_iterator *it)
 STATIC_FUNC
 int32_t tx_msg_dhash_or_description_request(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct tx_task_node *ttn = it->ttn;
         struct hdr_dhash_request *hdr = ((struct hdr_dhash_request*) tx_iterator_cache_hdr_ptr(it));
@@ -1116,7 +1116,7 @@ int32_t tx_msg_dhash_or_description_request(struct tx_frame_iterator *it)
 STATIC_FUNC
 int32_t tx_msg_description_adv(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct tx_task_node * ttn = it->ttn;
         struct dhash_node *dhn;
         struct description *desc0;
@@ -1175,7 +1175,7 @@ STATIC_FUNC
 int32_t tx_msg_dhash_adv(struct tx_frame_iterator *it)
 {
 
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-500774, (tx_iterator_cache_data_space_pref(it) >= ((int) sizeof (struct msg_dhash_adv))));
         assertion(-500556, (it && it->ttn->task.myIID4x >= IID_MIN_USED));
 
@@ -1215,7 +1215,7 @@ int32_t tx_msg_dhash_adv(struct tx_frame_iterator *it)
 
 void update_my_dev_adv(void)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct avl_node *an;
         struct dev_node *dev;
@@ -1281,7 +1281,7 @@ void update_my_dev_adv(void)
 STATIC_FUNC
 int32_t tx_frame_dev_adv(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct hdr_dev_adv* hdr = ((struct hdr_dev_adv*) tx_iterator_cache_hdr_ptr(it));
 
@@ -1302,7 +1302,7 @@ int32_t tx_frame_dev_adv(struct tx_frame_iterator *it)
 STATIC_FUNC
 int32_t rx_msg_dev_req( struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct msg_dev_req* req = ((struct msg_dev_req*) it->msg);
 
 	if (req->destination_local_id == my_local_id) {
@@ -1316,7 +1316,7 @@ int32_t rx_msg_dev_req( struct rx_frame_iterator *it)
 STATIC_FUNC
 int32_t tx_msg_dev_req(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct tx_task_node *ttn = it->ttn;
         struct msg_dev_req *msg = ((struct msg_dev_req*) tx_iterator_cache_msg_ptr(it));
         struct local_node *local = avl_find_item(&local_tree, &ttn->task.u32);
@@ -1345,7 +1345,7 @@ int32_t tx_msg_dev_req(struct tx_frame_iterator *it)
 STATIC_FUNC
 int32_t rx_frame_dev_adv( struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct hdr_dev_adv* hdr = (struct hdr_dev_adv*) it->frame_data;;
         struct msg_dev_adv* adv = (struct msg_dev_adv*) it->msg;
@@ -1421,7 +1421,7 @@ void set_link_adv_msg(uint16_t msg, struct link_dev_node *lndev)
 
 void update_my_link_adv(uint32_t changes)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct avl_node *an;
         struct link_dev_node *lndev;
@@ -1504,7 +1504,7 @@ void update_my_link_adv(uint32_t changes)
 STATIC_FUNC
 int32_t tx_frame_link_adv(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct hdr_link_adv* hdr = ((struct hdr_link_adv*) tx_iterator_cache_hdr_ptr(it));
 
@@ -1525,7 +1525,7 @@ int32_t tx_frame_link_adv(struct tx_frame_iterator *it)
 STATIC_FUNC
 int32_t rx_msg_link_req( struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct msg_link_req* req = ((struct msg_link_req*) it->msg);
 
         if (req->destination_local_id == my_local_id) {
@@ -1540,7 +1540,7 @@ int32_t rx_msg_link_req( struct rx_frame_iterator *it)
 STATIC_FUNC
 int32_t tx_msg_link_req(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct tx_task_node *ttn = it->ttn;
         struct msg_link_req *msg = ((struct msg_link_req*) tx_iterator_cache_msg_ptr(it));
         struct local_node *local = avl_find_item(&local_tree, &ttn->task.u32);
@@ -1570,7 +1570,7 @@ int32_t tx_msg_link_req(struct tx_frame_iterator *it)
 STATIC_FUNC
 int32_t rx_frame_link_adv( struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct hdr_link_adv* hdr = (struct hdr_link_adv*) it->frame_data;;
         struct msg_link_adv* adv = (struct msg_link_adv*) it->msg;
@@ -1640,7 +1640,7 @@ int32_t rx_frame_link_adv( struct rx_frame_iterator *it)
 STATIC_FUNC
 int32_t tx_frame_rp_adv(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct msg_rp_adv* msg = ((struct msg_rp_adv*) tx_iterator_cache_msg_ptr(it));
         struct avl_node *an;
@@ -1685,7 +1685,7 @@ int32_t tx_frame_rp_adv(struct tx_frame_iterator *it)
 STATIC_FUNC
 int32_t rx_frame_rp_adv(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct msg_rp_adv* adv = (struct msg_rp_adv*) it->msg;
         struct local_node *local = it->pb->i.link->local;
@@ -1768,7 +1768,7 @@ int32_t rx_frame_rp_adv(struct rx_frame_iterator *it)
 STATIC_FUNC
 int32_t tx_frame_ogm_advs(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct tx_task_node *ttn = it->ttn;
         AGGREG_SQN_T sqn = ttn->task.u16; // because AGGREG_SQN_T is just 8 bit!
 
@@ -1809,7 +1809,7 @@ int32_t tx_frame_ogm_advs(struct tx_frame_iterator *it)
 STATIC_FUNC
 int32_t tx_msg_ogm_ack(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct tx_task_node *ttn = it->ttn;
         assertion(-500587, (ttn->task.link));
 
@@ -1832,7 +1832,7 @@ int32_t tx_msg_ogm_ack(struct tx_frame_iterator *it)
 STATIC_FUNC
 int32_t tx_frame_problem_adv(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct tx_task_node *ttn = it->ttn;
         struct msg_problem_adv *adv = ((struct msg_problem_adv*) tx_iterator_cache_msg_ptr(it));
 
@@ -1863,7 +1863,7 @@ int32_t tx_frame_problem_adv(struct tx_frame_iterator *it)
 STATIC_FUNC
 int32_t rx_frame_problem_adv(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct msg_problem_adv *adv = (struct msg_problem_adv *) it->frame_data;
 
         if (adv->code == FRAME_TYPE_PROBLEM_CODE_DUP_LINK_ID) {
@@ -1897,7 +1897,7 @@ int32_t rx_frame_problem_adv(struct rx_frame_iterator *it)
 STATIC_FUNC
 int32_t rx_frame_ogm_advs(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct hdr_ogm_adv *hdr = (struct hdr_ogm_adv *) it->frame_data;
         struct packet_buff *pb = it->pb;
@@ -2140,7 +2140,7 @@ int32_t rx_frame_ogm_advs(struct rx_frame_iterator *it)
 STATIC_FUNC
 int32_t rx_frame_ogm_acks(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct packet_buff *pb = it->pb;
         struct local_node *local = pb->i.link->local;
         struct neigh_node *neigh = pb->i.link->local->neigh;
@@ -2192,7 +2192,7 @@ STATIC_FUNC
 struct dhash_node *process_dhash_description_neighIID4x
 (struct packet_buff *pb, struct description_hash *dhash, struct description *dsc, IID_T neighIID4x)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct dhash_node *orig_dhn = NULL;
         struct local_node *local = pb->i.link->local;
         IDM_T invalid = NO;
@@ -2295,7 +2295,7 @@ struct dhash_node *process_dhash_description_neighIID4x
 STATIC_FUNC
 int32_t rx_msg_dhash_adv( struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct packet_buff *pb = it->pb;
         struct msg_dhash_adv *adv = (struct msg_dhash_adv*) (it->msg);
         IID_T neighIID4x = ntohs(adv->transmitterIID4x);
@@ -2331,7 +2331,7 @@ int32_t rx_msg_dhash_adv( struct rx_frame_iterator *it)
 STATIC_FUNC
 int32_t rx_frame_description_advs(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         int32_t pos = 0;
         uint16_t tlvs_len = 0;
         IID_T neighIID4x = 0;
@@ -2396,7 +2396,7 @@ int32_t rx_frame_description_advs(struct rx_frame_iterator *it)
 STATIC_FUNC
 int32_t rx_msg_dhash_or_description_request(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion( -500365 , (sizeof( struct msg_description_request ) == sizeof( struct msg_dhash_request)));
 
         struct packet_buff *pb = it->pb;
@@ -2463,7 +2463,7 @@ int32_t rx_msg_dhash_or_description_request(struct rx_frame_iterator *it)
 STATIC_FUNC
 int32_t rx_msg_hello_adv(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct packet_buff *pb = it->pb;
         struct msg_hello_adv *msg = (struct msg_hello_adv*) (it->msg);
         HELLO_SQN_T hello_sqn = ntohs(msg->hello_sqn);
@@ -2571,7 +2571,7 @@ void cache_desc_tlv_hashes(uint8_t op, struct orig_node *on, int8_t t_start, int
 
 int32_t rx_frame_iterate(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct packet_buff *pb = it->pb;
 
         dbgf_all(DBGT_INFO, "%s - frame_pos=%d frame_len=%d", it->caller, it->frames_pos, it->frames_length);
@@ -2795,11 +2795,11 @@ int32_t rx_frame_iterate(struct rx_frame_iterator *it)
 
 IDM_T rx_frames(struct packet_buff *pb)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         int32_t it_result;
 
         struct rx_frame_iterator it = {
-                .caller = __FUNCTION__, .on = NULL, .cn = NULL, .op = 0, .pb = pb,
+                .caller = __func__, .on = NULL, .cn = NULL, .op = 0, .pb = pb,
                 .handls = packet_frame_handler, .handl_max = FRAME_TYPE_MAX, .process_filter = FRAME_TYPE_PROCESS_ALL,
                 .data = ((uint8_t*) & pb->packet.header), .frame_type = -1,
                 .frames_in = (((uint8_t*) & pb->packet.header) + sizeof (struct packet_header)),
@@ -2861,7 +2861,7 @@ IDM_T rx_frames(struct packet_buff *pb)
 STATIC_FUNC
 int8_t send_udp_packet(struct packet_buff *pb, struct sockaddr_storage *dst, int32_t send_sock)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 	int status;
 
         dbgf_all(DBGT_INFO, "len=%d via dev=%s", pb->i.total_length, pb->i.oif->label_cfg.str);
@@ -2911,7 +2911,7 @@ int8_t send_udp_packet(struct packet_buff *pb, struct sockaddr_storage *dst, int
 STATIC_FUNC
 int32_t tx_frame_iterate(IDM_T iterate_msg, struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         uint8_t t = it->frame_type;
         struct frame_handl *handl = &(it->handls[t]);
         int32_t tlv_result;// = TLV_DATA_DONE;
@@ -3042,7 +3042,7 @@ int32_t tx_frame_iterate(IDM_T iterate_msg, struct tx_frame_iterator *it)
 STATIC_FUNC
 void next_tx_task_list(struct dev_node *dev, struct tx_frame_iterator *it, struct avl_node **link_tree_iterator)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct link_node *link = NULL;
 
@@ -3087,7 +3087,7 @@ void next_tx_task_list(struct dev_node *dev, struct tx_frame_iterator *it, struc
 STATIC_FUNC
 void tx_packet(void *devp)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         static uint8_t cache_data_array[MAX_UDPD_SIZE] = {0};
         static struct packet_buff pb;
@@ -3117,7 +3117,7 @@ void tx_packet(void *devp)
         memset(&pb.i, 0, sizeof (pb.i));
 
         struct tx_frame_iterator it = {
-                .caller = __FUNCTION__, .handls = packet_frame_handler, .handl_max = FRAME_TYPE_MAX,
+                .caller = __func__, .handls = packet_frame_handler, .handl_max = FRAME_TYPE_MAX,
                 .frames_out_ptr = (pb.packet.data + sizeof (struct packet_header)), .frames_out_pos = 0, .frames_out_num = 0,
                 .frames_out_max = (MAX_UDPD_SIZE - sizeof (struct packet_header)),
                 .frames_out_pref = (pref_udpd_size - sizeof (struct packet_header)),
@@ -3285,7 +3285,7 @@ void tx_packet(void *devp)
 
 void tx_packets( void *unused ) {
 
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct avl_node *an;
         struct dev_node *dev;
@@ -3341,7 +3341,7 @@ void tx_packets( void *unused ) {
 
 void schedule_my_originator_message( void* unused )
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         if (((OGM_SQN_MASK) & (self->ogmSqn_next + OGM_SQN_STEP - self->ogmSqn_rangeMin)) >= self->ogmSqn_rangeSize)
                 my_description_changed = YES;
@@ -3358,7 +3358,7 @@ void schedule_my_originator_message( void* unused )
 STATIC_FUNC
 IDM_T validate_description(struct description *desc)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         if (validate_name_string(desc->globalId.name, GLOBAL_ID_NAME_LEN, NULL) == FAILURE) {
 
@@ -3382,7 +3382,7 @@ IDM_T validate_description(struct description *desc)
 
 struct dhash_node * process_description(struct packet_buff *pb, struct description *desc, struct description_hash *dhash)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-500262, (pb && pb->i.link && desc));
         assertion(-500381, (!avl_find( &dhash_tree, dhash )));
 
@@ -3500,7 +3500,7 @@ process_desc0_ignore:
 
 void update_my_description_adv(void)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         static uint8_t cache_data_array[MAX_UDPD_SIZE] = {0};
         struct description_hash dhash;
         struct description *dsc = self->desc;
@@ -3548,7 +3548,7 @@ void update_my_description_adv(void)
         // add all tlv options:
         
         struct tx_frame_iterator it = {
-                .caller = __FUNCTION__, .frames_out_ptr = (((uint8_t*) dsc) + sizeof (struct description)),
+                .caller = __func__, .frames_out_ptr = (((uint8_t*) dsc) + sizeof (struct description)),
                 .handls = description_tlv_handl, .handl_max = FRAME_TYPE_MAX, .frames_out_pos = 0, .frames_out_num = 0,
                 .frames_out_max = MAX_UDPD_SIZE - (sizeof (struct packet_header) + sizeof (struct frame_header_long) + sizeof (struct msg_description_adv)),
                 .frames_out_pref = MAX_UDPD_SIZE - (sizeof (struct packet_header) + sizeof (struct frame_header_long) + sizeof (struct msg_description_adv)),
@@ -3605,7 +3605,7 @@ STATIC_FUNC
 int32_t opt_show_descriptions(uint8_t cmd, uint8_t _save, struct opt_type *opt,
                               struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
 	if ( cmd == OPT_APPLY ) {
 
@@ -3655,7 +3655,7 @@ int32_t opt_show_descriptions(uint8_t cmd, uint8_t _save, struct opt_type *opt,
                         debugFree(desc_buff, -300362);
 
                         struct rx_frame_iterator it = {
-                                .caller = __FUNCTION__, .on = on, .cn = cn, .op = TLV_OP_PLUGIN_MIN,
+                                .caller = __func__, .on = on, .cn = cn, .op = TLV_OP_PLUGIN_MIN,
                                 .handls = description_tlv_handl, .handl_max = BMX_DSC_TLV_MAX, .process_filter = type_filter,
                                 .data = ((uint8_t*) on->desc), .frame_type = -1,
                                 .frames_in = (((uint8_t*) on->desc) + sizeof (struct description)), .frames_length = tlvs_len

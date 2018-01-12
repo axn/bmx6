@@ -54,7 +54,7 @@ STATIC_FUNC
 json_object * fields_dbg_json(uint8_t relevance, uint8_t force_array, uint16_t data_size, uint8_t *data,
                     uint16_t min_msg_size, const struct field_format *format)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-501300, (format && data));
 
         uint32_t msgs_size = 0;
@@ -309,7 +309,7 @@ void json_dev_event_hook(int32_t cb_id, void* data)
         if (!json_update_interval || terminating)
                 return;
 
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         int fd;
         char path_name[MAX_PATH_SIZE + 20] = "";
@@ -335,7 +335,7 @@ void json_config_event_hook(int32_t cb_id, void *data)
         if (!json_update_interval || terminating)
                 return;
 
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         update_json_options(0, 1, JSON_PARAMETERS_FILE);
 
@@ -348,7 +348,7 @@ void json_status_event_hook(int32_t cb_id, void* data)
         if (!json_update_interval || terminating)
                 return;
 
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         int fd;
         char path_name[MAX_PATH_SIZE + 20] = "";
@@ -374,7 +374,7 @@ void json_links_event_hook(int32_t cb_id, void* data)
         if (!json_update_interval || terminating)
                 return;
 
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         int fd;
         char path_name[MAX_PATH_SIZE + 20] = "";
@@ -397,7 +397,7 @@ void json_links_event_hook(int32_t cb_id, void* data)
 STATIC_FUNC
 void json_originator_event_hook(int32_t cb_id, struct orig_node *orig)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         assertion(-501272, (json_orig_dir));
         assertion(-501347, (cb_id == PLUGIN_CB_DESCRIPTION_DESTROY || cb_id == PLUGIN_CB_DESCRIPTION_CREATED));
@@ -477,7 +477,7 @@ void json_route_change_hook(uint8_t del, struct orig_node *on)
 STATIC_FUNC
 void json_description_event_hook(int32_t cb_id, struct orig_node *on)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         assertion(-501306, (on));
         assertion(-501270, IMPLIES(cb_id == PLUGIN_CB_DESCRIPTION_CREATED, (on && on->desc)));
@@ -536,7 +536,7 @@ void json_description_event_hook(int32_t cb_id, struct orig_node *on)
                         if (tlvs_len) {
 
                                 struct rx_frame_iterator it = {
-                                        .caller = __FUNCTION__, .on = on, .cn = NULL, .op = TLV_OP_PLUGIN_MIN,
+                                        .caller = __func__, .on = on, .cn = NULL, .op = TLV_OP_PLUGIN_MIN,
                                         .handls = description_tlv_handl, .handl_max = BMX_DSC_TLV_MAX,
                                         .process_filter = FRAME_TYPE_PROCESS_ALL,
                                         .data = ((uint8_t*) on->desc), .frame_type = -1,
@@ -608,7 +608,7 @@ void update_json_status(void *data)
 STATIC_FUNC
 int32_t opt_json_status(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         if (cmd == OPT_CHECK || cmd == OPT_APPLY) {
 

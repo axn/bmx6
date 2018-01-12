@@ -151,7 +151,7 @@ IDM_T fmetric_cmp(FMETRIC_U16_T a, unsigned char cmp, FMETRIC_U16_T b)
 
 UMETRIC_T fmetric_to_umetric(FMETRIC_U16_T fm)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         assertion(-500680, (is_fmetric_valid(fm)));
 
@@ -164,7 +164,7 @@ UMETRIC_T fmetric_to_umetric(FMETRIC_U16_T fm)
 FMETRIC_U16_T umetric_to_fmetric(UMETRIC_T val)
 {
 
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         FMETRIC_U16_T fm = {.val.u16 = 0};
 
@@ -431,7 +431,7 @@ void register_path_metricalgo(uint8_t algo_type_bit, void (*algo) (UMETRIC_T *pa
 
 UMETRIC_T apply_metric_algo(UMETRIC_T *linkQuality, UMETRIC_T *linkMax, const UMETRIC_T *path, struct host_metricalgo *algo)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         assertion(-501037, ((*path & ~UMETRIC_MASK) == 0));
         assertion(-501038, (*path <= UMETRIC_MAX));
@@ -499,7 +499,7 @@ UMETRIC_T apply_metric_algo(UMETRIC_T *linkQuality, UMETRIC_T *linkMax, const UM
 STATIC_FUNC
 UMETRIC_T apply_lndev_metric_algo(struct link_dev_node *lndev, const UMETRIC_T *path, struct host_metricalgo *algo)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         assertion(-500823, (lndev->key.dev->umetric_max));
 
@@ -516,7 +516,7 @@ STATIC_FUNC
 void _reconfigure_metric_record_position(const char *f, struct metric_record *rec, struct host_metricalgo *alg,
         SQN_T min, SQN_T in, uint8_t sqn_bit_size, uint8_t reset)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-500737, (XOR(sqn_bit_size, rec->sqn_bit_mask)));
 
         if (sqn_bit_size)
@@ -545,12 +545,12 @@ void _reconfigure_metric_record_position(const char *f, struct metric_record *re
 }
 
 #define reconfigure_metric_record_position(rec, alg, min, in, sqn_bit_size, reset) \
-  _reconfigure_metric_record_position(__FUNCTION__, rec, alg, min, in, sqn_bit_size, reset)
+  _reconfigure_metric_record_position(__func__, rec, alg, min, in, sqn_bit_size, reset)
 
 STATIC_FUNC
 IDM_T update_metric_record(struct orig_node *on, struct router_node *rt, SQN_T in, const UMETRIC_T *probe)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         char *scenario = NULL;
         
         struct metric_record *rec = &rt->mr;
@@ -750,7 +750,7 @@ UMETRIC_T timeaware_tx_probe(struct link_dev_node *lndev)
 
 void lndev_assign_best(struct local_node *only_local, struct link_dev_node *only_lndev )
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         assertion(-501133, (IMPLIES(only_lndev, only_local && only_local == only_lndev->key.link->local)));
         ASSERTION(-500792, (IMPLIES(only_lndev, only_lndev->key.link == avl_find_item(&only_local->link_tree, &only_lndev->key.link->key.dev_idx))));
@@ -833,7 +833,7 @@ void lndev_assign_best(struct local_node *only_local, struct link_dev_node *only
 void update_link_probe_record(struct link_dev_node *lndev, HELLO_SQN_T sqn, uint8_t probe)
 {
 
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct link_node *link = lndev->key.link;
         struct lndev_probe_record *lpr = &lndev->rx_probe_record;
 
@@ -965,7 +965,7 @@ UMETRIC_T lndev_best_via_router(struct local_node *local, struct orig_node *on, 
 
 IDM_T update_path_metrics(struct packet_buff *pb, struct orig_node *on, OGM_SQN_T ogm_sqn, UMETRIC_T *ogm_metric)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-500876, (!on->blocked));
         assertion(-500734, (on->path_metricalgo));
         assertion(-501052, ((((OGM_SQN_MASK)&(ogm_sqn - on->ogmSqn_rangeMin)) < on->ogmSqn_rangeSize)));
@@ -1114,7 +1114,7 @@ IDM_T update_path_metrics(struct packet_buff *pb, struct orig_node *on, OGM_SQN_
 STATIC_FUNC
 IDM_T validate_metricalgo(struct host_metricalgo *ma, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         if (
                 validate_param((ma->algo_type), MIN_METRIC_ALGO, MAX_METRIC_ALGO, ARG_PATH_METRIC_ALGO) ||
@@ -1148,7 +1148,7 @@ IDM_T validate_metricalgo(struct host_metricalgo *ma, struct ctrl_node *cn)
 STATIC_FUNC
 IDM_T metricalgo_tlv_to_host(struct description_tlv_metricalgo *tlv_algo, struct host_metricalgo *host_algo, uint16_t size)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         memset(host_algo, 0, sizeof (struct host_metricalgo));
 
         if (size < sizeof (struct mandatory_tlv_metricalgo))
@@ -1188,7 +1188,7 @@ struct host_metricalgo my_hostmetricalgo;
 STATIC_FUNC
 int create_description_tlv_metricalgo(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct description_tlv_metricalgo tlv_algo;
 
         dbgf_track(DBGT_INFO, " size %zu", sizeof (struct description_tlv_metricalgo));
@@ -1283,7 +1283,7 @@ void metricalgo_assign(struct orig_node *on, struct host_metricalgo *host_algo)
 STATIC_FUNC
 int process_description_tlv_metricalgo(struct rx_frame_iterator *it )
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-500683, (it->frame_type == BMX_DSC_TLV_METRIC));
         assertion(-500684, (it->on));
 
@@ -1320,7 +1320,7 @@ int process_description_tlv_metricalgo(struct rx_frame_iterator *it )
 STATIC_FUNC
 int32_t opt_link_metric(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         static int32_t my_link_window_prev = DEF_HELLO_SQN_WINDOW;
 
         if (cmd == OPT_APPLY && !strcmp(opt->name, ARG_HELLO_SQN_WINDOW)) {
@@ -1362,7 +1362,7 @@ int32_t opt_link_metric(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
 STATIC_FUNC
 int32_t opt_path_metricalgo(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         if (cmd == OPT_REGISTER || cmd == OPT_CHECK || cmd == OPT_APPLY) {
 

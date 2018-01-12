@@ -300,7 +300,7 @@ int create_description_topology(struct tx_frame_iterator *it)
 STATIC_FUNC
 int32_t opt_topology(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
 	static int32_t scheduled_period = MAX_TOPOLOGY_PERIOD;
 

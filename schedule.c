@@ -51,7 +51,7 @@ void change_selects(void)
 
 static void check_selects(void)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         if (changed_readfds) {
 
@@ -117,7 +117,7 @@ static void check_selects(void)
 void task_register(TIME_T timeout, void (* task) (void *), void *data, int32_t tag)
 {
 
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         assertion(-500475, (task_remove(task, data) == FAILURE));
         assertion(-500989, (timeout <= REGISTER_TASK_TIMEOUT_MAX ));
@@ -157,7 +157,7 @@ void task_register(TIME_T timeout, void (* task) (void *), void *data, int32_t t
 
 IDM_T task_remove(void (* task) (void *), void *data)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
 	struct list_node *list_pos, *tmp_pos, *prev_pos = (struct list_node*)&task_list;
         IDM_T ret = FAILURE;
@@ -190,7 +190,7 @@ IDM_T task_remove(void (* task) (void *), void *data)
 
 TIME_T task_next( void )
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct list_node *list_pos, *tmp_pos, *prev_pos;
 
@@ -231,7 +231,7 @@ task_next_again:
 
 void wait4Event(TIME_T timeout)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 	static struct packet_buff pb;
 	
 	TIME_T last_get_time_result = 0;

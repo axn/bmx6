@@ -198,7 +198,7 @@ uint8_t set_hna_to_key(struct net_key *key, struct description_msg_hna4 *uhna4, 
 STATIC_FUNC
 int _create_tlv_hna(uint8_t* data, uint16_t max_size, uint16_t pos, struct net_key *net, uint8_t flags)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         int i;
         uint16_t msg_size = net->af == AF_INET ? sizeof (struct description_msg_hna4) : sizeof (struct description_msg_hna6);
 
@@ -310,7 +310,7 @@ IFNAME_T tun_out_get_free_name(char *typename, char *postname)
 STATIC_FUNC
 IDM_T configure_tunnel_in(uint8_t del, struct tun_in_node *tin, int16_t tun6Id)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-501523, IMPLIES(!del, is_ip_set(&tin->remote)));
         assertion(-501341, IMPLIES(!del, (is_ip_set(&self->primary_ip))));
         assertion(-501311, IMPLIES(tin->upIfIdx, tin->nameKey.str[0]));
@@ -391,7 +391,7 @@ void reconfigure_tun_ins(void)
 STATIC_FUNC
 int create_description_tlv_hna(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-500765, (it->frame_type == BMX_DSC_TLV_UHNA4 || it->frame_type == BMX_DSC_TLV_UHNA6));
 
         uint8_t *data = tx_iterator_cache_msg_ptr(it);
@@ -441,7 +441,7 @@ int create_description_tlv_hna(struct tx_frame_iterator *it)
 STATIC_FUNC
 void configure_hna(IDM_T del, struct net_key* key, struct orig_node *on, uint8_t flags)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct hna_node *un = avl_find_item( &global_uhna_tree, key );
 
         assertion(-500589, (on));
@@ -534,7 +534,7 @@ static uint32_t hna_net_key_elements = 0;
 STATIC_FUNC
 int process_description_tlv_hna(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         ASSERTION(-500357, (it->frame_type == BMX_DSC_TLV_UHNA4 || it->frame_type == BMX_DSC_TLV_UHNA6));
         assertion(-500588, (it->on));
 
@@ -681,7 +681,7 @@ int process_description_tlv_hna(struct rx_frame_iterator *it)
 STATIC_FUNC
 int32_t opt_uhna(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
 	if ( cmd == OPT_ADJUST  ||  cmd == OPT_CHECK  ||  cmd == OPT_APPLY ) {
 
@@ -761,7 +761,7 @@ struct tun_packet
 STATIC_FUNC
 void tun_out_state_set(struct tun_out_node *ton, IDM_T tdn_state)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         assertion(-500204, (ton));
 	assertion(-501452, (tdn_state==TDN_STATE_CATCHALL || tdn_state==TDN_STATE_DEDICATED));
@@ -817,7 +817,7 @@ void tun_out_catchAll_hook(int fd)
 {
 	// pick catched packet,  open dedicated tunnel, reroute all related active tun_bit_nodes via dedicated tunnel, and retransmit catched packet
 
-	TRACE_FUNCTION_CALL;
+	TRACE_func_CALL;
 	dbgf_track(DBGT_INFO, "fd=%d",fd);
 
 	static struct tun_packet tp;
@@ -967,7 +967,7 @@ void tun_out_catchAll_hook(int fd)
 STATIC_FUNC
 struct tun_dev_node * tun_dev_out_del(struct tun_bit_node *tbn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
 	struct tun_search_node *tsn = tbn->tunBitKey.keyNodes.tsn;
 	struct tun_net_node *tnn = tbn->tunBitKey.keyNodes.tnn;
@@ -1109,7 +1109,7 @@ struct tun_in_node *find_matching_tun_in_node(IDM_T isv4, struct tun_search_node
 STATIC_FUNC
 struct tun_dev_node *tun_dev_out_add(struct tun_bit_node *tbn, IDM_T tdn_state)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
 	struct tun_search_node *tsn = tbn->tunBitKey.keyNodes.tsn;
 	struct tun_net_node *tnn = tbn->tunBitKey.keyNodes.tnn;
@@ -1253,7 +1253,7 @@ struct tun_dev_node *tun_dev_out_add(struct tun_bit_node *tbn, IDM_T tdn_state)
 STATIC_FUNC
 IDM_T configure_tunnel_out(uint8_t del, struct tun_out_node *ton)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         assertion(-501525, (is_ip_set(&ton->localIp)));
         assertion(-501235, (ton->tunOutKey.on));
         assertion(-501321, (ton->tunOutKey.on != self));
@@ -1309,7 +1309,7 @@ IDM_T configure_tunnel_out(uint8_t del, struct tun_out_node *ton)
 STATIC_FUNC
 void configure_tun_bit(uint8_t del, struct tun_bit_node *tbn, IDM_T tdn_state)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
 	struct tun_search_node *tsn = tbn->tunBitKey.keyNodes.tsn;
 	struct tun_net_node *tnn = tbn->tunBitKey.keyNodes.tnn;
@@ -1367,7 +1367,7 @@ void configure_tun_bit(uint8_t del, struct tun_bit_node *tbn, IDM_T tdn_state)
 STATIC_FUNC
 void _add_tun_bit_node(struct tun_search_node *tsna, struct tun_net_node *tnna)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct tun_bit_key_nodes tbkn;
         struct avl_node *itsn = NULL;
@@ -1461,7 +1461,7 @@ void _add_tun_bit_node(struct tun_search_node *tsna, struct tun_net_node *tnna)
 STATIC_FUNC
 void _del_tun_bit_node(struct tun_search_node *tsn, struct tun_net_node *tnn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct tun_bit_node *tbn;
         struct avl_tree *tbt = (tsn ? &tsn->tun_bit_tree : (tnn ? &tnn->tun_bit_tree : &tun_bit_tree));
@@ -1496,7 +1496,7 @@ void upd_tun_bit_node(uint8_t del, struct tun_search_node *tsn, struct tun_net_n
 STATIC_FUNC
 IDM_T _recalc_tun_bit_tree(void)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
 	IDM_T changedOrder = NO;
         struct tun_bit_node *tbn_curr;
@@ -1556,7 +1556,7 @@ IDM_T _recalc_tun_bit_tree(void)
 STATIC_FUNC
 void eval_tun_bit_tree(void  *onlyIfOrderChanged)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         task_remove((void(*)(void*))eval_tun_bit_tree, ((void*)1));
 
@@ -1706,7 +1706,7 @@ void eval_tun_bit_tree(void  *onlyIfOrderChanged)
 STATIC_FUNC
 int create_description_tlv_tun6_adv(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         uint16_t m = 0;
         struct tun_in_node *tin;
         struct avl_node *an = NULL;
@@ -1751,7 +1751,7 @@ struct tun_out_key set_tun_adv_key(struct orig_node *on, int16_t tun6Id)
 STATIC_FUNC
 IDM_T terminate_tun_out(struct orig_node *on, struct tun_out_node *tona, struct tun_net_node *tnna )
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         IDM_T used = NO;
 
         struct tun_out_node *ton;
@@ -1818,7 +1818,7 @@ static uint8_t new_tun6_advs_changed;
 STATIC_FUNC
 int process_description_tlv_tun6_adv(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         int16_t m;
 
 
@@ -1938,7 +1938,7 @@ int process_description_tlv_tun6_adv(struct rx_frame_iterator *it)
 STATIC_FUNC
 int create_description_tlv_tunXin6_ingress_adv(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct tun_in_node *tin;
         struct avl_node *an = NULL;
         uint8_t isSrc4in6 = (it->frame_type == BMX_DSC_TLV_TUN4IN6_INGRESS_ADV);
@@ -1975,7 +1975,7 @@ int create_description_tlv_tunXin6_ingress_adv(struct tx_frame_iterator *it)
 STATIC_FUNC
 int process_description_tlv_tunXin6_ingress_adv(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         uint8_t isSrc4 = (it->frame_type == BMX_DSC_TLV_TUN4IN6_INGRESS_ADV);
         uint16_t pos;
 
@@ -2016,7 +2016,7 @@ int process_description_tlv_tunXin6_ingress_adv(struct rx_frame_iterator *it)
 STATIC_FUNC
 int create_description_tlv_tunXin6_src_adv(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         return TLV_TX_DATA_IGNORED;
 }
 
@@ -2024,7 +2024,7 @@ int create_description_tlv_tunXin6_src_adv(struct tx_frame_iterator *it)
 STATIC_FUNC
 int process_description_tlv_tunXin6_src_adv(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         return it->frame_msgs_length;
 }
 
@@ -2060,7 +2060,7 @@ struct tun_in_node * set_tun6Id(char *tun_name, struct description_msg_tun6in6_n
 STATIC_FUNC
 uint16_t create_description_tlv_tunXin6_net_adv_msg(struct tx_frame_iterator *it, struct description_msg_tun6in6_net_adv *adv, uint16_t m, char *tun_name)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         IDM_T is4in6 = (it->frame_type == BMX_DSC_TLV_TUN4IN6_NET_ADV) ? YES : NO;
         struct tun_in_node *tun = set_tun6Id(tun_name, adv);
@@ -2102,7 +2102,7 @@ uint16_t create_description_tlv_tunXin6_net_adv_msg(struct tx_frame_iterator *it
 STATIC_FUNC
 int create_description_tlv_tunXin6_net_adv(struct tx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         IDM_T is4in6 = (it->frame_type == BMX_DSC_TLV_TUN4IN6_NET_ADV) ? YES : NO;
 	uint8_t af = is4in6 ? AF_INET : AF_INET6;
 	uint16_t m = 0, should = 0;
@@ -2209,7 +2209,7 @@ int create_description_tlv_tunXin6_net_adv(struct tx_frame_iterator *it)
 STATIC_FUNC
 int process_description_tlv_tunXin6_net_adv(struct rx_frame_iterator *it)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         uint8_t family = it->frame_type == BMX_DSC_TLV_TUN4IN6_NET_ADV ? AF_INET : AF_INET6;
         uint16_t msg_size = it->handl->min_msg_size;
         uint16_t pos=0, cnt=0;
@@ -2536,7 +2536,7 @@ static int32_t tun_out_status_creator(struct status_handl *handl, void *data)
 STATIC_FUNC
 int32_t opt_tun_in(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         dbgf_all(DBGT_INFO, "diff=%d cmd=%s  save=%d  opt=%s  patch=%s",
                    patch?patch->diff:-1, opt_cmd2str[cmd], _save, opt->name, patch?patch->val:NULL);
@@ -2607,7 +2607,7 @@ int32_t opt_tun_in(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_
 STATIC_FUNC
 int32_t opt_tun_search(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct tun_search_node *tsn = NULL;
 
         if (cmd == OPT_ADJUST || cmd == OPT_CHECK || cmd == OPT_APPLY) {
@@ -2943,7 +2943,7 @@ void purge_tunCatchTree(void )
 STATIC_FUNC
 int32_t opt_tun_in_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct tun_in_node *tin = NULL;
 
 	if ( cmd == OPT_ADJUST  ||  cmd == OPT_CHECK  ||  cmd == OPT_APPLY ) {
@@ -3114,7 +3114,7 @@ int32_t opt_tun_in_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 STATIC_FUNC
 int32_t opt_tun_name_prefix(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         if (cmd == OPT_CHECK) {
 
                 if (strlen(patch->val) > MAX_TUN_NAME_PREFIX_LEN ||
@@ -3152,7 +3152,7 @@ int32_t opt_tun_name_prefix(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 STATIC_FUNC
 int32_t opt_tun_state_dedicated_to(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	TRACE_FUNCTION_CALL;
+	TRACE_func_CALL;
 
         if ( cmd == OPT_APPLY ) {
 
@@ -3204,7 +3204,7 @@ int32_t opt_tun_state_dedicated_to(uint8_t cmd, uint8_t _save, struct opt_type *
 STATIC_FUNC
 int32_t opt_tun_out_mtu(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	TRACE_FUNCTION_CALL;
+	TRACE_func_CALL;
 
         if ( cmd == OPT_APPLY ) {
 
@@ -3230,7 +3230,7 @@ int32_t opt_tun_out_mtu(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
 STATIC_FUNC
 int32_t opt_tun_address(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	TRACE_FUNCTION_CALL;
+	TRACE_func_CALL;
 
         struct net_key net = !strcmp(opt->name, ARG_TUN4_ADDRESS) ? ZERO_NET4_KEY : ZERO_NET6_KEY;
 	struct hna_node *hna;
@@ -3459,7 +3459,7 @@ struct opt_type hna_options[]= {
 STATIC_FUNC
 void hna_route_change_hook(uint8_t del, struct orig_node *on)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         dbgf_all(DBGT_INFO, "global_id=%s", globalIdAsString(&on->global_id));
 
@@ -3476,7 +3476,7 @@ void hna_route_change_hook(uint8_t del, struct orig_node *on)
 STATIC_FUNC
 void hna_dev_event_hook(int32_t cb_id, void* unused)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         struct tun_in_node *tun;
         struct avl_node *an = NULL;
@@ -3508,7 +3508,7 @@ void hna_dev_event_hook(int32_t cb_id, void* unused)
 STATIC_FUNC
 void hna_cleanup( void )
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         task_remove((void(*)(void*))eval_tun_bit_tree, ((void*)1));
 
@@ -3530,7 +3530,7 @@ void hna_cleanup( void )
 STATIC_FUNC
 int32_t hna_init( void )
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         assertion(-501335, is_zero((void*) &ZERO_TUN_NET_KEY, sizeof (ZERO_TUN_NET_KEY)));
         //assertion(-501327, tun_search_net_tree.key_size == sizeof (struct tun_search_key));

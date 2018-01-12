@@ -162,7 +162,7 @@ int32_t sync_redist_routes(IDM_T cleanup, IDM_T resync);
 
 static void recv_rtevent_netlink_sk(int sk)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 //	char buf[4096]; //test this with a very small value !!
 //	struct sockaddr_nl sa;
 //	struct iovec iov = {.iov_base = buf, .iov_len = sizeof(buf)};
@@ -242,7 +242,7 @@ int32_t sync_redist_routes(IDM_T cleanup, IDM_T resync)
 STATIC_FUNC
 int32_t opt_redistribute(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         static uint8_t changed = NO;
 	static uint8_t initialized = NO;
 

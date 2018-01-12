@@ -198,12 +198,12 @@ void zdata_parse_route(struct zdata *zd)
 
         if (tmp) {
                 tmp->cnt += (zd->cmd == ZEBRA_IPV4_ROUTE_ADD || zd->cmd == ZEBRA_IPV6_ROUTE_ADD) ? (+1) : (-1);
-                redist_dbg(DBGL_CHANGES, DBGT_INFO, __FUNCTION__, tmp, zapi_rt_dict, zebraCmd2Str[zd->cmd], "OLD");
+                redist_dbg(DBGL_CHANGES, DBGT_INFO, __func__, tmp, zapi_rt_dict, zebraCmd2Str[zd->cmd], "OLD");
         } else {
                 tmp = debugMallocReset(sizeof (zrn), -300472);
                 *tmp = zrn;
                 tmp->cnt += 1;
-                redist_dbg(DBGL_CHANGES, DBGT_INFO, __FUNCTION__, tmp, zapi_rt_dict, zebraCmd2Str[zd->cmd], "NEW");
+                redist_dbg(DBGL_CHANGES, DBGT_INFO, __func__, tmp, zapi_rt_dict, zebraCmd2Str[zd->cmd], "NEW");
                 assertion(-501406, (zd->cmd == ZEBRA_IPV4_ROUTE_ADD || zd->cmd == ZEBRA_IPV6_ROUTE_ADD));
                 avl_insert(&zroute_tree, tmp, -300473);
         }
@@ -247,7 +247,7 @@ void zdata_parse(void)
                 while ((zrn = avl_next_item(&zroute_tree, &zri.k))) {
                         zri = *zrn;
 
-//                        zroute_dbg(DBGL_CHANGES, DBGT_INFO, __FUNCTION__, zrn, "", "");
+//                        zroute_dbg(DBGL_CHANGES, DBGT_INFO, __func__, zrn, "", "");
 
                         if (zrn->old != zrn->cnt)
                                 changed_routes = YES;
@@ -783,7 +783,7 @@ int32_t opt_zsock_path(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 STATIC_FUNC
 int32_t opt_redistribute(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct redistr_opt_node *rdn = NULL;
         static uint8_t changed = NO;
 

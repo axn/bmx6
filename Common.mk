@@ -21,7 +21,7 @@ CFLAGS += -pedantic -Wall -W -Wno-unused-parameter -Os -g3 -std=gnu99 -DGIT_REV=
 # CFLAGS += -DNO_DEBUG_SYS
 # CFLAGS += -DLESS_OPTIONS
 # CFLAGS += -DNO_DYN_PLUGIN
-# CFLAGS += -DNO_TRACE_FUNCTION_CALLS
+# CFLAGS += -DNO_TRACE_func_CALLS
 
 # CFLAGS += -DDEBUG_ALL
 # CFLAGS += -DTRAFFIC_DUMP
@@ -44,7 +44,7 @@ CFLAGS += -DDEBUG_MALLOC
 #EXTRA_CFLAGS="-DPROFILING -pg"
 
 #for very poor embedded stuff (reducing binary size and cpu footprint):
-#EXTRA_CFLAGS="-DNO_DEBUG_TRACK -DNO_TRACE_FUNCTION_CALLS -DNO_ASSERTIONS"
+#EXTRA_CFLAGS="-DNO_DEBUG_TRACK -DNO_TRACE_func_CALLS -DNO_ASSERTIONS"
 
 #for small embedded stuff the defaults are just fine.
 

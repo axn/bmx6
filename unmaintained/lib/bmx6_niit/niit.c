@@ -55,7 +55,7 @@ static IPX_T niitPrefix96 = DEF_NIIT_PREFIX;
 STATIC_FUNC
 void niit_description_event_hook(int32_t cb_id, struct orig_node *on)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         if (on != self)
                 return;
@@ -79,7 +79,7 @@ void niit_description_event_hook(int32_t cb_id, struct orig_node *on)
 STATIC_FUNC
 void niit_dev_event_hook(int32_t cb_id, void* unused)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct avl_node *an = NULL;
         struct if_link_node *iln = NULL;
         struct if_link_node *iln_4to6 = NULL;
@@ -171,7 +171,7 @@ void niit_dev_event_hook(int32_t cb_id, void* unused)
 STATIC_FUNC
 IDM_T configure_niit4to6(IDM_T del, struct net_key *key)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         if (!niit4to6_idx || !niit4_address.mask || AF_CFG != AF_INET6 || key->mask < 96 ||
                 !is_ip_net_equal(&key->ip, &niitPrefix96, 96, AF_INET6))
@@ -198,7 +198,7 @@ IDM_T configure_niit4to6(IDM_T del, struct net_key *key)
 STATIC_FUNC
 IDM_T configure_niit6to4(IDM_T del, struct net_key *key)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         if (!niit6to4_idx || !niit4_address.mask || AF_CFG != AF_INET6 || key->mask < 96 ||
                 !is_ip_net_equal(&key->ip, &niitPrefix96, 96, AF_INET6))
@@ -236,7 +236,7 @@ struct net_key netX4ToNiit6(struct net_key *net)
 STATIC_FUNC
 int32_t opt_niit4_address(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	TRACE_FUNCTION_CALL;
+	TRACE_func_CALL;
 
         struct net_key net = ZERO_NET_KEY;
         net.af = AF_INET;
@@ -321,7 +321,7 @@ struct opt_type niit_options[]= {
 STATIC_FUNC
 void niit_cleanup( void )
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         //set_route_change_hooks(hna_route_change_hook, DEL);
 }
 
@@ -329,7 +329,7 @@ void niit_cleanup( void )
 STATIC_FUNC
 int32_t niit_init( void )
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
 
         hna_configure_niit4to6 = configure_niit4to6;
         hna_configure_niit6to4 = configure_niit6to4;

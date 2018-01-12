@@ -301,11 +301,11 @@ IDM_T redistribute_routes(struct avl_tree *redist_out_tree, struct avl_tree *red
                                 *(routn = debugMalloc(sizeof (routf), -300505)) = routf;
                                 avl_insert(redist_out_tree, routn, -300506);
                                 if ( __dbgf_track() ) {
-                                        redist_dbg(DBGL_CHANGES, DBGT_INFO, __FUNCTION__, rin, rt_dict, "parsing", "adding");
+                                        redist_dbg(DBGL_CHANGES, DBGT_INFO, __func__, rin, rt_dict, "parsing", "adding");
                                 }
                         } else {
                                 if ( __dbgf_track() ) {
-                                        redist_dbg(DBGL_CHANGES, DBGT_INFO, __FUNCTION__, rin, rt_dict, "parsing", "reusing");
+                                        redist_dbg(DBGL_CHANGES, DBGT_INFO, __func__, rin, rt_dict, "parsing", "reusing");
                                 }
                         }
 
@@ -349,7 +349,7 @@ IDM_T redistribute_routes(struct avl_tree *redist_out_tree, struct avl_tree *red
 
 int32_t opt_redist(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn, struct avl_tree *redist_opt_tree, uint8_t *changed)
 {
-        TRACE_FUNCTION_CALL;
+        TRACE_func_CALL;
         struct redistr_opt_node *ron = NULL;
 
         if (cmd == OPT_ADJUST || cmd == OPT_CHECK || cmd == OPT_APPLY) {

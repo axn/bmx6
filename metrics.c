@@ -99,7 +99,7 @@ FMETRIC_U16_T fmetric(uint8_t mantissa, uint8_t exp)
 
 UMETRIC_T umetric(uint8_t mantissa, uint8_t exp)
 {
-	return fmetric_to_umetric(fmetric(mantissa, exp));
+    return fmetric_to_umetric(fmetric(mantissa, exp));
 }
 
 
@@ -151,7 +151,7 @@ IDM_T fmetric_cmp(FMETRIC_U16_T a, unsigned char cmp, FMETRIC_U16_T b)
 
 UMETRIC_T fmetric_to_umetric(FMETRIC_U16_T fm)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         assertion(-500680, (is_fmetric_valid(fm)));
 
@@ -164,7 +164,7 @@ UMETRIC_T fmetric_to_umetric(FMETRIC_U16_T fm)
 FMETRIC_U16_T umetric_to_fmetric(UMETRIC_T val)
 {
 
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         FMETRIC_U16_T fm = {.val.u16 = 0};
 
@@ -286,15 +286,15 @@ FMETRIC_U16_T fmetric_substract_min(FMETRIC_U16_T f)
 {
 
         if (f.val.f.mantissa_fm16) {
-                
+
                 f.val.f.mantissa_fm16--;
 
         } else if (f.val.f.exp_fm16) {
-                
+
                 f.val.f.mantissa_fm16 = OGM_MANTISSA_MASK;
                 f.val.f.exp_fm16--;
         }
-        
+
         return f;
 }
 
@@ -397,7 +397,7 @@ void path_metricalgo_VectorBandwidth(UMETRIC_T *path, UMETRIC_T *linkMax, UMETRI
         UMETRIC_T path_out = UMETRIC_MIN__NOT_ROUTABLE;
 
         UMETRIC_T linkBandwidth = umetric_multiply_normalized(*linkMax, linkQuality);
-        
+
         UMETRIC_T maxPrecisionScaler = XMIN(*path, linkBandwidth) * U64_MAX_HALF_SQRT;
 
 
@@ -415,7 +415,7 @@ void path_metricalgo_VectorBandwidth(UMETRIC_T *path, UMETRIC_T *linkMax, UMETRI
                 "pb=%-12ju max_extension=%-19ju (me/pb)^2=%-19ju lp=%-12ju link=%-12ju lb=%-12ju (me/lb)^2=%-19ju ufs=%-12ju UMETRIC_MIN=%ju -> path_out=%ju",
                 *path, maxPrecisionScaler, inverseSquaredPathBandwidth, linkQuality, *linkMax,
                 linkBandwidth, inverseSquaredLinkQuality, rootOfSum, UMETRIC_MIN__NOT_ROUTABLE, path_out);
-        
+
        *path = path_out;
 }
 
@@ -431,7 +431,7 @@ void register_path_metricalgo(uint8_t algo_type_bit, void (*algo) (UMETRIC_T *pa
 
 UMETRIC_T apply_metric_algo(UMETRIC_T *linkQuality, UMETRIC_T *linkMax, const UMETRIC_T *path, struct host_metricalgo *algo)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         assertion(-501037, ((*path & ~UMETRIC_MASK) == 0));
         assertion(-501038, (*path <= UMETRIC_MAX));
@@ -499,7 +499,7 @@ UMETRIC_T apply_metric_algo(UMETRIC_T *linkQuality, UMETRIC_T *linkMax, const UM
 STATIC_FUNC
 UMETRIC_T apply_lndev_metric_algo(struct link_dev_node *lndev, const UMETRIC_T *path, struct host_metricalgo *algo)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         assertion(-500823, (lndev->key.dev->umetric_max));
 
@@ -516,7 +516,7 @@ STATIC_FUNC
 void _reconfigure_metric_record_position(const char *f, struct metric_record *rec, struct host_metricalgo *alg,
         SQN_T min, SQN_T in, uint8_t sqn_bit_size, uint8_t reset)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         assertion(-500737, (XOR(sqn_bit_size, rec->sqn_bit_mask)));
 
         if (sqn_bit_size)
@@ -550,9 +550,9 @@ void _reconfigure_metric_record_position(const char *f, struct metric_record *re
 STATIC_FUNC
 IDM_T update_metric_record(struct orig_node *on, struct router_node *rt, SQN_T in, const UMETRIC_T *probe)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         char *scenario = NULL;
-        
+
         struct metric_record *rec = &rt->mr;
         struct host_metricalgo *alg = on->path_metricalgo;
         SQN_T range = on->ogmSqn_rangeSize;
@@ -750,7 +750,7 @@ UMETRIC_T timeaware_tx_probe(struct link_dev_node *lndev)
 
 void lndev_assign_best(struct local_node *only_local, struct link_dev_node *only_lndev )
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         assertion(-501133, (IMPLIES(only_lndev, only_local && only_local == only_lndev->key.link->local)));
         ASSERTION(-500792, (IMPLIES(only_lndev, only_lndev->key.link == avl_find_item(&only_local->link_tree, &only_lndev->key.link->key.dev_idx))));
@@ -833,7 +833,7 @@ void lndev_assign_best(struct local_node *only_local, struct link_dev_node *only
 void update_link_probe_record(struct link_dev_node *lndev, HELLO_SQN_T sqn, uint8_t probe)
 {
 
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         struct link_node *link = lndev->key.link;
         struct lndev_probe_record *lpr = &lndev->rx_probe_record;
 
@@ -858,7 +858,7 @@ void update_link_probe_record(struct link_dev_node *lndev, HELLO_SQN_T sqn, uint
                 lpr->hello_sum = probe;
                 dbgf_all(DBGT_INFO, "probe=%d probe_sum=%d %d",
                         probe, lpr->hello_sum, bits_get(lpr->hello_array, MAX_HELLO_SQN_WINDOW, 0, MAX_HELLO_SQN_WINDOW - 1));
-                
+
                 ASSERTION(-501058, (bits_get(lpr->hello_array, MAX_HELLO_SQN_WINDOW, 0, MAX_HELLO_SQN_WINDOW - 1) == lpr->hello_sum));
 
         } else {
@@ -877,7 +877,7 @@ void update_link_probe_record(struct link_dev_node *lndev, HELLO_SQN_T sqn, uint
                                 prev_sqn_min,lpr->hello_sqn_max, new_sqn_min_minus_one+1, sqn, lpr->hello_sum,
                                 bits_get(lpr->hello_array, MAX_HELLO_SQN_WINDOW, 0, MAX_HELLO_SQN_WINDOW - 1),
                                 bits_print(lpr->hello_array, MAX_HELLO_SQN_WINDOW, 0, MAX_HELLO_SQN_WINDOW - 1));
-                        
+
                         bits_clear(lpr->hello_array, MAX_HELLO_SQN_WINDOW, prev_sqn_min, new_sqn_min_minus_one, HELLO_SQN_MASK);
 
                         dbgf_all(DBGT_INFO, "prev_min=%5d prev_max=%d new_min=%5d sqn=%5d sum=%3d bits=%3d %s\n",
@@ -893,7 +893,7 @@ void update_link_probe_record(struct link_dev_node *lndev, HELLO_SQN_T sqn, uint
                         bit_set(lpr->hello_array, MAX_HELLO_SQN_WINDOW, sqn, 1);
                         lpr->hello_sum++;
                 }
-                
+
                 ASSERTION(-501056, (bits_get(lpr->hello_array, MAX_HELLO_SQN_WINDOW, 0, MAX_HELLO_SQN_WINDOW - 1) == lpr->hello_sum));
         }
 
@@ -965,7 +965,7 @@ UMETRIC_T lndev_best_via_router(struct local_node *local, struct orig_node *on, 
 
 IDM_T update_path_metrics(struct packet_buff *pb, struct orig_node *on, OGM_SQN_T ogm_sqn, UMETRIC_T *ogm_metric)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         assertion(-500876, (!on->blocked));
         assertion(-500734, (on->path_metricalgo));
         assertion(-501052, ((((OGM_SQN_MASK)&(ogm_sqn - on->ogmSqn_rangeMin)) < on->ogmSqn_rangeSize)));
@@ -1114,7 +1114,7 @@ IDM_T update_path_metrics(struct packet_buff *pb, struct orig_node *on, OGM_SQN_
 STATIC_FUNC
 IDM_T validate_metricalgo(struct host_metricalgo *ma, struct ctrl_node *cn)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         if (
                 validate_param((ma->algo_type), MIN_METRIC_ALGO, MAX_METRIC_ALGO, ARG_PATH_METRIC_ALGO) ||
@@ -1148,7 +1148,7 @@ IDM_T validate_metricalgo(struct host_metricalgo *ma, struct ctrl_node *cn)
 STATIC_FUNC
 IDM_T metricalgo_tlv_to_host(struct description_tlv_metricalgo *tlv_algo, struct host_metricalgo *host_algo, uint16_t size)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         memset(host_algo, 0, sizeof (struct host_metricalgo));
 
         if (size < sizeof (struct mandatory_tlv_metricalgo))
@@ -1156,7 +1156,7 @@ IDM_T metricalgo_tlv_to_host(struct description_tlv_metricalgo *tlv_algo, struct
 
         host_algo->fmetric_u16_min.val.u16 = ntohs(tlv_algo->m.fmetric_u16_min.val.u16);
         host_algo->umetric_min = fmetric_to_umetric(host_algo->fmetric_u16_min);
-	host_algo->algo_type = ntohs(tlv_algo->m.algo_type);
+    host_algo->algo_type = ntohs(tlv_algo->m.algo_type);
         host_algo->flags = ntohs(tlv_algo->m.flags);
         host_algo->algo_rp_exp_numerator = tlv_algo->m.rp_exp_numerator;
         host_algo->algo_rp_exp_divisor = tlv_algo->m.rp_exp_divisor;
@@ -1166,8 +1166,8 @@ IDM_T metricalgo_tlv_to_host(struct description_tlv_metricalgo *tlv_algo, struct
         host_algo->lounge_size = tlv_algo->m.path_lounge_size;
         host_algo->regression = tlv_algo->m.regression;
         host_algo->hystere = tlv_algo->m.hystere;
-	host_algo->hop_penalty = tlv_algo->m.hop_penalty;
-	host_algo->late_penalty = tlv_algo->m.late_penalty;
+    host_algo->hop_penalty = tlv_algo->m.hop_penalty;
+    host_algo->late_penalty = tlv_algo->m.late_penalty;
 
         if (validate_metricalgo(host_algo, NULL) == FAILURE)
                 return FAILURE;
@@ -1188,7 +1188,7 @@ struct host_metricalgo my_hostmetricalgo;
 STATIC_FUNC
 int create_description_tlv_metricalgo(struct tx_frame_iterator *it)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         struct description_tlv_metricalgo tlv_algo;
 
         dbgf_track(DBGT_INFO, " size %zu", sizeof (struct description_tlv_metricalgo));
@@ -1224,8 +1224,8 @@ int create_description_tlv_metricalgo(struct tx_frame_iterator *it)
                 cleanup_all(-500844);
 
 
-	if (!descMetricalgo)
-		return TLV_TX_DATA_IGNORED;
+    if (!descMetricalgo)
+        return TLV_TX_DATA_IGNORED;
 
 
         if (tx_iterator_cache_data_space_pref(it) < ((int) sizeof (struct description_tlv_metricalgo))) {
@@ -1243,47 +1243,47 @@ int create_description_tlv_metricalgo(struct tx_frame_iterator *it)
 
 void metricalgo_remove(struct orig_node *on)
 {
-	if (on->path_metricalgo) {
-		debugFree(on->path_metricalgo, -300285);
-		on->path_metricalgo = NULL;
-	}
+    if (on->path_metricalgo) {
+        debugFree(on->path_metricalgo, -300285);
+        on->path_metricalgo = NULL;
+    }
 
-	if (on->metricSqnMaxArr) {
-		debugFree(on->metricSqnMaxArr, -300307);
-		on->metricSqnMaxArr = NULL;
-	}
+    if (on->metricSqnMaxArr) {
+        debugFree(on->metricSqnMaxArr, -300307);
+        on->metricSqnMaxArr = NULL;
+    }
 }
 
 void metricalgo_assign(struct orig_node *on, struct host_metricalgo *host_algo)
 {
 
-	metricalgo_remove(on);
+    metricalgo_remove(on);
 
-	assertion(-500684, (!on->path_metricalgo));
-	assertion(-501522, (!on->metricSqnMaxArr));
+    assertion(-500684, (!on->path_metricalgo));
+    assertion(-501522, (!on->metricSqnMaxArr));
 
-	if (!host_algo)
-		host_algo = &my_hostmetricalgo;
+    if (!host_algo)
+        host_algo = &my_hostmetricalgo;
 
-	on->path_metricalgo = debugMalloc(sizeof (struct host_metricalgo), -300286);
-	memcpy(on->path_metricalgo, host_algo, sizeof (struct host_metricalgo));
+    on->path_metricalgo = debugMalloc(sizeof (struct host_metricalgo), -300286);
+    memcpy(on->path_metricalgo, host_algo, sizeof (struct host_metricalgo));
 
-	on->metricSqnMaxArr = debugMalloc(((on->path_metricalgo->lounge_size + 1) * sizeof (UMETRIC_T)), -300308);
-	memset(on->metricSqnMaxArr, 0, ((on->path_metricalgo->lounge_size + 1) * sizeof (UMETRIC_T)));
+    on->metricSqnMaxArr = debugMalloc(((on->path_metricalgo->lounge_size + 1) * sizeof (UMETRIC_T)), -300308);
+    memset(on->metricSqnMaxArr, 0, ((on->path_metricalgo->lounge_size + 1) * sizeof (UMETRIC_T)));
 
-	// migrate current router_nodes->mr.clr position to new sqn_range:
-	struct router_node *rn;
-	struct avl_node *an = NULL;
+    // migrate current router_nodes->mr.clr position to new sqn_range:
+    struct router_node *rn;
+    struct avl_node *an = NULL;
 
-	while ((rn = avl_iterate_item(&on->rt_tree, &an)))
-		reconfigure_metric_record_position(&rn->mr, on->path_metricalgo, on->ogmSqn_rangeMin, on->ogmSqn_rangeMin, 0, NO);
+    while ((rn = avl_iterate_item(&on->rt_tree, &an)))
+        reconfigure_metric_record_position(&rn->mr, on->path_metricalgo, on->ogmSqn_rangeMin, on->ogmSqn_rangeMin, 0, NO);
 }
 
 
 STATIC_FUNC
 int process_description_tlv_metricalgo(struct rx_frame_iterator *it )
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         assertion(-500683, (it->frame_type == BMX_DSC_TLV_METRIC));
         assertion(-500684, (it->on));
 
@@ -1302,11 +1302,11 @@ int process_description_tlv_metricalgo(struct rx_frame_iterator *it )
         }
 
         if (op == TLV_OP_DEL)
-		metricalgo_remove(on);
+        metricalgo_remove(on);
 
 
         if (op == TLV_OP_NEW)
-		metricalgo_assign(on, &host_algo);
+        metricalgo_assign(on, &host_algo);
 
         return it->frame_msgs_length;
 }
@@ -1320,7 +1320,7 @@ int process_description_tlv_metricalgo(struct rx_frame_iterator *it )
 STATIC_FUNC
 int32_t opt_link_metric(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         static int32_t my_link_window_prev = DEF_HELLO_SQN_WINDOW;
 
         if (cmd == OPT_APPLY && !strcmp(opt->name, ARG_HELLO_SQN_WINDOW)) {
@@ -1362,7 +1362,7 @@ int32_t opt_link_metric(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
 STATIC_FUNC
 int32_t opt_path_metricalgo(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         if (cmd == OPT_REGISTER || cmd == OPT_CHECK || cmd == OPT_APPLY) {
 
@@ -1446,7 +1446,7 @@ int32_t opt_path_metricalgo(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
         }
 
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 
@@ -1456,12 +1456,12 @@ struct opt_type metrics_options[]=
 //       ord parent long_name             shrt Attributes                            *ival              min                 max                default              *func,*syntax,*help
 
 #ifdef WITH_UNUSED
-	{ODI, 0, ARG_PATH_HYST,   	   0,  5,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&my_path_hystere,MIN_PATH_HYST,	MAX_PATH_HYST,	DEF_PATH_HYST,0, opt_path_metricalgo,
-			ARG_VALUE_FORM,	"use hysteresis to delay route switching to alternative next-hop neighbors with better path metric"}
+    {ODI, 0, ARG_PATH_HYST,        0,  5,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,   &my_path_hystere,MIN_PATH_HYST, MAX_PATH_HYST,  DEF_PATH_HYST,0, opt_path_metricalgo,
+            ARG_VALUE_FORM, "use hysteresis to delay route switching to alternative next-hop neighbors with better path metric"}
         ,
         // there SHOULD! be a minimal lateness_penalty >= 1 ! Otherwise a shorter path with equal path-cost than a longer path will never dominate
-	{ODI, 0, ARG_LATE_PENAL,  	   0,  5,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&my_late_penalty,MIN_LATE_PENAL,MAX_LATE_PENAL, DEF_LATE_PENAL,0, opt_path_metricalgo,
-			ARG_VALUE_FORM,	"penalize non-first rcvd OGMs "}
+    {ODI, 0, ARG_LATE_PENAL,       0,  5,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,   &my_late_penalty,MIN_LATE_PENAL,MAX_LATE_PENAL, DEF_LATE_PENAL,0, opt_path_metricalgo,
+            ARG_VALUE_FORM, "penalize non-first rcvd OGMs "}
         ,
 
 #endif
@@ -1485,26 +1485,26 @@ struct opt_type metrics_options[]=
                 ARG_VALUE_FORM, " "}
         ,
         {ODI, 0, ARG_PATH_WINDOW, 0, 9,1, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &my_path_window, MIN_PATH_WINDOW, MAX_PATH_WINDOW, DEF_PATH_WINDOW,0, opt_path_metricalgo,
-			ARG_VALUE_FORM,	"set path window size (PWS) for end2end path-quality calculation (path metric)"}
+            ARG_VALUE_FORM, "set path window size (PWS) for end2end path-quality calculation (path metric)"}
         ,
         {ODI, 0, ARG_DESC_METRICALGO,0, 9,2, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &descMetricalgo, MIN_DESC_METRICALGO, MAX_DESC_METRICALGO, DEF_DESC_METRICALGO,0, opt_path_metricalgo,
-			ARG_VALUE_FORM,	"enable/disable inclusion of metric algo in node description (other nodes will use their default algo)"}
+            ARG_VALUE_FORM, "enable/disable inclusion of metric algo in node description (other nodes will use their default algo)"}
         ,
 #endif
-	{ODI, 0, ARG_PATH_LOUNGE,          0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&my_path_lounge, MIN_PATH_LOUNGE,MAX_PATH_LOUNGE,DEF_PATH_LOUNGE,0, opt_path_metricalgo,
-			ARG_VALUE_FORM, "set default PLS buffer size to artificially delay my OGM processing for ordered path-quality calulation"}
+    {ODI, 0, ARG_PATH_LOUNGE,          0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,   &my_path_lounge, MIN_PATH_LOUNGE,MAX_PATH_LOUNGE,DEF_PATH_LOUNGE,0, opt_path_metricalgo,
+            ARG_VALUE_FORM, "set default PLS buffer size to artificially delay my OGM processing for ordered path-quality calulation"}
         ,
-	{ODI, 0, ARG_PATH_REGRESSION_SLOW, 0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&my_path_regression,MIN_PATH_REGRESSION_SLOW,MAX_PATH_REGRESSION_SLOW,DEF_PATH_REGRESSION_SLOW,0,opt_path_metricalgo,
-			ARG_VALUE_FORM,	"set (slow) path regression "}
+    {ODI, 0, ARG_PATH_REGRESSION_SLOW, 0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,   &my_path_regression,MIN_PATH_REGRESSION_SLOW,MAX_PATH_REGRESSION_SLOW,DEF_PATH_REGRESSION_SLOW,0,opt_path_metricalgo,
+            ARG_VALUE_FORM, "set (slow) path regression "}
         ,
-	{ODI, 0, ARG_HOP_PENALTY,	   0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&my_hop_penalty, MIN_HOP_PENALTY, MAX_HOP_PENALTY, DEF_HOP_PENALTY,0, opt_path_metricalgo,
-			ARG_VALUE_FORM,	"penalize non-first rcvd OGMs in 1/255 (each hop will substract metric*(VALUE/255) from current path-metric)"}
+    {ODI, 0, ARG_HOP_PENALTY,      0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,   &my_hop_penalty, MIN_HOP_PENALTY, MAX_HOP_PENALTY, DEF_HOP_PENALTY,0, opt_path_metricalgo,
+            ARG_VALUE_FORM, "penalize non-first rcvd OGMs in 1/255 (each hop will substract metric*(VALUE/255) from current path-metric)"}
         ,
-        {ODI,0,ARG_HELLO_SQN_WINDOW,       0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&my_link_window,	MIN_HELLO_SQN_WINDOW, 	MAX_HELLO_SQN_WINDOW,DEF_HELLO_SQN_WINDOW,0,    opt_link_metric,
-			ARG_VALUE_FORM,	"set link window size (LWS) for link-quality calculation (link metric)"}
+        {ODI,0,ARG_HELLO_SQN_WINDOW,       0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,   &my_link_window,    MIN_HELLO_SQN_WINDOW,   MAX_HELLO_SQN_WINDOW,DEF_HELLO_SQN_WINDOW,0,    opt_link_metric,
+            ARG_VALUE_FORM, "set link window size (LWS) for link-quality calculation (link metric)"}
         ,
         {ODI, 0, ARG_NEW_RT_DISMISSAL,     0, 9,1, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &new_rt_dismissal_div100, MIN_NEW_RT_DISMISSAL, MAX_NEW_RT_DISMISSAL, DEF_NEW_RT_DISMISSAL,0, 0,
-			ARG_VALUE_FORM,	HLP_NEW_RT_DISMISSAL}
+            ARG_VALUE_FORM, HLP_NEW_RT_DISMISSAL}
 
 };
 
@@ -1545,7 +1545,7 @@ int32_t init_metrics( void )
         uint32_t c=0;
         uint16_t steps = 8;
 
-        
+
         uint32_t err_sqrt_sum_square = 0;
         uint32_t err_sqrt_sum = 0;
         int32_t err_sqrt_min = 10000;
@@ -1606,7 +1606,7 @@ int32_t init_metrics( void )
         metric_handl.msg_format = metric_format;
         register_frame_handler(description_tlv_handl, BMX_DSC_TLV_METRIC, &metric_handl);
 
-        
+
         register_path_metricalgo(BIT_METRIC_ALGO_MP, path_metricalgo_MultiplyQuality);
         register_path_metricalgo(BIT_METRIC_ALGO_EP, path_metricalgo_ExpectedQuality);
         register_path_metricalgo(BIT_METRIC_ALGO_MB, path_metricalgo_MultiplyBandwidth);
@@ -1635,13 +1635,13 @@ void cleanup_metrics( void )
 
 struct plugin *metrics_get_plugin( void ) {
 
-	static struct plugin metrics_plugin;
-	memset( &metrics_plugin, 0, sizeof ( struct plugin ) );
+    static struct plugin metrics_plugin;
+    memset( &metrics_plugin, 0, sizeof ( struct plugin ) );
 
-	metrics_plugin.plugin_name = CODE_CATEGORY_NAME;
-	metrics_plugin.plugin_size = sizeof ( struct plugin );
+    metrics_plugin.plugin_name = CODE_CATEGORY_NAME;
+    metrics_plugin.plugin_size = sizeof ( struct plugin );
         metrics_plugin.cb_init = init_metrics;
-	metrics_plugin.cb_cleanup = cleanup_metrics;
+    metrics_plugin.cb_cleanup = cleanup_metrics;
 
         return &metrics_plugin;
 }

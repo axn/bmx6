@@ -115,7 +115,7 @@ AVL_TREE(status_tree, struct status_handl, status_name);
 
 void blacklist_neighbor(struct packet_buff *pb)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         dbgf_sys(DBGT_ERR, "%s via %s", pb->i.llip_str, pb->i.iif->label_cfg.str);
 
         EXITERROR(-500697, (0));
@@ -124,7 +124,7 @@ void blacklist_neighbor(struct packet_buff *pb)
 
 IDM_T blacklisted_neighbor(struct packet_buff *pb, struct description_hash *dhash)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         //dbgf_all(DBGT_INFO, "%s via %s", pb->i.neigh_str, pb->i.iif->label_cfg.str);
         return NO;
 }
@@ -175,7 +175,7 @@ struct neigh_node *is_described_neigh( struct link_node *link, IID_T transmitter
 STATIC_FUNC
 struct dhash_node* create_dhash_node(struct description_hash *dhash, struct orig_node *on)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         struct dhash_node * dhn = debugMallocReset(sizeof ( struct dhash_node), -300001);
         memcpy(&dhn->dhash, dhash, HASH_SHA1_LEN);
@@ -195,7 +195,7 @@ struct dhash_node* create_dhash_node(struct description_hash *dhash, struct orig
 STATIC_FUNC
 void purge_dhash_iid(struct dhash_node *dhn)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         struct avl_node *an;
         struct neigh_node *neigh;
 
@@ -210,7 +210,7 @@ void purge_dhash_iid(struct dhash_node *dhn)
 STATIC_FUNC
  void purge_dhash_invalid_list( IDM_T force_purge_all ) {
 
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         struct dhash_node *dhn;
 
         dbgf_all( DBGT_INFO, "%s", force_purge_all ? "force_purge_all" : "only_expired");
@@ -240,7 +240,7 @@ STATIC_FUNC
 STATIC_FUNC
 void free_dhash_node( struct dhash_node *dhn )
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         static uint32_t blocked_counter = 1;
 
         dbgf(terminating ? DBGL_CHANGES : DBGL_SYS, DBGT_INFO,
@@ -268,7 +268,7 @@ void free_dhash_node( struct dhash_node *dhn )
 STATIC_FUNC
 void invalidate_dhash_node( struct dhash_node *dhn )
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         dbgf_track(DBGT_INFO,
                 "dhash %8X myIID4orig %d, my_iid_repository: used=%d, inactive=%d  min_free=%d  max_free=%d ",
@@ -312,7 +312,7 @@ void update_neigh_dhash(struct orig_node *on, struct description_hash *dhash)
 STATIC_FUNC
 void free_neigh_node(struct neigh_node *neigh)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         dbgf_track(DBGT_INFO, "freeing id=%s",
                 neigh && neigh->dhn && neigh->dhn->on ? globalIdAsString(&neigh->dhn->on->global_id) : DBG_NIL);
@@ -339,7 +339,7 @@ void free_neigh_node(struct neigh_node *neigh)
 STATIC_FUNC
 void create_neigh_node(struct local_node *local, struct dhash_node * dhn)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         assertion(-500400, (dhn && !dhn->neigh));
 
         struct neigh_node *neigh = debugMallocReset(sizeof ( struct neigh_node), -300131);
@@ -356,7 +356,7 @@ void create_neigh_node(struct local_node *local, struct dhash_node * dhn)
 
 IDM_T update_local_neigh(struct packet_buff *pb, struct dhash_node *dhn)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         struct local_node *local = pb->i.link->local;
 
         dbgf_all(DBGT_INFO, "local_id=0x%X  dhn->id=%s", local->local_id, globalIdAsString(&dhn->on->desc->globalId));
@@ -447,7 +447,7 @@ update_local_neigh_success:
 STATIC_FUNC
 void purge_orig_router(struct orig_node *only_orig, struct link_dev_node *only_lndev, IDM_T only_useless)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         struct orig_node *on;
         struct avl_node *an = NULL;
         while ((on = only_orig) || (on = avl_iterate_item( &orig_tree, &an))) {
@@ -504,7 +504,7 @@ void purge_orig_router(struct orig_node *only_orig, struct link_dev_node *only_l
 STATIC_FUNC
 void purge_link_node(struct link_node_key *only_link_key, struct dev_node *only_dev, IDM_T only_expired)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         struct link_node *link;
         struct link_node_key link_key_it;
@@ -619,7 +619,7 @@ void purge_link_node(struct link_node_key *only_link_key, struct dev_node *only_
 
 void purge_local_node(struct local_node *local)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         uint16_t link_tree_items = local->link_tree.items;
         struct link_node *link;
@@ -657,7 +657,7 @@ void block_orig_node(IDM_T block, struct orig_node *on)
 
 void free_orig_node(struct orig_node *on)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         dbgf_all(DBGT_INFO, "id=%s ip=%s", globalIdAsString(&on->global_id), on->primary_ip_str);
 
         if ( on == self)
@@ -703,7 +703,7 @@ void free_orig_node(struct orig_node *on)
 
 void purge_link_route_orig_nodes(struct dev_node *only_dev, IDM_T only_expired)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         dbgf_all( DBGT_INFO, "%s %s only expired",
                 only_dev ? only_dev->label_cfg.str : DBG_NIL, only_expired ? " " : "NOT");
@@ -790,7 +790,7 @@ LOCAL_ID_T new_local_id(struct dev_node *dev)
 STATIC_FUNC
 struct link_node *get_link_node(struct packet_buff *pb)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         struct link_node *link;
         dbgf_all(DBGT_INFO, "NB=%s, local_id=%X dev_idx=0x%X",
                 pb->i.llip_str, ntohl(pb->i.link_key.local_id), pb->i.link_key.dev_idx);
@@ -924,7 +924,7 @@ struct link_node *get_link_node(struct packet_buff *pb)
 STATIC_FUNC
 struct link_dev_node *get_link_dev_node(struct packet_buff *pb)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         assertion(-500607, (pb->i.iif));
 
@@ -979,7 +979,7 @@ struct link_dev_node *get_link_dev_node(struct packet_buff *pb)
 
 void rx_packet( struct packet_buff *pb )
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         struct dev_node *iif = pb->i.iif;
 
@@ -1122,15 +1122,15 @@ process_packet_error:
 ************************************************************/
 
 
-#ifndef NO_TRACE_func_CALLS
-static char* function_call_buffer_name_array[func_CALL_BUFFER_SIZE] = {0};
-static TIME_T function_call_buffer_time_array[func_CALL_BUFFER_SIZE] = {0};
+#ifndef NO_TRACE_FUNCTION_CALLS
+static char* function_call_buffer_name_array[FUNCTION_CALL_BUFFER_SIZE] = {0};
+static TIME_T function_call_buffer_time_array[FUNCTION_CALL_BUFFER_SIZE] = {0};
 static uint8_t function_call_buffer_pos = 0;
 
 static void debug_function_calls(void)
 {
         uint8_t i;
-        for (i = function_call_buffer_pos + 1; i != function_call_buffer_pos; i = ((i+1) % func_CALL_BUFFER_SIZE)) {
+        for (i = function_call_buffer_pos + 1; i != function_call_buffer_pos; i = ((i+1) % FUNCTION_CALL_BUFFER_SIZE)) {
 
                 if (!function_call_buffer_name_array[i])
                         continue;
@@ -1146,7 +1146,7 @@ void trace_function_call(const char *func)
         if (function_call_buffer_name_array[function_call_buffer_pos] != func) {
                 function_call_buffer_time_array[function_call_buffer_pos] = bmx_time;
                 function_call_buffer_name_array[function_call_buffer_pos] = (char*)func;
-                function_call_buffer_pos = ((function_call_buffer_pos+1) % func_CALL_BUFFER_SIZE);
+                function_call_buffer_pos = ((function_call_buffer_pos+1) % FUNCTION_CALL_BUFFER_SIZE);
         }
 }
 
@@ -1220,7 +1220,7 @@ char *get_human_uptime(uint32_t reference)
 void wait_sec_msec(TIME_SEC_T sec, TIME_T msec)
 {
 
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
     struct timeval time;
 
     //no debugging here because this is called from debug_output() -> dbg_fprintf() which may case a loop!
@@ -1236,7 +1236,7 @@ void wait_sec_msec(TIME_SEC_T sec, TIME_T msec)
 static void handler(int32_t sig)
 {
 
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
     if ( !Client_mode ) {
                 dbgf_sys(DBGT_ERR, "called with signal %d", sig);
     }
@@ -1252,7 +1252,7 @@ static void handler(int32_t sig)
 
 static void segmentation_fault(int32_t sig)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         static int segfault = NO;
 
         if (!segfault) {
@@ -1261,7 +1261,7 @@ static void segmentation_fault(int32_t sig)
 
                 dbg_sys(DBGT_ERR, "First SIGSEGV %d received, try cleaning up...", sig);
 
-#ifndef NO_TRACE_func_CALLS
+#ifndef NO_TRACE_FUNCTION_CALLS
                 debug_function_calls();
 #endif
 
@@ -1293,7 +1293,7 @@ static void segmentation_fault(int32_t sig)
 
 void cleanup_all(int32_t status)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         if (status < 0) {
                 segmentation_fault(status);
@@ -1530,7 +1530,7 @@ char *field_dbg_value(const struct field_format *format, uint16_t min_msg_size, 
 
 uint32_t field_iterate(struct field_iterator *it)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         assertion(-501171, IMPLIES(it->data_size, it->data));
 
         const struct field_format *format;
@@ -1639,7 +1639,7 @@ int16_t field_format_get_items(const struct field_format *format) {
 uint32_t fields_dbg_lines(struct ctrl_node *cn, uint16_t relevance, uint16_t data_size, uint8_t *data,
                           uint16_t min_msg_size, const struct field_format *format)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         assertion(-501209, format);
 
         uint32_t msgs_size = 0;
@@ -1673,7 +1673,7 @@ uint32_t fields_dbg_lines(struct ctrl_node *cn, uint16_t relevance, uint16_t dat
 void fields_dbg_table(struct ctrl_node *cn, uint16_t relevance, uint32_t data_size, uint8_t *data,
                           uint16_t min_msg_size, const struct field_format *format)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         assertion(-501255, (format && data && cn));
 
         uint16_t field_string_sizes[FIELD_FORMAT_MAX_ITEMS] = {0};
@@ -2013,7 +2013,7 @@ static int32_t orig_status_creator(struct status_handl *handl, void *data)
 STATIC_FUNC
 int32_t opt_version(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
     if ( cmd != OPT_APPLY )
         return SUCCESS;
@@ -2031,7 +2031,7 @@ int32_t opt_version(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt
 
 int32_t opt_status(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         if ( cmd == OPT_CHECK || cmd == OPT_APPLY) {
 
@@ -2083,7 +2083,7 @@ int32_t opt_status(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_
 STATIC_FUNC
 int32_t opt_purge(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
     if ( cmd == OPT_APPLY)
                 purge_link_route_orig_nodes(NULL, NO);
@@ -2095,7 +2095,7 @@ int32_t opt_purge(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_p
 STATIC_FUNC
 int32_t opt_update_description(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
     if ( cmd == OPT_APPLY )
         my_description_changed = YES;
@@ -2182,7 +2182,7 @@ char *globalIdAsString( struct GLOBAL_ID *id ) {
 
 struct orig_node *init_orig_node(GLOBAL_ID_T *id)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         struct orig_node *on = debugMallocReset(sizeof ( struct orig_node) + (sizeof (void*) * plugin_data_registries[PLUGIN_DATA_ORIG]), -300128);
         on->global_id = *id;
 

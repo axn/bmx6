@@ -26,7 +26,7 @@ struct iid_repos my_iid_repos = { 0,0,0,0,{NULL} };
 
 int8_t iid_extend_repos(struct iid_repos *rep)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         dbgf_all(DBGT_INFO, "sizeof iid: %zu,  tot_used %d  arr_size %d ",
                 (rep == &my_iid_repos) ? sizeof (IID_NODE_T*) : sizeof (IID_T), rep->tot_used, rep->arr_size);
@@ -65,7 +65,7 @@ int8_t iid_extend_repos(struct iid_repos *rep)
 
 void iid_purge_repos( struct iid_repos *rep )
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         if (rep->arr.u8)
                 debugFree(rep->arr.u8, -300135);
@@ -76,7 +76,7 @@ void iid_purge_repos( struct iid_repos *rep )
 
 void iid_free(struct iid_repos *rep, IID_T iid)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         int m = (rep == &my_iid_repos);
 
         assertion(-500330, (iid > IID_RSVD_MAX));
@@ -122,7 +122,7 @@ void iid_free(struct iid_repos *rep, IID_T iid)
 
 IID_NODE_T* iid_get_node_by_myIID4x(IID_T myIID4x)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         if ( my_iid_repos.max_free <= myIID4x )
                 return NULL;
@@ -146,7 +146,7 @@ IID_NODE_T* iid_get_node_by_myIID4x(IID_T myIID4x)
 
 IID_NODE_T* iid_get_node_by_neighIID4x(IID_NEIGH_T *nn, IID_T neighIID4x, IDM_T verbose)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         if (!nn || nn->neighIID4x_repos.max_free <= neighIID4x) {
 
@@ -202,7 +202,7 @@ IID_NODE_T* iid_get_node_by_neighIID4x(IID_NEIGH_T *nn, IID_T neighIID4x, IDM_T 
 STATIC_FUNC
 void _iid_set(struct iid_repos *rep, IID_T IIDpos, IID_T myIID4x, IID_NODE_T *dhn)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         assertion(-500530, (rep && XOR(myIID4x, dhn))); // eihter the one ore the other !!
         assertion(-500531, (!dhn || rep == &my_iid_repos));
         assertion(-500535, (IIDpos >= IID_MIN_USED));
@@ -236,7 +236,7 @@ void _iid_set(struct iid_repos *rep, IID_T IIDpos, IID_T myIID4x, IID_NODE_T *dh
 
 IID_T iid_new_myIID4x(IID_NODE_T *dhn)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         IID_T mid;
 #ifndef NO_ASSERTIONS
         IDM_T warn = 0;
@@ -266,7 +266,7 @@ IID_T iid_new_myIID4x(IID_NODE_T *dhn)
                 }
 
         } else {
-                
+
                 mid = my_iid_repos.min_free;
         }
 
@@ -279,7 +279,7 @@ IID_T iid_new_myIID4x(IID_NODE_T *dhn)
 
 IDM_T iid_set_neighIID4x(struct iid_repos *neigh_rep, IID_T neighIID4x, IID_T myIID4x)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         assertion(-500326, (neighIID4x > IID_RSVD_MAX));
         assertion(-500327, (myIID4x > IID_RSVD_MAX));
         assertion(-500384, (neigh_rep && neigh_rep != &my_iid_repos));
@@ -323,7 +323,7 @@ IDM_T iid_set_neighIID4x(struct iid_repos *neigh_rep, IID_T neighIID4x, IID_T my
                                 );
 
 //                        EXITERROR(-500701, (0));
-                        
+
                         return FAILURE;
                 }
 
@@ -356,7 +356,7 @@ IDM_T iid_set_neighIID4x(struct iid_repos *neigh_rep, IID_T neighIID4x, IID_T my
 
 void iid_free_neighIID4x_by_myIID4x( struct iid_repos *rep, IID_T myIID4x)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         assertion(-500282, (rep != &my_iid_repos));
         assertion(-500328, (myIID4x > IID_RSVD_MAX));
 
@@ -376,5 +376,3 @@ void iid_free_neighIID4x_by_myIID4x( struct iid_repos *rep, IID_T myIID4x)
                 }
         }
 }
-
-

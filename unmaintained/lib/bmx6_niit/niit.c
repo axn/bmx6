@@ -55,7 +55,7 @@ static IPX_T niitPrefix96 = DEF_NIIT_PREFIX;
 STATIC_FUNC
 void niit_description_event_hook(int32_t cb_id, struct orig_node *on)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         if (on != self)
                 return;
@@ -79,7 +79,7 @@ void niit_description_event_hook(int32_t cb_id, struct orig_node *on)
 STATIC_FUNC
 void niit_dev_event_hook(int32_t cb_id, void* unused)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         struct avl_node *an = NULL;
         struct if_link_node *iln = NULL;
         struct if_link_node *iln_4to6 = NULL;
@@ -171,7 +171,7 @@ void niit_dev_event_hook(int32_t cb_id, void* unused)
 STATIC_FUNC
 IDM_T configure_niit4to6(IDM_T del, struct net_key *key)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         if (!niit4to6_idx || !niit4_address.mask || AF_CFG != AF_INET6 || key->mask < 96 ||
                 !is_ip_net_equal(&key->ip, &niitPrefix96, 96, AF_INET6))
@@ -198,7 +198,7 @@ IDM_T configure_niit4to6(IDM_T del, struct net_key *key)
 STATIC_FUNC
 IDM_T configure_niit6to4(IDM_T del, struct net_key *key)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         if (!niit6to4_idx || !niit4_address.mask || AF_CFG != AF_INET6 || key->mask < 96 ||
                 !is_ip_net_equal(&key->ip, &niitPrefix96, 96, AF_INET6))
@@ -236,7 +236,7 @@ struct net_key netX4ToNiit6(struct net_key *net)
 STATIC_FUNC
 int32_t opt_niit4_address(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	TRACE_func_CALL;
+    TRACE_FUNCTION_CALL;
 
         struct net_key net = ZERO_NET_KEY;
         net.af = AF_INET;
@@ -303,10 +303,10 @@ int32_t opt_niit4_address(uint8_t cmd, uint8_t _save, struct opt_type *opt, stru
 
 STATIC_FUNC
 struct opt_type niit_options[]= {
-//     		ord parent long_name   shrt Attributes				*ival		min		max		default		*function
+//          ord parent long_name   shrt Attributes              *ival       min     max     default     *function
 
-	{ODI,0,ARG_NIIT4_ADDRESS,        0,  9,2,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	0,		0,		0,		0,0,		opt_niit4_address,
-			ARG_PREFIX_FORM,"specify default niit IPv4 tunnel address (IP SHOULD be announced and assigned to niit4to6 interface!)"},
+    {ODI,0,ARG_NIIT4_ADDRESS,        0,  9,2,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY, 0,      0,      0,      0,0,        opt_niit4_address,
+            ARG_PREFIX_FORM,"specify default niit IPv4 tunnel address (IP SHOULD be announced and assigned to niit4to6 interface!)"},
 
 };
 
@@ -321,7 +321,7 @@ struct opt_type niit_options[]= {
 STATIC_FUNC
 void niit_cleanup( void )
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
         //set_route_change_hooks(hna_route_change_hook, DEL);
 }
 
@@ -329,7 +329,7 @@ void niit_cleanup( void )
 STATIC_FUNC
 int32_t niit_init( void )
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         hna_configure_niit4to6 = configure_niit4to6;
         hna_configure_niit6to4 = configure_niit6to4;
@@ -357,14 +357,14 @@ int32_t niit_init( void )
 
 struct plugin *niit_get_plugin( void ) {
 
-	static struct plugin niit_plugin;
-	memset( &niit_plugin, 0, sizeof ( struct plugin ) );
+    static struct plugin niit_plugin;
+    memset( &niit_plugin, 0, sizeof ( struct plugin ) );
 
-	niit_plugin.plugin_name = CODE_CATEGORY_NAME;
-	niit_plugin.plugin_size = sizeof ( struct plugin );
+    niit_plugin.plugin_name = CODE_CATEGORY_NAME;
+    niit_plugin.plugin_size = sizeof ( struct plugin );
         niit_plugin.plugin_code_version = CODE_VERSION;
         niit_plugin.cb_init = niit_init;
-	niit_plugin.cb_cleanup = niit_cleanup;
+    niit_plugin.cb_cleanup = niit_cleanup;
         niit_plugin.cb_plugin_handler[PLUGIN_CB_SYS_DEV_EVENT] = niit_dev_event_hook;
         niit_plugin.cb_plugin_handler[PLUGIN_CB_DESCRIPTION_CREATED] = (void (*) (int32_t, void*)) niit_description_event_hook;
         niit_plugin.cb_plugin_handler[PLUGIN_CB_DESCRIPTION_DESTROY] = (void (*) (int32_t, void*)) niit_description_event_hook;

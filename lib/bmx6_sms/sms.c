@@ -161,7 +161,7 @@ void check_for_changed_sms(void *unused)
 STATIC_FUNC
 void json_inotify_event_hook(int fd)
 {
-        TRACE_func_CALL;
+        TRACE_FUNCTION_CALL;
 
         dbgf_track(DBGT_INFO, "detected changes in directory: %s", smsTx_dir);
 
@@ -318,10 +318,10 @@ int32_t opt_json_sms(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct op
                 sprintf(tmp_sms_tx_dir, "%s/%s", tmp_sms_dir, DEF_SMS_TX_SUBDIR);
 
                 if (check_dir(run_dir, YES/*create*/, YES/*writable*/) == FAILURE)
-			return FAILURE;
+            return FAILURE;
 
                 if (check_dir(tmp_sms_dir, YES/*create*/, YES/*writable*/) == FAILURE)
-			return FAILURE;
+            return FAILURE;
 
                 if (check_dir(tmp_sms_rx_dir, YES/*create*/, YES/*writable*/) == FAILURE)
                         return FAILURE;
@@ -397,11 +397,11 @@ int32_t opt_json_sms(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct op
 }
 
 static struct opt_type sms_options[]= {
-//        ord parent long_name          shrt Attributes				*ival		min		max		default		*func,*syntax,*help
-	
-	{ODI,0,ARG_SMS,	        0,  9,2,A_PM1N,A_ADM,A_DYI,A_CFA,A_ANY,	0,		0,		0,		0,0,		opt_json_sms,
-			ARG_FILE_FORM,"add arbitrary file-data to description"}
-	
+//        ord parent long_name          shrt Attributes             *ival       min     max     default     *func,*syntax,*help
+
+    {ODI,0,ARG_SMS,         0,  9,2,A_PM1N,A_ADM,A_DYI,A_CFA,A_ANY, 0,      0,      0,      0,0,        opt_json_sms,
+            ARG_FILE_FORM,"add arbitrary file-data to description"}
+
 };
 
 
@@ -449,23 +449,21 @@ static int32_t sms_init( void ) {
         tlv_handl.msg_format = json_extension_format;
         register_frame_handler(description_tlv_handl, BMX_DSC_TLV_JSON_SMS, &tlv_handl);
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 
 struct plugin* get_plugin( void ) {
-	
-	static struct plugin sms_plugin;
-	
-	memset( &sms_plugin, 0, sizeof ( struct plugin ) );
-	
 
-	sms_plugin.plugin_name = CODE_CATEGORY_NAME;
-	sms_plugin.plugin_size = sizeof ( struct plugin );
-	sms_plugin.cb_init = sms_init;
-	sms_plugin.cb_cleanup = sms_cleanup;
+    static struct plugin sms_plugin;
 
-	return &sms_plugin;
+    memset( &sms_plugin, 0, sizeof ( struct plugin ) );
+
+
+    sms_plugin.plugin_name = CODE_CATEGORY_NAME;
+    sms_plugin.plugin_size = sizeof ( struct plugin );
+    sms_plugin.cb_init = sms_init;
+    sms_plugin.cb_cleanup = sms_cleanup;
+
+    return &sms_plugin;
 }
-
-

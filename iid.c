@@ -266,7 +266,7 @@ IID_T iid_new_myIID4x(IID_NODE_T *dhn)
                 }
 
         } else {
-                
+
                 mid = my_iid_repos.min_free;
         }
 
@@ -323,7 +323,7 @@ IDM_T iid_set_neighIID4x(struct iid_repos *neigh_rep, IID_T neighIID4x, IID_T my
                                 );
 
 //                        EXITERROR(-500701, (0));
-                        
+
                         return FAILURE;
                 }
 
@@ -376,5 +376,3 @@ void iid_free_neighIID4x_by_myIID4x( struct iid_repos *rep, IID_T myIID4x)
                 }
         }
 }
-
-

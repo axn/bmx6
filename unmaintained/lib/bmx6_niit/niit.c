@@ -236,7 +236,7 @@ struct net_key netX4ToNiit6(struct net_key *net)
 STATIC_FUNC
 int32_t opt_niit4_address(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	TRACE_FUNCTION_CALL;
+    TRACE_FUNCTION_CALL;
 
         struct net_key net = ZERO_NET_KEY;
         net.af = AF_INET;
@@ -303,10 +303,10 @@ int32_t opt_niit4_address(uint8_t cmd, uint8_t _save, struct opt_type *opt, stru
 
 STATIC_FUNC
 struct opt_type niit_options[]= {
-//     		ord parent long_name   shrt Attributes				*ival		min		max		default		*function
+//          ord parent long_name   shrt Attributes              *ival       min     max     default     *function
 
-	{ODI,0,ARG_NIIT4_ADDRESS,        0,  9,2,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	0,		0,		0,		0,0,		opt_niit4_address,
-			ARG_PREFIX_FORM,"specify default niit IPv4 tunnel address (IP SHOULD be announced and assigned to niit4to6 interface!)"},
+    {ODI,0,ARG_NIIT4_ADDRESS,        0,  9,2,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY, 0,      0,      0,      0,0,        opt_niit4_address,
+            ARG_PREFIX_FORM,"specify default niit IPv4 tunnel address (IP SHOULD be announced and assigned to niit4to6 interface!)"},
 
 };
 
@@ -357,14 +357,14 @@ int32_t niit_init( void )
 
 struct plugin *niit_get_plugin( void ) {
 
-	static struct plugin niit_plugin;
-	memset( &niit_plugin, 0, sizeof ( struct plugin ) );
+    static struct plugin niit_plugin;
+    memset( &niit_plugin, 0, sizeof ( struct plugin ) );
 
-	niit_plugin.plugin_name = CODE_CATEGORY_NAME;
-	niit_plugin.plugin_size = sizeof ( struct plugin );
+    niit_plugin.plugin_name = CODE_CATEGORY_NAME;
+    niit_plugin.plugin_size = sizeof ( struct plugin );
         niit_plugin.plugin_code_version = CODE_VERSION;
         niit_plugin.cb_init = niit_init;
-	niit_plugin.cb_cleanup = niit_cleanup;
+    niit_plugin.cb_cleanup = niit_cleanup;
         niit_plugin.cb_plugin_handler[PLUGIN_CB_SYS_DEV_EVENT] = niit_dev_event_hook;
         niit_plugin.cb_plugin_handler[PLUGIN_CB_DESCRIPTION_CREATED] = (void (*) (int32_t, void*)) niit_description_event_hook;
         niit_plugin.cb_plugin_handler[PLUGIN_CB_DESCRIPTION_DESTROY] = (void (*) (int32_t, void*)) niit_description_event_hook;

@@ -188,7 +188,7 @@ void zdata_parse_route(struct zdata *zd)
 
         if (zrn.message & ZAPI_MESSAGE_DISTANCE)
                 zrn.distance = zdata_get_u8(zd, &ofs);
-        
+
         if (zrn.message & ZAPI_MESSAGE_METRIC)
                 zrn.metric = ntohl(zdata_get_u32(zd, &ofs));
 
@@ -198,12 +198,12 @@ void zdata_parse_route(struct zdata *zd)
 
         if (tmp) {
                 tmp->cnt += (zd->cmd == ZEBRA_IPV4_ROUTE_ADD || zd->cmd == ZEBRA_IPV6_ROUTE_ADD) ? (+1) : (-1);
-                redist_dbg(DBGL_CHANGES, DBGT_INFO, __FUNCTION__, tmp, zapi_rt_dict, zebraCmd2Str[zd->cmd], "OLD");
+                redist_dbg(DBGL_CHANGES, DBGT_INFO, __func__, tmp, zapi_rt_dict, zebraCmd2Str[zd->cmd], "OLD");
         } else {
                 tmp = debugMallocReset(sizeof (zrn), -300472);
                 *tmp = zrn;
                 tmp->cnt += 1;
-                redist_dbg(DBGL_CHANGES, DBGT_INFO, __FUNCTION__, tmp, zapi_rt_dict, zebraCmd2Str[zd->cmd], "NEW");
+                redist_dbg(DBGL_CHANGES, DBGT_INFO, __func__, tmp, zapi_rt_dict, zebraCmd2Str[zd->cmd], "NEW");
                 assertion(-501406, (zd->cmd == ZEBRA_IPV4_ROUTE_ADD || zd->cmd == ZEBRA_IPV6_ROUTE_ADD));
                 avl_insert(&zroute_tree, tmp, -300473);
         }
@@ -219,7 +219,7 @@ void zdata_parse(void)
 
         struct zdata * zd;
         uint8_t changed_routes = NO;
-        
+
         while ((zd = list_del_head(&zdata_read_list))) {
 
                 if (zd->cmd == ZEBRA_IPV4_ROUTE_ADD || zd->cmd == ZEBRA_IPV4_ROUTE_DELETE ||
@@ -247,7 +247,7 @@ void zdata_parse(void)
                 while ((zrn = avl_next_item(&zroute_tree, &zri.k))) {
                         zri = *zrn;
 
-//                        zroute_dbg(DBGL_CHANGES, DBGT_INFO, __FUNCTION__, zrn, "", "");
+//                        zroute_dbg(DBGL_CHANGES, DBGT_INFO, __func__, zrn, "", "");
 
                         if (zrn->old != zrn->cnt)
                                 changed_routes = YES;
@@ -269,8 +269,8 @@ void zdata_parse(void)
 
                 if (changed_routes) {
                         if ( redistribute_routes(&redist_out_tree, &zroute_tree, &redist_opt_tree, zapi_rt_dict) )
-				update_tunXin6_net_adv_list(&redist_out_tree, &quagga_net_adv_list);
-		}
+                update_tunXin6_net_adv_list(&redist_out_tree, &quagga_net_adv_list);
+        }
         }
 }
 
@@ -637,7 +637,7 @@ void zsock_connect(void *nothing)
 
         return;
 
-        
+
 zsock_connect_error:
 
         if (zcfg.socket > 0)
@@ -765,18 +765,18 @@ STATIC_FUNC
 int32_t opt_zsock_path(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
 
-	if ( cmd == OPT_CHECK  ||  cmd == OPT_APPLY ) {
+    if ( cmd == OPT_CHECK  ||  cmd == OPT_APPLY ) {
 
                 if (wordlen(patch->val) + 1 >= MAX_PATH_SIZE || patch->val[0] != '/')
                         return FAILURE;
 
                 if (check_file(patch->val, NO/*regular*/, NO/*read*/, NO/*writable*/, NO/*executable*/) == FAILURE)
-			return FAILURE;
+            return FAILURE;
 
-		snprintf( zcfg.unix_path, wordlen(patch->val)+1, "%s", patch->val );
+        snprintf( zcfg.unix_path, wordlen(patch->val)+1, "%s", patch->val );
         }
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 
@@ -787,17 +787,17 @@ int32_t opt_redistribute(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
         struct redistr_opt_node *rdn = NULL;
         static uint8_t changed = NO;
 
-	int32_t redist = opt_redist(cmd, _save, opt, patch, cn, &redist_opt_tree, &changed);
+    int32_t redist = opt_redist(cmd, _save, opt, patch, cn, &redist_opt_tree, &changed);
 
-	if (redist!=SUCCESS)
-		return redist;
+    if (redist!=SUCCESS)
+        return redist;
 
-	if (cmd == OPT_SET_POST) {
+    if (cmd == OPT_SET_POST) {
 
                 struct avl_node *an = NULL;
 
                 zcfg.bmx6_redist_bits_new = 0;
-                
+
                 while ((rdn = avl_iterate_item(&redist_opt_tree, &an)))
                         zcfg.bmx6_redist_bits_new |= rdn->bmx6_redist_bits;
 
@@ -807,8 +807,8 @@ int32_t opt_redistribute(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
                 } else if (changed) {
 
                         zsock_send_redist_request();
-			if ( redistribute_routes(&redist_out_tree, &zroute_tree, &redist_opt_tree, zapi_rt_dict) )
-				update_tunXin6_net_adv_list(&redist_out_tree, &quagga_net_adv_list);
+            if ( redistribute_routes(&redist_out_tree, &zroute_tree, &redist_opt_tree, zapi_rt_dict) )
+                update_tunXin6_net_adv_list(&redist_out_tree, &quagga_net_adv_list);
                 }
 
                 changed = NO;
@@ -819,51 +819,51 @@ int32_t opt_redistribute(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
 
 
 static struct opt_type quagga_options[]= {
-//        ord parent long_name          shrt Attributes				*ival		min		max		default		*func,*syntax,*help
-	
-	{ODI,0,ARG_ZAPI_DIR,		0,  2,1,A_PS1,A_ADM,A_INI,A_CFA,A_ANY,	0,		0,		0,		0,ZEBRA_SERV_PATH,opt_zsock_path,
-			ARG_DIR_FORM,	"" },
- 	{ODI,0,ARG_REDIST,     	          0,9,2,A_PM1N,A_ADM,A_DYI,A_CFA,A_ANY,	0,		0,		0,		0,0,		opt_redistribute,
-		        ARG_NAME_FORM,  HLP_REDIST},
-	{ODI,ARG_REDIST,ARG_REDIST_NET, 'n',9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,  0,              0,              0,              0,0,            opt_redistribute,
-			ARG_ADDR_FORM, HLP_REDIST_NET},
-	{ODI,ARG_REDIST,ARG_REDIST_PREFIX_MIN,0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,0,MIN_REDIST_PREFIX,MAX_REDIST_PREFIX,DEF_REDIST_PREFIX_MIN,0,opt_redistribute,
-			ARG_VALUE_FORM, HLP_REDIST_PREFIX_MIN},
-	{ODI,ARG_REDIST,ARG_REDIST_PREFIX_MAX,0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,0,MIN_REDIST_PREFIX,MAX_REDIST_PREFIX,DEF_REDIST_PREFIX_MAX,0,opt_redistribute,
-			ARG_VALUE_FORM, HLP_REDIST_PREFIX_MAX},
-	{ODI,ARG_REDIST,ARG_TUN_DEV,   0,9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,		0,              0,              0,0,            opt_redistribute,
-			ARG_NAME_FORM,	HLP_TUN_IN_DEV},
-	{ODI,ARG_REDIST,ARG_REDIST_AGGREGATE,0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,0,MIN_REDIST_AGGREGATE,MAX_REDIST_AGGREGATE,DEF_REDIST_AGGREGATE,0,opt_redistribute,
-			ARG_VALUE_FORM, HLP_REDIST_AGGREGATE},
-	{ODI,ARG_REDIST,ARG_REDIST_BW,  'b',9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,0,		0,	        0,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM,	HLP_REDIST_BW},
-	{ODI,ARG_REDIST,ARG_ROUTE_SYSTEM, 0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	{ODI,ARG_REDIST,ARG_ROUTE_KERNEL, 0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	{ODI,ARG_REDIST,ARG_ROUTE_CONNECT,0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	{ODI,ARG_REDIST,ARG_ROUTE_RIP,    0,9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	{ODI,ARG_REDIST,ARG_ROUTE_RIPNG,  0,9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	{ODI,ARG_REDIST,ARG_ROUTE_OSPF,   0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	{ODI,ARG_REDIST,ARG_ROUTE_OSPF6,  0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	{ODI,ARG_REDIST,ARG_ROUTE_ISIS,   0,9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	{ODI,ARG_REDIST,ARG_ROUTE_BGP,    0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	{ODI,ARG_REDIST,ARG_ROUTE_BABEL,  0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	{ODI,ARG_REDIST,ARG_ROUTE_HSLS,   0,9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	{ODI,ARG_REDIST,ARG_ROUTE_OLSR,   0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	{ODI,ARG_REDIST,ARG_ROUTE_BATMAN, 0,9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
-			ARG_VALUE_FORM, HLP_ROUTE_TYPE},
-	
+//        ord parent long_name          shrt Attributes             *ival       min     max     default     *func,*syntax,*help
+
+    {ODI,0,ARG_ZAPI_DIR,        0,  2,1,A_PS1,A_ADM,A_INI,A_CFA,A_ANY,  0,      0,      0,      0,ZEBRA_SERV_PATH,opt_zsock_path,
+            ARG_DIR_FORM,   "" },
+    {ODI,0,ARG_REDIST,                0,9,2,A_PM1N,A_ADM,A_DYI,A_CFA,A_ANY, 0,      0,      0,      0,0,        opt_redistribute,
+                ARG_NAME_FORM,  HLP_REDIST},
+    {ODI,ARG_REDIST,ARG_REDIST_NET, 'n',9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,  0,              0,              0,              0,0,            opt_redistribute,
+            ARG_ADDR_FORM, HLP_REDIST_NET},
+    {ODI,ARG_REDIST,ARG_REDIST_PREFIX_MIN,0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,0,MIN_REDIST_PREFIX,MAX_REDIST_PREFIX,DEF_REDIST_PREFIX_MIN,0,opt_redistribute,
+            ARG_VALUE_FORM, HLP_REDIST_PREFIX_MIN},
+    {ODI,ARG_REDIST,ARG_REDIST_PREFIX_MAX,0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,0,MIN_REDIST_PREFIX,MAX_REDIST_PREFIX,DEF_REDIST_PREFIX_MAX,0,opt_redistribute,
+            ARG_VALUE_FORM, HLP_REDIST_PREFIX_MAX},
+    {ODI,ARG_REDIST,ARG_TUN_DEV,   0,9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,        0,              0,              0,0,            opt_redistribute,
+            ARG_NAME_FORM,  HLP_TUN_IN_DEV},
+    {ODI,ARG_REDIST,ARG_REDIST_AGGREGATE,0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,0,MIN_REDIST_AGGREGATE,MAX_REDIST_AGGREGATE,DEF_REDIST_AGGREGATE,0,opt_redistribute,
+            ARG_VALUE_FORM, HLP_REDIST_AGGREGATE},
+    {ODI,ARG_REDIST,ARG_REDIST_BW,  'b',9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,0,        0,          0,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_REDIST_BW},
+    {ODI,ARG_REDIST,ARG_ROUTE_SYSTEM, 0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+    {ODI,ARG_REDIST,ARG_ROUTE_KERNEL, 0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+    {ODI,ARG_REDIST,ARG_ROUTE_CONNECT,0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+    {ODI,ARG_REDIST,ARG_ROUTE_RIP,    0,9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+    {ODI,ARG_REDIST,ARG_ROUTE_RIPNG,  0,9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+    {ODI,ARG_REDIST,ARG_ROUTE_OSPF,   0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+    {ODI,ARG_REDIST,ARG_ROUTE_OSPF6,  0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+    {ODI,ARG_REDIST,ARG_ROUTE_ISIS,   0,9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+    {ODI,ARG_REDIST,ARG_ROUTE_BGP,    0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+    {ODI,ARG_REDIST,ARG_ROUTE_BABEL,  0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+    {ODI,ARG_REDIST,ARG_ROUTE_HSLS,   0,9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+    {ODI,ARG_REDIST,ARG_ROUTE_OLSR,   0,9,2,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+    {ODI,ARG_REDIST,ARG_ROUTE_BATMAN, 0,9,1,A_CS1,A_ADM,A_DYI,A_CFA,A_ANY,   0,              0,              1,              0,0,            opt_redistribute,
+            ARG_VALUE_FORM, HLP_ROUTE_TYPE},
+
 };
 
 
@@ -882,9 +882,9 @@ static int32_t quagga_init( void )
 {
 
         assertion(-501424, (ZEBRA_ROUTE_MAX <= BMX6_ROUTE_MAX_KNOWN));
-	memset(&zapi_rt_dict, 0, sizeof(zapi_rt_dict));
+    memset(&zapi_rt_dict, 0, sizeof(zapi_rt_dict));
 
-	set_rt_dict(zapi_rt_dict, ZEBRA_ROUTE_SYSTEM,  'X', ARG_ROUTE_SYSTEM, BMX6_ROUTE_SYSTEM);
+    set_rt_dict(zapi_rt_dict, ZEBRA_ROUTE_SYSTEM,  'X', ARG_ROUTE_SYSTEM, BMX6_ROUTE_SYSTEM);
         set_rt_dict(zapi_rt_dict, ZEBRA_ROUTE_KERNEL,  'K', ARG_ROUTE_KERNEL, BMX6_ROUTE_KERNEL);
         set_rt_dict(zapi_rt_dict, ZEBRA_ROUTE_CONNECT, 'C', ARG_ROUTE_CONNECT, BMX6_ROUTE_CONNECT);
         set_rt_dict(zapi_rt_dict, ZEBRA_ROUTE_STATIC,  'S', ARG_ROUTE_STATIC, BMX6_ROUTE_STATIC);
@@ -909,23 +909,21 @@ static int32_t quagga_init( void )
         set_tunXin6_net_adv_list(ADD, &quagga_net_adv_list);
 
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 
 struct plugin* get_plugin( void ) {
-	
-	static struct plugin quagga_plugin;
-	
-	memset( &quagga_plugin, 0, sizeof ( struct plugin ) );
-	
 
-	quagga_plugin.plugin_name = CODE_CATEGORY_NAME;
-	quagga_plugin.plugin_size = sizeof ( struct plugin );
-	quagga_plugin.cb_init = quagga_init;
-	quagga_plugin.cb_cleanup = quagga_cleanup;
+    static struct plugin quagga_plugin;
 
-	return &quagga_plugin;
+    memset( &quagga_plugin, 0, sizeof ( struct plugin ) );
+
+
+    quagga_plugin.plugin_name = CODE_CATEGORY_NAME;
+    quagga_plugin.plugin_size = sizeof ( struct plugin );
+    quagga_plugin.cb_init = quagga_init;
+    quagga_plugin.cb_cleanup = quagga_cleanup;
+
+    return &quagga_plugin;
 }
-
-

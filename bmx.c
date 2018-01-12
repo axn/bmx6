@@ -371,7 +371,7 @@ IDM_T update_local_neigh(struct packet_buff *pb, struct dhash_node *dhn)
                 assertion(-500955, (dhn->neigh->local->neigh == dhn->neigh));
 
                 dbgf_track(DBGT_INFO, "CHANGED link=%s -> LOCAL=%d->%d <- neighIID4me=%d <- dhn->id=%s",
-                        pb->i.llip_str, dhn->neigh->local->local_id, local->local_id, dhn->neigh->neighIID4me, 
+                        pb->i.llip_str, dhn->neigh->local->local_id, local->local_id, dhn->neigh->neighIID4me,
                         globalIdAsString(&dhn->on->desc->globalId));
 
                 dhn->neigh->local->neigh = NULL;
@@ -384,9 +384,9 @@ IDM_T update_local_neigh(struct packet_buff *pb, struct dhash_node *dhn)
         } else if (!local->neigh && !dhn->neigh) {
 
                 create_neigh_node(local, dhn);
-                
+
                 dbgf_track(DBGT_INFO, "NEW link=%s <-> LOCAL=%d <-> NEIGHIID4me=%d <-> dhn->id=%s",
-                        pb->i.llip_str, local->local_id, local->neigh->neighIID4me, 
+                        pb->i.llip_str, local->local_id, local->neigh->neighIID4me,
                         globalIdAsString(&dhn->on->desc->globalId));
 
                 goto update_local_neigh_success;
@@ -524,7 +524,7 @@ void purge_link_node(struct link_node_key *only_link_key, struct dev_node *only_
                 assertion(-500942, link == avl_find_item(&local->link_tree, &link->key.dev_idx));
 
                 struct list_node *pos, *tmp, *prev = (struct list_node *) & link->lndev_list;
-                
+
                 link_key_it = link->key;
 
                 list_for_each_safe(pos, tmp, &link->lndev_list)
@@ -840,7 +840,7 @@ struct link_node *get_link_node(struct packet_buff *pb)
         link = NULL;
 
         if (local) {
-                
+
                 link = avl_find_item(&local->link_tree, &pb->i.link_key.dev_idx);
 
                 assertion(-500943, (link == avl_find_item(&link_tree, &pb->i.link_key)));
@@ -876,7 +876,7 @@ struct link_node *get_link_node(struct packet_buff *pb)
                         ASSERTION(-500213, !avl_find(&link_tree, &pb->i.link_key));
                         link = NULL;
                 }
-                
+
         } else {
 
                 if (local_tree.items >= LOCALS_MAX) {
@@ -982,7 +982,7 @@ void rx_packet( struct packet_buff *pb )
         TRACE_func_CALL;
 
         struct dev_node *iif = pb->i.iif;
-        
+
         if (drop_all_packets)
                 return;
 
@@ -1016,8 +1016,8 @@ void rx_packet( struct packet_buff *pb )
 
         dbgf_all(DBGT_INFO, "via %s %s %s size %d", iif->label_cfg.str, iif->ip_llocal_str, pb->i.llip_str, pkt_length);
 
-	// immediately drop invalid packets...
-	// we acceppt longer packets than specified by pos->size to allow padding for equal packet sizes
+    // immediately drop invalid packets...
+    // we acceppt longer packets than specified by pos->size to allow padding for equal packet sizes
         if (    pb->i.total_length < (int) (sizeof (struct packet_header) + sizeof (struct frame_header_long)) ||
                 pkt_length < (int) (sizeof (struct packet_header) + sizeof (struct frame_header_long)) ||
                 hdr->bmx_version != COMPATIBILITY_VERSION ||
@@ -1028,39 +1028,39 @@ void rx_packet( struct packet_buff *pb )
         }
 
 
-	struct dev_ip_key any_key = { .ip = pb->i.llip, .idx = 0 };
-	struct dev_node *anyIf;
+    struct dev_ip_key any_key = { .ip = pb->i.llip, .idx = 0 };
+    struct dev_node *anyIf;
         if (((anyIf = avl_find_item(&dev_ip_tree, &any_key)) || (anyIf = avl_next_item(&dev_ip_tree, &any_key))) &&
-		is_ip_equal(&pb->i.llip, &anyIf->llip_key.ip)) {
-		
-		struct dev_ip_key outIf_key = { .ip = pb->i.llip, .idx = pb->i.link_key.dev_idx };
-		struct dev_node *outIf = avl_find_item(&dev_ip_tree, &outIf_key);
-		anyIf = outIf ? outIf : anyIf;
-		if (!outIf || (((my_local_id != pb->i.link_key.local_id || anyIf->llip_key.idx != pb->i.link_key.dev_idx) &&
+        is_ip_equal(&pb->i.llip, &anyIf->llip_key.ip)) {
+
+        struct dev_ip_key outIf_key = { .ip = pb->i.llip, .idx = pb->i.link_key.dev_idx };
+        struct dev_node *outIf = avl_find_item(&dev_ip_tree, &outIf_key);
+        anyIf = outIf ? outIf : anyIf;
+        if (!outIf || (((my_local_id != pb->i.link_key.local_id || anyIf->llip_key.idx != pb->i.link_key.dev_idx) &&
                         (((TIME_T) (bmx_time - my_local_id_timestamp)) > (4 * (TIME_T) my_tx_interval))) ||
                         ((myIID4me != pb->i.transmittersIID) && (((TIME_T) (bmx_time - myIID4me_timestamp)) > (4 * (TIME_T) my_tx_interval))))) {
 
                         // my local_id  or myIID4me might have just changed and then, due to delay,
                         // I might receive my own packet back containing my previous (now non-matching) local_id of myIID4me
                         dbgf_mute(60, DBGL_SYS, DBGT_ERR, "DAD-Alert (duplicate Address) from NB=%s via dev=%s  "
-				"iifIdx=0X%X aifIdx=0X%X rcvdIdx=0x%X  myLocalId=%X rcvdLocalId=%X  myIID4me=%d rcvdIID=%d "
-				"oif=%d aif=%d dipt=%d time=%d mlidts=%d txintv=%d mi4mts=%d",
-                                pb->i.llip_str, iif->label_cfg.str, 
-				iif->llip_key.idx, anyIf->llip_key.idx, pb->i.link_key.dev_idx,
+                "iifIdx=0X%X aifIdx=0X%X rcvdIdx=0x%X  myLocalId=%X rcvdLocalId=%X  myIID4me=%d rcvdIID=%d "
+                "oif=%d aif=%d dipt=%d time=%d mlidts=%d txintv=%d mi4mts=%d",
+                                pb->i.llip_str, iif->label_cfg.str,
+                iif->llip_key.idx, anyIf->llip_key.idx, pb->i.link_key.dev_idx,
                                 ntohl(my_local_id), ntohl(pb->i.link_key.local_id),
                                 myIID4me, pb->i.transmittersIID, outIf?1:0, anyIf?1:0, dev_ip_tree.items,
-				bmx_time, my_local_id_timestamp, my_tx_interval, myIID4me_timestamp);
+                bmx_time, my_local_id_timestamp, my_tx_interval, myIID4me_timestamp);
 
                         goto process_packet_error;
 
                 } else if (outIf && outIf != iif && is_ip_equal(&outIf->llip_key.ip, &iif->llip_key.ip)) {
 
-			//ASSERTION(-500840, (oif == iif)); // so far, only unique own interface IPs are allowed!!
+            //ASSERTION(-500840, (oif == iif)); // so far, only unique own interface IPs are allowed!!
                         dbgf_mute(60, DBGL_SYS, DBGT_ERR, "Link-Alert! Rcvd my own packet on different dev=%s idx=0x%X than send dev=%s idx=0x%X "
-				"with same link-local ip=%s my_local_id=%X ! Separate links or fix link-local IPs!!!",
+                "with same link-local ip=%s my_local_id=%X ! Separate links or fix link-local IPs!!!",
                                 iif->label_cfg.str, iif->llip_key.idx, outIf->label_cfg.str, outIf->llip_key.idx,
-				iif->ip_llocal_str, ntohl(my_local_id));
-		}
+                iif->ip_llocal_str, ntohl(my_local_id));
+        }
 
                 return;
         }
@@ -1092,7 +1092,7 @@ void rx_packet( struct packet_buff *pb )
 
         if (blacklisted_neighbor(pb, NULL))
                 return;
-        
+
         if (drop_all_frames)
                 return;
 
@@ -1161,59 +1161,59 @@ void upd_time(struct timeval *precise_tv)
 
         timeradd( &MAX_TV, &curr_tv, &acceptable_max_tv );
 
-	gettimeofday( &curr_tv, NULL );
+    gettimeofday( &curr_tv, NULL );
 
-	if ( timercmp( &curr_tv, &acceptable_max_tv, > ) ) {
+    if ( timercmp( &curr_tv, &acceptable_max_tv, > ) ) {
 
-		timersub( &curr_tv, &acceptable_max_tv, &diff_tv );
-		timeradd( &start_time_tv, &diff_tv, &start_time_tv );
+        timersub( &curr_tv, &acceptable_max_tv, &diff_tv );
+        timeradd( &start_time_tv, &diff_tv, &start_time_tv );
 
                 dbg_sys(DBGT_WARN, "critical system time drift detected: ++ca %ld s, %ld us! Correcting reference!",
-		     diff_tv.tv_sec, diff_tv.tv_usec );
+             diff_tv.tv_sec, diff_tv.tv_usec );
 
                 if ( diff_tv.tv_sec > CRITICAL_PURGE_TIME_DRIFT )
                         purge_link_route_orig_nodes(NULL, NO);
 
-	} else 	if ( timercmp( &curr_tv, &acceptable_min_tv, < ) ) {
+    } else  if ( timercmp( &curr_tv, &acceptable_min_tv, < ) ) {
 
-		timersub( &acceptable_min_tv, &curr_tv, &diff_tv );
-		timersub( &start_time_tv, &diff_tv, &start_time_tv );
+        timersub( &acceptable_min_tv, &curr_tv, &diff_tv );
+        timersub( &start_time_tv, &diff_tv, &start_time_tv );
 
                 dbg_sys(DBGT_WARN, "critical system time drift detected: --ca %ld s, %ld us! Correcting reference!",
-		     diff_tv.tv_sec, diff_tv.tv_usec );
+             diff_tv.tv_sec, diff_tv.tv_usec );
 
                 if ( diff_tv.tv_sec > CRITICAL_PURGE_TIME_DRIFT )
                         purge_link_route_orig_nodes(NULL, NO);
 
-	}
+    }
 
-	timersub( &curr_tv, &start_time_tv, &bmx_tv );
+    timersub( &curr_tv, &start_time_tv, &bmx_tv );
 
-	if ( precise_tv ) {
-		precise_tv->tv_sec = bmx_tv.tv_sec;
-		precise_tv->tv_usec = bmx_tv.tv_usec;
-	}
+    if ( precise_tv ) {
+        precise_tv->tv_sec = bmx_tv.tv_sec;
+        precise_tv->tv_usec = bmx_tv.tv_usec;
+    }
 
-	bmx_time = ( (bmx_tv.tv_sec * 1000) + (bmx_tv.tv_usec / 1000) );
-	bmx_time_sec = bmx_tv.tv_sec;
+    bmx_time = ( (bmx_tv.tv_sec * 1000) + (bmx_tv.tv_usec / 1000) );
+    bmx_time_sec = bmx_tv.tv_sec;
 }
 
 char *get_human_uptime(uint32_t reference)
 {
-	//                  DD:HH:MM:SS
-	static char ut[32]="00:00:00:00";
+    //                  DD:HH:MM:SS
+    static char ut[32]="00:00:00:00";
 
-	sprintf( ut, "%i:%i%i:%i%i:%i%i",
-	         (((bmx_time_sec-reference)/86400)),
-	         (((bmx_time_sec-reference)%86400)/36000)%10,
-	         (((bmx_time_sec-reference)%86400)/3600)%10,
-	         (((bmx_time_sec-reference)%3600)/600)%10,
-	         (((bmx_time_sec-reference)%3600)/60)%10,
-	         (((bmx_time_sec-reference)%60)/10)%10,
-	         (((bmx_time_sec-reference)%60))%10
-	       );
+    sprintf( ut, "%i:%i%i:%i%i:%i%i",
+             (((bmx_time_sec-reference)/86400)),
+             (((bmx_time_sec-reference)%86400)/36000)%10,
+             (((bmx_time_sec-reference)%86400)/3600)%10,
+             (((bmx_time_sec-reference)%3600)/600)%10,
+             (((bmx_time_sec-reference)%3600)/60)%10,
+             (((bmx_time_sec-reference)%60)/10)%10,
+             (((bmx_time_sec-reference)%60))%10
+           );
 
-	return ut;
+    return ut;
 }
 
 
@@ -1221,29 +1221,29 @@ void wait_sec_msec(TIME_SEC_T sec, TIME_T msec)
 {
 
         TRACE_func_CALL;
-	struct timeval time;
+    struct timeval time;
 
-	//no debugging here because this is called from debug_output() -> dbg_fprintf() which may case a loop!
+    //no debugging here because this is called from debug_output() -> dbg_fprintf() which may case a loop!
 
-	time.tv_sec = sec + (msec/1000) ;
-	time.tv_usec = ( msec * 1000 ) % 1000000;
+    time.tv_sec = sec + (msec/1000) ;
+    time.tv_usec = ( msec * 1000 ) % 1000000;
 
-	select( 0, NULL, NULL, NULL, &time );
+    select( 0, NULL, NULL, NULL, &time );
 
-	return;
+    return;
 }
 
 static void handler(int32_t sig)
 {
 
         TRACE_func_CALL;
-	if ( !Client_mode ) {
+    if ( !Client_mode ) {
                 dbgf_sys(DBGT_ERR, "called with signal %d", sig);
-	}
+    }
 
-	printf("\n");// to have a newline after ^C
+    printf("\n");// to have a newline after ^C
 
-	terminating = YES;
+    terminating = YES;
 }
 
 
@@ -1285,8 +1285,8 @@ static void segmentation_fault(int32_t sig)
 
         signal(SIGSEGV, SIG_DFL);
         errno=0;
-	if ( raise( SIGSEGV ) ) {
-		dbg_sys(DBGT_ERR, "raising SIGSEGV failed: %s...", strerror(errno) );
+    if ( raise( SIGSEGV ) ) {
+        dbg_sys(DBGT_ERR, "raising SIGSEGV failed: %s...", strerror(errno) );
         }
 }
 
@@ -1311,13 +1311,13 @@ void cleanup_all(int32_t status)
                 cb_plugin_hooks(PLUGIN_CB_TERM, NULL);
 
 
-		cleanup_schedule();
+        cleanup_schedule();
 
                 purge_link_route_orig_nodes(NULL, NO);
 
-		cleanup_plugin();
+        cleanup_plugin();
 
-		cleanup_config();
+        cleanup_config();
 
                 cleanup_ip();
 
@@ -1342,9 +1342,9 @@ void cleanup_all(int32_t status)
                 purge_dhash_invalid_list(YES);
 
 
-		// last, close debugging system and check for forgotten resources...
+        // last, close debugging system and check for forgotten resources...
 
-		cleanup_control();
+        cleanup_control();
 
                 checkLeak();
 
@@ -1784,7 +1784,7 @@ struct bmx_status {
         struct net_key *tun4Address;
         LOCAL_ID_T myLocalId;
         char *uptime;
-        char cpu[6];
+        char cpu[32];
         uint16_t nodes;
 };
 
@@ -1806,11 +1806,11 @@ static const struct field_format bmx_status_format[] = {
 
 static int32_t bmx_status_creator(struct status_handl *handl, void *data)
 {
-	struct tun_in_node *tin = avl_first_item(&tun_in_tree);
+    struct tun_in_node *tin = avl_first_item(&tun_in_tree);
         struct bmx_status *status = (struct bmx_status *) (handl->data = debugRealloc(handl->data, sizeof (struct bmx_status), -300365));
         sprintf(status->version, "%s-%s", BMX_BRANCH, BRANCH_VERSION);
         status->compat = COMPATIBILITY_VERSION;
-	snprintf(status->revision, 8, GIT_REV);
+    snprintf(status->revision, 8, GIT_REV);
         status->name = self->global_id.name;
         status->globalId = &self->global_id;
         status->primaryIp = self->primary_ip;
@@ -2015,8 +2015,8 @@ int32_t opt_version(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt
 {
         TRACE_func_CALL;
 
-	if ( cmd != OPT_APPLY )
-		return SUCCESS;
+    if ( cmd != OPT_APPLY )
+        return SUCCESS;
 
         assertion(-501257, !strcmp(opt->name, ARG_VERSION));
 
@@ -2059,8 +2059,8 @@ int32_t opt_status(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_
 
                         if (cmd == OPT_APPLY && (data_len = ((*(handl->frame_creator))(handl, NULL)))) {
                                 dbg_printf(cn, "%s:\n", handl->status_name);
-				dbgf_track(DBGT_INFO, "name=%10s %6d / %6d = %6d %% %6d",
-					handl->status_name, data_len, handl->min_msg_size, (data_len / handl->min_msg_size), (data_len % handl->min_msg_size));
+                dbgf_track(DBGT_INFO, "name=%10s %6d / %6d = %6d %% %6d",
+                    handl->status_name, data_len, handl->min_msg_size, (data_len / handl->min_msg_size), (data_len % handl->min_msg_size));
                                 fields_dbg_table(cn, relevance, data_len, handl->data, handl->min_msg_size, handl->format);
                         }
 
@@ -2074,9 +2074,9 @@ int32_t opt_status(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_
                         return FAILURE;
                 }
 
-	}
+    }
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 
@@ -2085,10 +2085,10 @@ int32_t opt_purge(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_p
 {
         TRACE_func_CALL;
 
-	if ( cmd == OPT_APPLY)
+    if ( cmd == OPT_APPLY)
                 purge_link_route_orig_nodes(NULL, NO);
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 
@@ -2097,61 +2097,61 @@ int32_t opt_update_description(uint8_t cmd, uint8_t _save, struct opt_type *opt,
 {
         TRACE_func_CALL;
 
-	if ( cmd == OPT_APPLY )
-		my_description_changed = YES;
+    if ( cmd == OPT_APPLY )
+        my_description_changed = YES;
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 
 
 static struct opt_type bmx_options[]=
 {
-//        ord parent long_name          shrt Attributes				*ival		min		max		default		*func,*syntax,*help
+//        ord parent long_name          shrt Attributes             *ival       min     max     default     *func,*syntax,*help
 
-	{ODI,0,ARG_VERSION,		'v',9,2,A_PS0,A_USR,A_DYI,A_ARG,A_ANY,	0,		0, 		0,		0,0, 		opt_version,
-			0,		"show version"},
+    {ODI,0,ARG_VERSION,     'v',9,2,A_PS0,A_USR,A_DYI,A_ARG,A_ANY,  0,      0,      0,      0,0,        opt_version,
+            0,      "show version"},
 
-	{ODI,0,ARG_SHOW,		's',  9,2,A_PS1N,A_USR,A_DYN,A_ARG,A_ANY,	0,		0, 		0,		0,0, 		opt_status,
-			ARG_VALUE_FORM,		"show status information about given context. E.g.:" ARG_STATUS ", " ARG_INTERFACES ", " ARG_LINKS ", " ARG_ORIGINATORS ", ..." "\n"},
-	{ODI,ARG_SHOW,ARG_RELEVANCE,'r',9,1,A_CS1,A_USR,A_DYN,A_ARG,A_ANY,	0,	       MIN_RELEVANCE,   MAX_RELEVANCE,  DEF_RELEVANCE,0, opt_status,
-			ARG_VALUE_FORM,	HLP_ARG_RELEVANCE}
+    {ODI,0,ARG_SHOW,        's',  9,2,A_PS1N,A_USR,A_DYN,A_ARG,A_ANY,   0,      0,      0,      0,0,        opt_status,
+            ARG_VALUE_FORM,     "show status information about given context. E.g.:" ARG_STATUS ", " ARG_INTERFACES ", " ARG_LINKS ", " ARG_ORIGINATORS ", ..." "\n"},
+    {ODI,ARG_SHOW,ARG_RELEVANCE,'r',9,1,A_CS1,A_USR,A_DYN,A_ARG,A_ANY,  0,         MIN_RELEVANCE,   MAX_RELEVANCE,  DEF_RELEVANCE,0, opt_status,
+            ARG_VALUE_FORM, HLP_ARG_RELEVANCE}
         ,
 
-	{ODI,0,ARG_STATUS,		0,  9,2,A_PS0,A_USR,A_DYN,A_ARG,A_ANY,	0,		0, 		0,		0,0, 		opt_status,
-			0,		"show status\n"},
+    {ODI,0,ARG_STATUS,      0,  9,2,A_PS0,A_USR,A_DYN,A_ARG,A_ANY,  0,      0,      0,      0,0,        opt_status,
+            0,      "show status\n"},
 
-	{ODI,0,ARG_LINKS,		0,  9,2,A_PS0N,A_USR,A_DYN,A_ARG,A_ANY,	0,		0, 		0,		0,0, 		opt_status,
-			0,		"show links\n"},
-	{ODI,0,ARG_ORIGINATORS,	        0,  9,2,A_PS0N,A_USR,A_DYN,A_ARG,A_ANY,	0,		0, 		0,		0,0, 		opt_status,
-			0,		"show originators\n"}
+    {ODI,0,ARG_LINKS,       0,  9,2,A_PS0N,A_USR,A_DYN,A_ARG,A_ANY, 0,      0,      0,      0,0,        opt_status,
+            0,      "show links\n"},
+    {ODI,0,ARG_ORIGINATORS,         0,  9,2,A_PS0N,A_USR,A_DYN,A_ARG,A_ANY, 0,      0,      0,      0,0,        opt_status,
+            0,      "show originators\n"}
         ,
-	{ODI,0,ARG_TTL,			't',9,0,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&my_ttl,	MIN_TTL,	MAX_TTL,	DEF_TTL,0,	opt_update_description,
-			ARG_VALUE_FORM,	"set time-to-live (TTL) for OGMs"}
+    {ODI,0,ARG_TTL,         't',9,0,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,  &my_ttl,    MIN_TTL,    MAX_TTL,    DEF_TTL,0,  opt_update_description,
+            ARG_VALUE_FORM, "set time-to-live (TTL) for OGMs"}
         ,
         {ODI,0,ARG_TX_INTERVAL,         0,  9,1, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &my_tx_interval, MIN_TX_INTERVAL, MAX_TX_INTERVAL, DEF_TX_INTERVAL,0, opt_update_description,
-			ARG_VALUE_FORM,	"set aggregation interval (SHOULD be smaller than the half of your and others OGM interval)"}
+            ARG_VALUE_FORM, "set aggregation interval (SHOULD be smaller than the half of your and others OGM interval)"}
         ,
         {ODI,0,ARG_OGM_INTERVAL,        'o',9,1, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &my_ogm_interval,  MIN_OGM_INTERVAL,   MAX_OGM_INTERVAL,   DEF_OGM_INTERVAL,0,   0,
-			ARG_VALUE_FORM,	"set interval in ms with which new originator message (OGM) are send"}
+            ARG_VALUE_FORM, "set interval in ms with which new originator message (OGM) are send"}
         ,
-	{ODI,0,ARG_OGM_PURGE_TO,    	0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&ogm_purge_to,	MIN_OGM_PURGE_TO,	MAX_OGM_PURGE_TO,	DEF_OGM_PURGE_TO,0,	0,
-			ARG_VALUE_FORM,	"timeout in ms for purging stale originators"}
+    {ODI,0,ARG_OGM_PURGE_TO,        0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,  &ogm_purge_to,  MIN_OGM_PURGE_TO,   MAX_OGM_PURGE_TO,   DEF_OGM_PURGE_TO,0, 0,
+            ARG_VALUE_FORM, "timeout in ms for purging stale originators"}
         ,
-	{ODI,0,ARG_LINK_PURGE_TO,    	0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&link_purge_to,	MIN_LINK_PURGE_TO,MAX_LINK_PURGE_TO,DEF_LINK_PURGE_TO,0,0,
-			ARG_VALUE_FORM,	"timeout in ms for purging stale links"}
+    {ODI,0,ARG_LINK_PURGE_TO,       0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,  &link_purge_to, MIN_LINK_PURGE_TO,MAX_LINK_PURGE_TO,DEF_LINK_PURGE_TO,0,0,
+            ARG_VALUE_FORM, "timeout in ms for purging stale links"}
         ,
-	{ODI,0,ARG_DAD_TO,        	0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&dad_to,	MIN_DAD_TO,	MAX_DAD_TO,	DEF_DAD_TO,0,	0,
-			ARG_VALUE_FORM,	"duplicate address (DAD) detection timout in ms"}
+    {ODI,0,ARG_DAD_TO,          0,  9,1,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,  &dad_to,    MIN_DAD_TO, MAX_DAD_TO, DEF_DAD_TO,0,   0,
+            ARG_VALUE_FORM, "duplicate address (DAD) detection timout in ms"}
         ,
-	{ODI,0,"flushAll",		0,  9,2,A_PS0,A_ADM,A_DYN,A_ARG,A_ANY,	0,		0, 		0,		0,0, 		opt_purge,
-			0,		"purge all neighbors and routes on the fly"}
+    {ODI,0,"flushAll",      0,  9,2,A_PS0,A_ADM,A_DYN,A_ARG,A_ANY,  0,      0,      0,      0,0,        opt_purge,
+            0,      "purge all neighbors and routes on the fly"}
         ,
-	{ODI,0,ARG_DROP_ALL_FRAMES,     0,  9,0,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&drop_all_frames,	MIN_DROP_ALL_FRAMES,	MAX_DROP_ALL_FRAMES,	DEF_DROP_ALL_FRAMES,0,	0,
-			ARG_VALUE_FORM,	"drop all received frames (but process packet header)"}
+    {ODI,0,ARG_DROP_ALL_FRAMES,     0,  9,0,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,  &drop_all_frames,   MIN_DROP_ALL_FRAMES,    MAX_DROP_ALL_FRAMES,    DEF_DROP_ALL_FRAMES,0,  0,
+            ARG_VALUE_FORM, "drop all received frames (but process packet header)"}
         ,
-	{ODI,0,ARG_DROP_ALL_PACKETS,     0, 9,0,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&drop_all_packets,	MIN_DROP_ALL_PACKETS,	MAX_DROP_ALL_PACKETS,	DEF_DROP_ALL_PACKETS,0,	0,
-			ARG_VALUE_FORM,	"drop all received packets"}
+    {ODI,0,ARG_DROP_ALL_PACKETS,     0, 9,0,A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,  &drop_all_packets,  MIN_DROP_ALL_PACKETS,   MAX_DROP_ALL_PACKETS,   DEF_DROP_ALL_PACKETS,0, 0,
+            ARG_VALUE_FORM, "drop all received packets"}
 
 };
 
@@ -2242,18 +2242,18 @@ void bmx(void)
 {
 
         struct avl_node *an;
-	struct dev_node *dev;
-	TIME_T frequent_timeout, seldom_timeout;
+    struct dev_node *dev;
+    TIME_T frequent_timeout, seldom_timeout;
 
-	TIME_T s_last_cpu_time = 0, s_curr_cpu_time = 0;
+    TIME_T s_last_cpu_time = 0, s_curr_cpu_time = 0;
 
-	frequent_timeout = seldom_timeout = bmx_time;
+    frequent_timeout = seldom_timeout = bmx_time;
 
         update_my_description_adv();
 
         for (an = NULL; (dev = avl_iterate_item(&dev_ip_tree, &an));) {
 
-//		schedule_tx_task(&dev->dummy_lndev, FRAME_TYPE_DEV_ADV, SCHEDULE_UNKNOWN_MSGS_SIZE, 0, 0, 0, 0);
+//      schedule_tx_task(&dev->dummy_lndev, FRAME_TYPE_DEV_ADV, SCHEDULE_UNKNOWN_MSGS_SIZE, 0, 0, 0, 0);
                 schedule_tx_task(&dev->dummy_lndev, FRAME_TYPE_DESC_ADV, ntohs(self->desc->extensionLen) + sizeof ( struct msg_description_adv), 0, 0, myIID4me, 0);
         }
 
@@ -2261,50 +2261,50 @@ void bmx(void)
 
         while (!terminating) {
 
-		TIME_T wait = task_next( );
+        TIME_T wait = task_next( );
 
-		if ( wait )
-			wait4Event( XMIN( wait, MAX_SELECT_TIMEOUT_MS ) );
+        if ( wait )
+            wait4Event( XMIN( wait, MAX_SELECT_TIMEOUT_MS ) );
 
                 if (my_description_changed)
                         update_my_description_adv();
 
-		// The regular tasks...
-		if ( U32_LT( frequent_timeout + 1000,  bmx_time ) ) {
+        // The regular tasks...
+        if ( U32_LT( frequent_timeout + 1000,  bmx_time ) ) {
 
-			// check for changed interface konfigurations...
+            // check for changed interface konfigurations...
                         for (an = NULL; (dev = avl_iterate_item(&dev_name_tree, &an));) {
 
-				if ( dev->active )
+                if ( dev->active )
                                         sysctl_config( dev );
 
                         }
 
 
-			close_ctrl_node( CTRL_CLEANUP, NULL );
+            close_ctrl_node( CTRL_CLEANUP, NULL );
 
 /*
-	                struct list_node *list_pos;
-			list_for_each( list_pos, &dbgl_clients[DBGL_ALL] ) {
+                    struct list_node *list_pos;
+            list_for_each( list_pos, &dbgl_clients[DBGL_ALL] ) {
 
-				struct ctrl_node *cn = (list_entry( list_pos, struct dbgl_node, list ))->cn;
+                struct ctrl_node *cn = (list_entry( list_pos, struct dbgl_node, list ))->cn;
 
-				dbg_printf( cn, "------------------ DEBUG ------------------ \n" );
+                dbg_printf( cn, "------------------ DEBUG ------------------ \n" );
 
-				check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_STATUS ), 0, cn );
-				check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_LINKS ), 0, cn );
-				check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_LOCALS ), 0, cn );
+                check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_STATUS ), 0, cn );
+                check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_LINKS ), 0, cn );
+                check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_LOCALS ), 0, cn );
                                 check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_ORIGINATORS ), 0, cn );
-				dbg_printf( cn, "--------------- END DEBUG ---------------\n" );
-			}
+                dbg_printf( cn, "--------------- END DEBUG ---------------\n" );
+            }
 */
 
-			/* preparing the next debug_timeout */
-			frequent_timeout = bmx_time;
-		}
+            /* preparing the next debug_timeout */
+            frequent_timeout = bmx_time;
+        }
 
 
-		if ( U32_LT( seldom_timeout + 5000, bmx_time ) ) {
+        if ( U32_LT( seldom_timeout + 5000, bmx_time ) ) {
 
                         struct orig_node *on;
                         GLOBAL_ID_T id;
@@ -2341,18 +2341,18 @@ void bmx(void)
 
                         }
 
-			// check for corrupted memory..
-			checkIntegrity();
+            // check for corrupted memory..
+            checkIntegrity();
 
 
-			/* generating cpu load statistics... */
-			s_curr_cpu_time = (TIME_T)clock();
-			s_curr_avg_cpu_load = ( (s_curr_cpu_time - s_last_cpu_time) / (TIME_T)(bmx_time - seldom_timeout) );
-			s_last_cpu_time = s_curr_cpu_time;
+            /* generating cpu load statistics... */
+            s_curr_cpu_time = (TIME_T)clock();
+            s_curr_avg_cpu_load = ( (s_curr_cpu_time - s_last_cpu_time) / (TIME_T)(bmx_time - seldom_timeout) );
+            s_last_cpu_time = s_curr_cpu_time;
 
-			seldom_timeout = bmx_time;
-		}
-	}
+            seldom_timeout = bmx_time;
+        }
+    }
 }
 
 
@@ -2367,12 +2367,12 @@ int main(int argc, char *argv[])
         assertion(-500999, (sizeof(struct frame_header_long) == 4));
 
 
-	gettimeofday( &start_time_tv, NULL );
+    gettimeofday( &start_time_tv, NULL );
         curr_tv = start_time_tv;
 
-	upd_time( NULL );
+    upd_time( NULL );
 
-	My_pid = getpid();
+    My_pid = getpid();
 
 
         if ( InitRng(&rng) != 0 ) {
@@ -2383,25 +2383,25 @@ int main(int argc, char *argv[])
 
         RNG_GenerateBlock(&rng, (byte*)&random, sizeof (random));
 
-	srand( random );
+    srand( random );
 
 
-	signal( SIGINT, handler );
-	signal( SIGTERM, handler );
-	signal( SIGPIPE, SIG_IGN );
-	signal( SIGSEGV, segmentation_fault );
+    signal( SIGINT, handler );
+    signal( SIGTERM, handler );
+    signal( SIGPIPE, SIG_IGN );
+    signal( SIGSEGV, segmentation_fault );
 
 #ifdef TEST_DEBUG_MALLOC
         debugMalloc(1, -300525); //testing debugMalloc
 #endif
         init_tools();
-	init_control();
+    init_control();
         init_avl();
 
-	init_bmx();
+    init_bmx();
         init_ip();
 
-	//init_schedule();
+    //init_schedule();
 
         if (init_plugin() == SUCCESS) {
 
@@ -2420,15 +2420,15 @@ int main(int argc, char *argv[])
 
 #ifdef BMX6_TODO
 
-#ifndef	NO_VIS
+#ifndef NO_VIS
                 activate_plugin((vis_get_plugin_v1()), NULL, NULL);
 #endif
 
-#ifndef	NO_TUNNEL
+#ifndef NO_TUNNEL
                 activate_plugin((tun_get_plugin_v1()), NULL, NULL);
 #endif
 
-#ifndef	NO_SRV
+#ifndef NO_SRV
                 activate_plugin((srv_get_plugin_v1()), NULL, NULL);
 #endif
 
@@ -2438,13 +2438,11 @@ int main(int argc, char *argv[])
                 assertion(-500809, (0));
         }
 
-	apply_init_args( argc, argv );
+    apply_init_args( argc, argv );
 
         bmx();
 
-	cleanup_all( CLEANUP_SUCCESS );
+    cleanup_all( CLEANUP_SUCCESS );
 
-	return -1;
+    return -1;
 }
-
-

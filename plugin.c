@@ -41,7 +41,7 @@ int32_t plugin_data_registries[PLUGIN_DATA_SIZE];
 
 void cb_plugin_hooks(int32_t cb_id, void* data)
 {
-        TRACE_FUNCTION_CALL;
+    TRACE_FUNCTION_CALL;
     struct list_node *list_pos;
     struct plugin_node *pn, *prev_pn = NULL;
 
@@ -50,13 +50,13 @@ void cb_plugin_hooks(int32_t cb_id, void* data)
         pn = list_entry( list_pos, struct plugin_node, list );
 
         if ( prev_pn  &&  prev_pn->plugin  &&  prev_pn->plugin->cb_plugin_handler[cb_id])
-                        (*(prev_pn->plugin->cb_plugin_handler[cb_id])) (cb_id, data);
+            (*(prev_pn->plugin->cb_plugin_handler[cb_id])) (cb_id, data);
 
         prev_pn = pn;
     }
 
     if ( prev_pn  &&  prev_pn->plugin  &&  prev_pn->plugin->cb_plugin_handler[cb_id])
-                ((*(prev_pn->plugin->cb_plugin_handler[cb_id])) (cb_id, data));
+        ((*(prev_pn->plugin->cb_plugin_handler[cb_id])) (cb_id, data));
 
 }
 
@@ -68,7 +68,7 @@ void _set_thread_hook(int32_t cb_type, void (*cb_handler) (void), int8_t del, st
     struct cb_node *cbn;
 
     if ( !cb_type  ||  !cb_handler ) {
-                cleanup_all(-500143);
+        cleanup_all(-500143);
     }
 
     list_for_each_safe( list_pos, tmp_pos, (struct list_head*) cb_list ) {
@@ -79,12 +79,12 @@ void _set_thread_hook(int32_t cb_type, void (*cb_handler) (void), int8_t del, st
 
             if ( del ) {
 
-                                list_del_next(((struct list_head*) cb_list), prev_pos);
+                list_del_next(((struct list_head*) cb_list), prev_pos);
                 debugFree( cbn, -300069 );
-                                return;
+                return;
 
             } else {
-                                cleanup_all(-500144);
+                cleanup_all(-500144);
                 //dbgf_sys(DBGT_ERR, "cb_hook for cb_type %d and cb_handler already registered", cb_type );
             }
 
@@ -94,20 +94,20 @@ void _set_thread_hook(int32_t cb_type, void (*cb_handler) (void), int8_t del, st
         }
     }
 
-        assertion(-501289, (!del));
+    assertion(-501289, (!del));
 
-        cbn = debugMallocReset(sizeof ( struct cb_node), -300027);
+    cbn = debugMallocReset(sizeof ( struct cb_node), -300027);
 
-        cbn->cb_type = cb_type;
-        cbn->cb_handler = cb_handler;
-        list_add_tail(((struct list_head*) cb_list), &cbn->list);
+    cbn->cb_type = cb_type;
+    cbn->cb_handler = cb_handler;
+    list_add_tail(((struct list_head*) cb_list), &cbn->list);
 
 }
 
 
 void set_route_change_hooks(void (*cb_route_change_handler) (uint8_t del, struct orig_node *dest), uint8_t del)
 {
-        _set_thread_hook(1, (void (*) (void)) cb_route_change_handler, del, (struct list_node*) & cb_route_change_list);
+    _set_thread_hook(1, (void (*) (void)) cb_route_change_handler, del, (struct list_node*) & cb_route_change_list);
 }
 
 
@@ -115,41 +115,41 @@ void set_route_change_hooks(void (*cb_route_change_handler) (uint8_t del, struct
 // THIS MAY CRASH when one plugin unregisteres two packet_hooks while being called with cb_packet_handler()
 void cb_route_change_hooks(uint8_t del, struct orig_node *dest)
 {
-        TRACE_FUNCTION_CALL;
+    TRACE_FUNCTION_CALL;
     struct list_node *list_pos;
     struct cb_route_change_node *con, *prev_con = NULL;
-        struct local_node *local_router = dest->curr_rt_local->local_key;
+    struct local_node *local_router = dest->curr_rt_local->local_key;
 
-        assertion(-500674, (dest && dest->desc));
+    assertion(-500674, (dest && dest->desc));
 
-        local_router->orig_routes = local_router->orig_routes + (del ? -1 : +1);
+    local_router->orig_routes = local_router->orig_routes + (del ? -1 : +1);
 
-        assertion(-501320, (local_router->orig_routes >= 0 && local_router->orig_routes < (int) orig_tree.items));
+    assertion(-501320, (local_router->orig_routes >= 0 && local_router->orig_routes < (int) orig_tree.items));
 
     list_for_each( list_pos, &cb_route_change_list ) {
 
         con = list_entry( list_pos, struct cb_route_change_node, list );
 
         if ( prev_con )
-                        (*(prev_con->cb_route_change_handler)) (del, dest);
+            (*(prev_con->cb_route_change_handler)) (del, dest);
 
-                prev_con = con;
+        prev_con = con;
 
-        }
+    }
 
-        if (prev_con)
-                (*(prev_con->cb_route_change_handler)) (del, dest);
+    if (prev_con)
+        (*(prev_con->cb_route_change_handler)) (del, dest);
 
 }
 
 void set_packet_hook(void (*cb_packet_handler) (struct packet_buff *), int8_t del)
 {
-        _set_thread_hook(1, (void (*) (void)) cb_packet_handler, del, (struct list_node*) &cb_packet_list);
+    _set_thread_hook(1, (void (*) (void)) cb_packet_handler, del, (struct list_node*) &cb_packet_list);
 }
 
 void cb_packet_hooks(struct packet_buff *pb)
 {
-        TRACE_FUNCTION_CALL;
+    TRACE_FUNCTION_CALL;
 
     struct list_node *list_pos;
     struct cb_packet_node *cpn, *prev_cpn = NULL;
@@ -158,7 +158,7 @@ void cb_packet_hooks(struct packet_buff *pb)
 
         cpn = list_entry( list_pos, struct cb_packet_node, list );
 
-                if (prev_cpn) {
+        if (prev_cpn) {
 
             (*(prev_cpn->cb_packet_handler)) (pb);
 
@@ -166,24 +166,24 @@ void cb_packet_hooks(struct packet_buff *pb)
 
         prev_cpn = cpn;
 
-        }
+    }
 
-        if (prev_cpn)
-                (*(prev_cpn->cb_packet_handler)) (pb);
+    if (prev_cpn)
+        (*(prev_cpn->cb_packet_handler)) (pb);
 
 }
 
 
 void set_fd_hook( int32_t fd, void (*cb_fd_handler) (int32_t fd), int8_t del ) {
 
-        _set_thread_hook(fd, (void (*) (void)) cb_fd_handler, del, (struct list_node*) & cb_fd_list);
+    _set_thread_hook(fd, (void (*) (void)) cb_fd_handler, del, (struct list_node*) & cb_fd_list);
 
     change_selects();
 }
 
 int32_t get_plugin_data_registry(uint8_t data_type)
 {
-        TRACE_FUNCTION_CALL;
+    TRACE_FUNCTION_CALL;
 
     static int is_plugin_data_initialized = NO;
 
@@ -192,25 +192,25 @@ int32_t get_plugin_data_registry(uint8_t data_type)
         is_plugin_data_initialized=YES;
     }
 
-        assertion(-501366, ( initializing && data_type < PLUGIN_DATA_SIZE ));
+    assertion(-501366, ( initializing && data_type < PLUGIN_DATA_SIZE ));
 
     // do NOT return the incremented value!
-        plugin_data_registries[data_type]++;
-        return ((plugin_data_registries[data_type]) - 1);
+    plugin_data_registries[data_type]++;
+    return ((plugin_data_registries[data_type]) - 1);
 }
 
 void **get_plugin_data(void *data, uint8_t data_type, int32_t registry)
 {
-        TRACE_FUNCTION_CALL;
+    TRACE_FUNCTION_CALL;
 
-        assertion(-501284, (data_type < PLUGIN_DATA_SIZE));
-        assertion(-501285, (registry < plugin_data_registries[data_type]));
+    assertion(-501284, (data_type < PLUGIN_DATA_SIZE));
+    assertion(-501285, (registry < plugin_data_registries[data_type]));
 
     if ( data_type == PLUGIN_DATA_ORIG )
         return &(((struct orig_node*)data)->plugin_data[registry]);
 
-        if ( data_type == PLUGIN_DATA_DEV )
-                return &(((struct dev_node*)data)->plugin_data[registry]);
+    if ( data_type == PLUGIN_DATA_DEV )
+        return &(((struct dev_node*)data)->plugin_data[registry]);
 
     return NULL;
 }
@@ -239,44 +239,44 @@ int is_plugin_active( void *plugin ) {
 int activate_plugin(struct plugin *p, void *dlhandle, const char *dl_name)
 {
 
-        if (p == NULL)
+    if (p == NULL)
         return SUCCESS;
 
     if ( is_plugin_active( p ) )
         return FAILURE;
 
 
-        if (p->plugin_size != sizeof ( struct plugin)) {
+    if (p->plugin_size != sizeof ( struct plugin)) {
 
-                dbgf_sys(DBGT_ERR,
-                        "plugin with unexpected size %d != %zu, revision=%s",
-                        p->plugin_size, sizeof ( struct plugin), GIT_REV);
+        dbgf_sys(DBGT_ERR,
+                 "plugin with unexpected size %d != %zu, revision=%s",
+                 p->plugin_size, sizeof ( struct plugin), GIT_REV);
 
-                return FAILURE;
-        }
+        return FAILURE;
+    }
 
 
-        if ( p->cb_init == NULL  ||  ((*( p->cb_init )) ()) == FAILURE ) {
+    if ( p->cb_init == NULL  ||  ((*( p->cb_init )) ()) == FAILURE ) {
 
-                dbg_sys(DBGT_ERR, "could not init plugin");
-                return FAILURE;
-        }
+        dbg_sys(DBGT_ERR, "could not init plugin");
+        return FAILURE;
+    }
 
-        struct plugin_node *pn = debugMallocReset( sizeof( struct plugin_node), -300028);
+    struct plugin_node *pn = debugMallocReset( sizeof( struct plugin_node), -300028);
 
-        pn->plugin = p;
-        pn->dlhandle = dlhandle;
+    pn->plugin = p;
+    pn->dlhandle = dlhandle;
 
-        list_add_tail(&plugin_list, &pn->list);
+    list_add_tail(&plugin_list, &pn->list);
 
-        dbgf_all( DBGT_INFO, "%s SUCCESS", pn->plugin->plugin_name );
+    dbgf_all( DBGT_INFO, "%s SUCCESS", pn->plugin->plugin_name );
 
-        if ( dl_name ) {
-                pn->dlname = debugMalloc( strlen(dl_name)+1, -300029 );
-                strcpy( pn->dlname, dl_name );
-        }
+    if ( dl_name ) {
+        pn->dlname = debugMalloc( strlen(dl_name)+1, -300029 );
+        strcpy( pn->dlname, dl_name );
+    }
 
-        return SUCCESS;
+    return SUCCESS;
 }
 
 STATIC_FUNC
@@ -294,7 +294,7 @@ void deactivate_plugin( void *p ) {
 
         if ( pn->plugin == p ) {
 
-                        list_del_next(&plugin_list, prev_pos);
+            list_del_next(&plugin_list, prev_pos);
 
             dbg_track(DBGT_INFO, "deactivating plugin %s", pn->plugin->plugin_name );
 
@@ -366,14 +366,14 @@ int8_t activate_dyn_plugin( const char* name ) {
     dbgf_all( DBGT_INFO, "survived dlopen()!" );
 
 
-        typedef struct plugin* (*sdl_init_function_type) ( void );
+    typedef struct plugin* (*sdl_init_function_type) ( void );
 
-        union {
-                sdl_init_function_type func;
-                void * obj;
-        } alias;
+    union {
+        sdl_init_function_type func;
+        void * obj;
+    } alias;
 
-        alias.obj = dlsym( dlhandle, "get_plugin");
+    alias.obj = dlsym( dlhandle, "get_plugin");
 
     if ( !( get_plugin = alias.func )  ) {
         dbgf_sys(DBGT_ERR, "dlsym( %s ) failed: %s", name, dlerror() );
@@ -392,14 +392,14 @@ int8_t activate_dyn_plugin( const char* name ) {
         return SUCCESS;
 
 
-        if (activate_plugin(pv1, dlhandle, name) == FAILURE) {
+    if (activate_plugin(pv1, dlhandle, name) == FAILURE) {
 
-                dbgf_sys(DBGT_ERR, "activate_plugin( %s ) failed", dl_path);
-                return FAILURE;
+        dbgf_sys(DBGT_ERR, "activate_plugin( %s ) failed", dl_path);
+        return FAILURE;
 
-        }
+    }
 
-        dbg_track(DBGT_INFO, "loading and activating %s dl %s succeeded", My_libs ? "customized" : "default", dl_path);
+    dbg_track(DBGT_INFO, "loading and activating %s dl %s succeeded", My_libs ? "customized" : "default", dl_path);
 
     return SUCCESS;
 }
@@ -439,8 +439,8 @@ static struct opt_type plugin_options[]=
 
     //order> config-file order to be loaded by config file, order < ARG_CONNECT oder to appera first in help text
     {ODI,0,ARG_PLUGIN,      0,  2,2,A_PM1N,A_ADM,A_INI,A_CFA,A_ANY, 0,      0,      0,      0,0,        opt_plugin,
-            ARG_FILE_FORM,  "load plugin. "ARG_FILE_FORM" must be in LD_LIBRARY_PATH or " BMX_ENV_LIB_PATH
-            "\n path (e.g. --plugin bmx6_howto_plugin.so )\n"}
+     ARG_FILE_FORM,  "load plugin. "ARG_FILE_FORM" must be in LD_LIBRARY_PATH or " BMX_ENV_LIB_PATH
+     "\n path (e.g. --plugin bmx6_howto_plugin.so )\n"}
 };
 #endif
 
@@ -450,7 +450,7 @@ IDM_T init_plugin(void)
 
 //  set_snd_ext_hook( 0, NULL, YES ); //ensure correct initialization of extension hooks
 //  reg_plugin_data( PLUGIN_DATA_SIZE );// ensure correct initialization of plugin_data
-                    ;
+    ;
 #ifndef NO_DYN_PLUGIN
     // first try loading config plugin, if succesfull, continue loading optinal plugins depending on config
     activate_dyn_plugin( BMX_LIB_CONFIG );
@@ -458,7 +458,7 @@ IDM_T init_plugin(void)
     register_options_array( plugin_options, sizeof( plugin_options ), CODE_CATEGORY_NAME);
 #endif
 
-        return SUCCESS;
+    return SUCCESS;
 }
 
 

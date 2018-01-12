@@ -1178,10 +1178,10 @@ void rx_packet( struct packet_buff *pb );
 
 #ifndef NO_TRACE_FUNCTION_CALLS
 
-#define func_CALL_BUFFER_SIZE 64
+#define FUNCTION_CALL_BUFFER_SIZE 64
 
-//extern char* function_call_buffer_name_array[func_CALL_BUFFER_SIZE];
-//extern TIME_T function_call_buffer_time_array[func_CALL_BUFFER_SIZE];
+//extern char* function_call_buffer_name_array[FUNCTION_CALL_BUFFER_SIZE];
+//extern TIME_T function_call_buffer_time_array[FUNCTION_CALL_BUFFER_SIZE];
 //extern uint8_t function_call_buffer_pos;
 
 void trace_function_call(const char *);
